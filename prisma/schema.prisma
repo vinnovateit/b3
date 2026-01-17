@@ -10,6 +10,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -55,9 +56,8 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  // Relations to VIT students and external participants
-  vitStudent          VITStudent?
-  externalParticipant externalParticipant?
+  // Relation to VIT student
+  vitStudent VITStudent?
 
   @@map("users")
 }
@@ -94,29 +94,6 @@ model VITStudent {
   @@map("vit_students")
 }
 
-model externalParticipant {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  collegeName String   @map("college_name")
-  year        Int
-  phone       String
-  branch      String
-  city        String
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  // Add team relationships if needed
-  teamId String? @map("team_id") @db.ObjectId
-  team   Team?   @relation(fields: [teamId], references: [id])
-
-  userId String? @unique @map("user_id") @db.ObjectId
-  user   User?   @relation(fields: [userId], references: [id])
-
-  @@index([collegeName])
-  @@index([city])
-  @@map("external_participants")
-}
-
 model Team {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -136,8 +113,7 @@ model Team {
   otherLinks         String? @map("other_links")
 
   // Relations
-  externalParticipants externalParticipant[]
-  vitStudents          VITStudent[]
+  vitStudents VITStudent[]
 
   @@map("teams")
 }
