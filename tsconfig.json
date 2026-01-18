@@ -22,17 +22,22 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",                        // ← very important, usually missing
+    "baseUrl": ".", // ← very important, usually missing
     "paths": {
-      "@/*": ["./src/*"]                   // ← this maps @/ to src/
-    },
+      "@/*": [
+        "./src/*"
+      ] // ← this maps @/ to src/
+    }
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/auth.ts", "src/app/lib/mongodb.js"  ],
+    "**/*.tsx",
+    "src/app/lib/auth.ts",
+    "src/app/lib/mongodb.js",
+    ".next/dev/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ]
