@@ -1,5 +1,35 @@
+"use client";
+
+import { useRef, useEffect, useState } from "react";
+import "../HeroSection.css";
 export default function HeroSection() {
+
+  const glassRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (glassRef.current) {
+      observer.observe(glassRef.current);
+    }
+
+    return () => {
+      if (glassRef.current) observer.unobserve(glassRef.current);
+    };
+  }, []);
+
+
+
   return (
+    
     <section className="relative min-h-[260vh] bg-transparent overflow-hidden">
 
       {/* ================= BACKGROUND GRADIENTS ================= */}
@@ -231,7 +261,8 @@ export default function HeroSection() {
 
         {/* Glass Container & Content */}
         <div
-          className="
+          ref={glassRef}   // <-- needed if you’re using IntersectionObserver
+          className={`
             absolute
             inset-0
             rounded-[30px]
@@ -240,7 +271,9 @@ export default function HeroSection() {
             backdrop-blur-xl
             bg-white/5
             z-10
-          "
+            glass-card
+            ${isVisible ? "visible" : ""}
+          `}
         >
           {/* Glass Card Content */}
           <div className="relative h-full flex flex-col items-center justify-center text-center p-12">
