@@ -114,6 +114,9 @@ model Team {
 
   // Relations
   vitStudents VITStudent[]
+  
+  round1 Round1? @relation("TeamRound1")
+  round2 Round2? @relation("TeamRound2")
 
   @@map("teams")
 }
@@ -128,4 +131,50 @@ model Yantra {
   updatedAt          String
 
   @@map("yantra")
+}
+
+
+model Round1 {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  teamId            String   @unique @db.ObjectId
+  projectTitle      String
+  projectDescription String
+  figmaLink         String?
+  githubLink        String?
+  techStack         String[]
+  track             String?
+  pptLink           String?
+  otherLinks        String?
+  submittedBy       String?  @db.ObjectId
+  submittedAt       DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  team              Team     @relation("TeamRound1", fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("round1")
+}
+
+model Round2 {
+  id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  teamId                    String   @unique @db.ObjectId                  
+  team                      Team     @relation("TeamRound2", fields: [teamId], references: [id], onDelete: Cascade)
+  implementationDescription String?  
+  challengesFaced           String?  
+  learnings                 String?  
+  futureScope               String?  
+
+  demoVideoLink             String? 
+  liveDeploymentLink        String?  
+  updatedGithubLink         String?  
+  pptLink                   String?  
+  additionalMaterials       String?  
+
+  techStackUpdates          String[]
+
+  submittedBy               String?  @db.ObjectId   
+  submittedAt               DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  @@map("round2")   
 }
