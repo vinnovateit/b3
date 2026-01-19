@@ -16,6 +16,33 @@ export async function createTeam(data: Prisma.TeamCreateInput) {
 
 
 /**
+ * Add student to team
+ */
+export async function attachStudentToTeam(
+    studentId: string,
+    teamId: string
+) {
+    return prisma.vITStudent.update({
+        where: { id: studentId },
+        data: { teamId },
+    });
+}
+
+
+/**
+ * Remove student from team
+ */
+export async function removeStudentFromTeam(
+    studentId: string,
+) {
+    return prisma.vITStudent.update({
+        where: { id: studentId },
+        data: { teamId: null },
+    });
+}
+
+
+/**
  * Team name Check
  */
 export async function teamNameExists(name: string) {
@@ -26,7 +53,20 @@ export async function teamNameExists(name: string) {
 
 
 /**
- * Find student by regno list
+ * Find team by code
+ */
+export async function findTeamByCode(code: string) {
+    return prisma.team.findUnique({
+        where: { code },
+        include: {
+            vitStudents: true,
+        },
+    });
+}
+
+
+/**
+ * Find student by regNo list
  */
 export async function findStudentByRegNo(
     regNo: string

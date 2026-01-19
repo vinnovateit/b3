@@ -5,11 +5,13 @@
  * @module services/team.service
  */
 
-import * as repo from "@/repositories/team.repo";
-import { generateTeamCode } from "@/utils/teamCode";
-import { CreateTeamDTO } from "@/types/team";
 import { Prisma } from "@prisma/client";
-import { MAX_TEAM_CODE_GEN_TRIES } from "@/constants/team";
+
+import * as repo from "@/repositories/team.repo";
+import { getCurrentStudent } from "@/lib/getCurrentStudent";
+import { generateTeamCode } from "@/utils/teamCode";
+import { CreateTeamDTO, JoinTeamDTO } from "@/types/team";
+import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
 
 // TODO: Create a regNo type 
 export async function registerTeam(payload: CreateTeamDTO, creatorRegNo: string) {
@@ -69,4 +71,82 @@ export async function registerTeam(payload: CreateTeamDTO, creatorRegNo: string)
 
     throw new Error("Failed to generate unique team code");
 }
+
+export async function joinTeam(payload: JoinTeamDTO) {
+    const joiner = await getCurrentStudent();
+
+    // if (!joiner) {
+    //     throw new Error("Student not registered");
+    // }
+
+    // Ensure joiner is not already in a team
+    if (joiner.teamId) {
+        throw new Error("You are already in a team");
+    }
+
+    // Find team by code
+    const team = await repo.findTeamByCode(payload.code);
+
+    if (!team) {
+        throw new Error("Invalid team code");
+    }
+
+    if (team.vitStudents.length > MAX_TEAM_SIZE) {
+        throw new Error("Team is already full");
+    }
+
+    try {
+        repo.attachStudentToTeam(joiner.id, team.id);
+        return {
+            name: team.name,
+            code: team.code,
+        };
+
+    } catch (err: any) {
+
+        // DB-level safety (race conditions)
+        if (err.code === "P2002") {
+            throw new Error("Student already assigned to a team");
+        }
+        throw err;
+    }
+}
+
+
+export async function leaveTeam() {
+    const student = await getCurrentStudent();
+
+    // Ensure the student is in a team.
+    if (!student.teamId) {
+        throw new Error("Student is not a part of any team!");
+    }
+
+    // TODO: Handle creator of team
+    // // Find team by code
+    // const team = await repo.findTeamByCode(payload.code);
+
+    // if (!team) {
+    //     throw new Error("Invalid team code");
+    // }
+
+    // if (team.vitStudents.length > MAX_TEAM_SIZE) {
+    //     throw new Error("Team is already full");
+    // }
+
+    try {
+        repo.removeStudentFromTeam(student.id);
+        return {
+            message: "Student has left the team."
+        };
+
+    } catch (err: any) {
+
+        // DB-level safety (race conditions)
+        if (err.code === "P2002") {
+            throw new Error("Student has already left the team");
+        }
+        throw err;
+    }
+}
+
 
