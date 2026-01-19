@@ -16,6 +16,19 @@ export async function createTeam(data: Prisma.TeamCreateInput) {
 
 
 /**
+ * Get team
+ */
+export async function getTeamById(teamId: string) {
+    return prisma.team.findFirst({
+        where: { id: teamId },
+        include: {
+            vitStudents: true,
+        },
+    })
+}
+
+
+/**
  * Add student to team
  */
 export async function attachStudentToTeam(

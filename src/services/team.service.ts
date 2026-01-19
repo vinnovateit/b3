@@ -12,6 +12,7 @@ import { getCurrentStudent } from "@/lib/getCurrentStudent";
 import { generateTeamCode } from "@/utils/teamCode";
 import { CreateTeamDTO, JoinTeamDTO } from "@/types/team";
 import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
+import { memo } from "react";
 
 // TODO: Create a regNo type 
 export async function registerTeam(payload: CreateTeamDTO) {
@@ -147,5 +148,33 @@ export async function leaveTeam() {
         throw err;
     }
 }
+
+
+export async function viewTeam() {
+    const student = await getCurrentStudent();
+
+    if (!student) {
+        throw new Error("Student not found")
+    }
+
+    if (!student.teamId) {
+        throw new Error("Student is not a part of any team");
+    }
+
+    try {
+        const team = await repo.getTeamById(student.teamId);
+
+        if (!team) {
+            throw new Error("Team not found");
+        }
+
+        return team;
+    }
+    catch (err: any) {
+        throw err;
+    }
+}
+
+
 
 
