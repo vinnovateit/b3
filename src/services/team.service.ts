@@ -14,16 +14,15 @@ import { CreateTeamDTO, JoinTeamDTO } from "@/types/team";
 import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
 
 // TODO: Create a regNo type 
-export async function registerTeam(payload: CreateTeamDTO, creatorRegNo: string) {
+export async function registerTeam(payload: CreateTeamDTO) {
     // Prevent duplicate team names
     const nameExists = await repo.teamNameExists(payload.name);
     if (nameExists) {
         throw new Error("Team name already registered");
     }
 
-    // Ensure creator exists
-    const creator =
-        await repo.findStudentByRegNo(creatorRegNo);
+    // Get creator from auth context. 
+    const creator = await getCurrentStudent();
 
     if (!creator) {
         throw new Error("Student not registered");
@@ -55,7 +54,7 @@ export async function registerTeam(payload: CreateTeamDTO, creatorRegNo: string)
                 otherLinks: payload.otherLinks,
 
                 vitStudents: {
-                    connect: { regNo: creatorRegNo },
+                    connect: { regNo: creator.regNo },
                 },
 
 

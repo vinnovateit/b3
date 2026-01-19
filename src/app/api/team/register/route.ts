@@ -12,23 +12,22 @@ import { z, ZodError } from 'zod';
  * @returns {Promise<NextResponse>} JSON response containing team details or error.
  * 
  * @description
- * This endpoint performs the following:
- * 1. Retrieves the **Registration Number** (currently mocked as `temp_reg_no`).
- *    - This ID serves as the foreign key to link the team to its creator.
- * 2. Validates the request body against {@link createTeamSchema}.
- * 3. Registers the team via {@link registerTeam}, associating it with the reg no.
+ * This endpoint validates the request body against {@link createTeamSchema},
+ * resolves the currently authenticated student from context and
+ * creates a team, updates the teamId of student and generates a unique team code for the team.
+ * The request accept team code in the payload and validates the request against {@link joinTeamSchema}.
  * 
  * @throws {ZodError} If validation fails.
+ * @throws {Error} If the student is already a part of team.
+ * @throws {Error} If the student context cannot be resolved.
  */
 export async function POST(req: Request): Promise<NextResponse> {
     try {
 
-        // TODO: Get register no through user auth 
-        const temp_reg_no = "24BCE1234"
 
         const body = await req.json();
         const parsed = createTeamSchema.parse(body)
-        const team = await registerTeam(parsed, temp_reg_no);
+        const team = await registerTeam(parsed);
 
         return NextResponse.json(
             { success: true, teamName: team.name, teamCode: team.code },
