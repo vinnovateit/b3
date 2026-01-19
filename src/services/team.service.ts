@@ -5,14 +5,13 @@
  * @module services/team.service
  */
 
-import { Prisma } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
 import * as repo from "@/repositories/team.repo";
 import { getCurrentStudent } from "@/lib/getCurrentStudent";
 import { generateTeamCode } from "@/utils/teamCode";
 import { CreateTeamDTO, JoinTeamDTO } from "@/types/team";
 import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
-import { memo } from "react";
 
 // TODO: Create a regNo type 
 export async function registerTeam(payload: CreateTeamDTO) {
@@ -39,29 +38,35 @@ export async function registerTeam(payload: CreateTeamDTO) {
         try {
             const code = generateTeamCode();
 
-            // Create team
-            const data: Prisma.TeamCreateInput = {
-                name: payload.name,
-                code,
-                description: payload.description,
-                category: payload.category,
+            // Create team using transaction
+            return await prisma.$transaction(async (tx) => {
+                const team = await tx.team.create({
+                    data: {
+                        name: payload.name,
+                        code,
+                        description: payload.description,
+                        category: payload.category,
 
-                projectTitle: payload.projectTitle,
-                projectDescription: payload.projectDescription,
-                track: payload.track,
-                githubLink: payload.githubLink,
-                figmaLink: payload.figmaLink,
-                pptLink: payload.pptLink,
-                otherLinks: payload.otherLinks,
+                        projectTitle: payload.projectTitle,
+                        projectDescription: payload.projectDescription,
+                        track: payload.track,
+                        githubLink: payload.githubLink,
+                        figmaLink: payload.figmaLink,
+                        pptLink: payload.pptLink,
+                        otherLinks: payload.otherLinks,
 
-                vitStudents: {
-                    connect: { regNo: creator.regNo },
-                },
+                        createdById: creator.id,    // Track team creator / leader
+                    },
+                });
 
+                // Only create team if student connects to the team
+                await tx.vITStudent.update({
+                    where: { id: creator.id },
+                    data: { teamId: team.id },
+                });
 
-            };
-
-            return repo.createTeam(data);
+                return team;
+            });
 
         } catch (err: any) {
             // If code is not unique try again.
@@ -96,7 +101,7 @@ export async function joinTeam(payload: JoinTeamDTO) {
     }
 
     try {
-        repo.attachStudentToTeam(joiner.id, team.id);
+        await repo.attachStudentToTeam(joiner.id, team.id);
         return {
             name: team.name,
             code: team.code,
@@ -118,33 +123,28 @@ export async function leaveTeam() {
 
     // Ensure the student is in a team.
     if (!student.teamId) {
-        throw new Error("Student is not a part of any team!");
+        throw new Error("Student is not a part of any team");
     }
 
-    // TODO: Handle creator of team
-    // // Find team by code
-    // const team = await repo.findTeamByCode(payload.code);
+    // Check whether the student is team leader or not
+    const team = await repo.getTeamById(student.teamId);
 
-    // if (!team) {
-    //     throw new Error("Invalid team code");
-    // }
+    if (!team) {
+        throw new Error("Team not found");
+    }
 
-    // if (team.vitStudents.length > MAX_TEAM_SIZE) {
-    //     throw new Error("Team is already full");
-    // }
+    // Creator cannot leave the team
+    if (team.createdById === student.id) {
+        throw new Error("Team leader cannot leave the team");
+    }
 
     try {
-        repo.removeStudentFromTeam(student.id);
+        await repo.removeStudentFromTeam(student.id);
         return {
             message: "Student has left the team."
         };
 
     } catch (err: any) {
-
-        // DB-level safety (race conditions)
-        if (err.code === "P2002") {
-            throw new Error("Student has already left the team");
-        }
         throw err;
     }
 }
