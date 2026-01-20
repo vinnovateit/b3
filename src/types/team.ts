@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { createTeamSchema, } from "@/validators/createTeam.schema";
-import { joinTeamSchema } from "@/validators/joinTeam.schema";
-import { updateTeamSchema } from "@/validators/updateTeam.schema";
-import { transferLeadershipSchema } from "@/validators/transferLeadership.schema";
-import { removeTeamMemberSchema } from "@/validators/removeTeamMember.schema";
+import { createTeamSchema, } from "@/validators/team/create.schema";
+import { joinTeamSchema } from "@/validators/team/join.schema";
+import { updateTeamSchema } from "@/validators/team/update.schema";
+import { transferLeadershipSchema } from "@/validators/team/transferLeadership.schema";
+import { removeTeamMemberSchema } from "@/validators/team/removeMember.schema";
 
 /**
  * Data Transfer Object for creating a new team.

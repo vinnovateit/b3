@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { transferLeadership } from "@/services/team.service";
-import { transferLeadershipSchema } from "@/validators/transferLeadership.schema";
+import { transferLeadershipSchema } from "@/validators/team/transferLeadership.schema";
 import { ZodError } from 'zod';
 
 

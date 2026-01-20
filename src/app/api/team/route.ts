@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from 'zod';
 import { viewTeam, updateTeam, disbandTeam, } from "@/services/team.service";
-import { updateTeamSchema } from "@/validators/updateTeam.schema";
+import { updateTeamSchema } from "@/validators/team/update.schema";
 
 /**
  * Handle get team request.

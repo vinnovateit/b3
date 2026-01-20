@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { joinTeam } from "@/services/team.service";
-import { joinTeamSchema } from "@/validators/joinTeam.schema";
+import { joinTeamSchema } from "@/validators/team/join.schema";
 import { ZodError } from 'zod';
 
 

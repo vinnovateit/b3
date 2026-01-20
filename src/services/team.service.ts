@@ -237,6 +237,13 @@ export async function updateTeam(payload: UpdateTeamDTO) {
         throw new Error("Only team leader can edit the team details");
     }
 
+    // Prevent taking other team names
+    const nameExists = await repo.teamNameExists(payload.name);
+    // Do not throw error if own team name
+    if (nameExists && payload.name !== team.name) {
+        throw new Error("Team name already registered");
+    }
+
     return await repo.updateTeamById(team.id, payload);
 }
 

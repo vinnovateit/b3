@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { removeMember } from "@/services/team.service";
-import { removeTeamMemberSchema } from "@/validators/removeTeamMember.schema";
+import { removeTeamMemberSchema } from "@/validators/team/removeMember.schema";
 import { ZodError } from 'zod';
 
 
