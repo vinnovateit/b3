@@ -124,3 +124,14 @@ export async function updateTeamById(teamId: string, data: Prisma.TeamUpdateInpu
         data
     });
 }
+
+
+/**
+ * Update team leadership by newLeaderId and teamId
+ */
+export async function updateTeamLeader(teamId: string, leaderId: string) {
+    return prisma.team.update({
+        where: { id: teamId },
+        data: { createdById: leaderId }
+    });
+}

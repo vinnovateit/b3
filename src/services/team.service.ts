@@ -10,7 +10,7 @@ import prisma from "@/lib/prisma";
 import * as repo from "@/repositories/team.repo";
 import { getCurrentStudent } from "@/lib/getCurrentStudent";
 import { generateTeamCode } from "@/utils/teamCode";
-import { CreateTeamDTO, JoinTeamDTO, UpdateTeamDTO } from "@/types/team";
+import { CreateTeamDTO, JoinTeamDTO, TransferLeaderDTO, UpdateTeamDTO, RemoveTeamMemberDTO } from "@/types/team";
 import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
 
 // TODO: Create a regNo type 
@@ -238,6 +238,90 @@ export async function updateTeam(payload: UpdateTeamDTO) {
     }
 
     return await repo.updateTeamById(team.id, payload);
+}
+
+
+export async function transferLeadership(payload: TransferLeaderDTO) {
+    const student = await getCurrentStudent();
+    // Ensure the student is in a team.
+    if (!student.teamId) {
+        throw new Error("Student is not a part of any team");
+    }
+
+    // Check whether the student is team leader or not
+    const team = await repo.getTeamById(student.teamId);
+
+    if (!team) {
+        throw new Error("Team not found");
+    }
+
+    // Creator cannot leave the team
+    if (team.createdById !== student.id) {
+        throw new Error("Only team leader can transfer team leadership");
+    }
+
+    if (team.createdById === payload.newLeaderId) {
+        throw new Error("Already the team leader")
+    }
+
+    // Ensure new leader is in the same team
+    const newLeader = await prisma.vITStudent.findUnique({
+        where: { id: payload.newLeaderId },
+    });
+
+    if (!newLeader || newLeader.teamId !== team.id) {
+        throw new Error("New leader must be a member of the same team");
+    }
+
+    // Transfer leadership
+    await repo.updateTeamLeader(team.id, payload.newLeaderId);
+
+    return {
+        success: true,
+        leaderId: payload.newLeaderId,
+    };
+}
+
+
+export async function removeMember(payload: RemoveTeamMemberDTO) {
+    const leader = await getCurrentStudent();
+    // Ensure the student is in a team.
+    if (!leader.teamId) {
+        throw new Error("Student is not a part of any team");
+    }
+
+    // Check whether the student is team leader or not
+    const team = await repo.getTeamById(leader.teamId);
+
+    if (!team) {
+        throw new Error("Team not found");
+    }
+
+    // Leader cannot be removed from the team
+    if (team.createdById !== leader.id) {
+        throw new Error("Only team leader can remove a member");
+    }
+
+    if (team.createdById === payload.removeMemberId) {
+        throw new Error("Team leader cannot be removed")
+    }
+
+    // Ensure the member is in the same team
+    const removeMember = await prisma.vITStudent.findUnique({
+        where: { id: payload.removeMemberId },
+    });
+
+    if (!removeMember || removeMember.teamId !== team.id) {
+        throw new Error("Member is not in the team");
+    }
+
+    // Remove member
+    await repo.removeStudentFromTeam(payload.removeMemberId);
+
+    return {
+        success: true,
+        removeMemberId: payload.removeMemberId,
+    };
 }
 
 
