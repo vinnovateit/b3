@@ -55,7 +55,7 @@ export async function registerTeam(payload: CreateTeamDTO) {
                         pptLink: payload.pptLink,
                         otherLinks: payload.otherLinks,
 
-                        createdById: creator.id,    // Track team creator / leader
+                        leaderId: creator.id,    // Track team creator / leader
                     },
                 });
 
@@ -133,8 +133,8 @@ export async function leaveTeam() {
         throw new Error("Team not found");
     }
 
-    // Creator cannot leave the team
-    if (team.createdById === student.id) {
+    // Leader cannot leave the team
+    if (team.leaderId === student.id) {
         throw new Error("Team leader cannot leave the team");
     }
 
@@ -191,8 +191,8 @@ export async function disbandTeam() {
         throw new Error("Team not found");
     }
 
-    // Creator cannot leave the team
-    if (team.createdById !== student.id) {
+    // Only Leader can disband the team
+    if (team.leaderId !== student.id) {
         throw new Error("Only team leader can disband the team");
     }
 
@@ -232,8 +232,8 @@ export async function updateTeam(payload: UpdateTeamDTO) {
         throw new Error("Team not found");
     }
 
-    // Creator cannot leave the team
-    if (team.createdById !== student.id) {
+    // Only leader can edit the details
+    if (team.leaderId !== student.id) {
         throw new Error("Only team leader can edit the team details");
     }
 
@@ -255,12 +255,12 @@ export async function transferLeadership(payload: TransferLeaderDTO) {
         throw new Error("Team not found");
     }
 
-    // Creator cannot leave the team
-    if (team.createdById !== student.id) {
+    // Only leader can transfer leadership
+    if (team.leaderId !== student.id) {
         throw new Error("Only team leader can transfer team leadership");
     }
 
-    if (team.createdById === payload.newLeaderId) {
+    if (team.leaderId === payload.newLeaderId) {
         throw new Error("Already the team leader")
     }
 
@@ -297,12 +297,12 @@ export async function removeMember(payload: RemoveTeamMemberDTO) {
         throw new Error("Team not found");
     }
 
-    // Leader cannot be removed from the team
-    if (team.createdById !== leader.id) {
+    // Only leader can remove team member
+    if (team.leaderId !== leader.id) {
         throw new Error("Only team leader can remove a member");
     }
 
-    if (team.createdById === payload.removeMemberId) {
+    if (team.leaderId === payload.removeMemberId) {
         throw new Error("Team leader cannot be removed")
     }
 

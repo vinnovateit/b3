@@ -132,6 +132,6 @@ export async function updateTeamById(teamId: string, data: Prisma.TeamUpdateInpu
 export async function updateTeamLeader(teamId: string, leaderId: string) {
     return prisma.team.update({
         where: { id: teamId },
-        data: { createdById: leaderId }
+        data: { leaderId: leaderId }
     });
 }

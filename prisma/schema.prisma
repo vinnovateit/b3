@@ -113,7 +113,7 @@ model Team {
   otherLinks         String? @map("other_links")
 
   // Team creator / leader
-  createdById  String  @map("created_by_id") @db.ObjectId
+  leaderId    String  @map("created_by_id") @db.ObjectId
 
   // Relations
   vitStudents VITStudent[]
