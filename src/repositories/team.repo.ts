@@ -103,3 +103,24 @@ export async function studentsAlreadyInTeam(
         },
     });
 }
+
+
+/**
+ * Delete team by id
+ */
+export async function deleteTeamById(teamId: string) {
+    return prisma.team.delete({
+        where: { id: teamId }
+    });
+}
+
+
+/**
+ * Update team by id
+ */
+export async function updateTeamById(teamId: string, data: Prisma.TeamUpdateInput) {
+    return prisma.team.update({
+        where: { id: teamId },
+        data
+    });
+}

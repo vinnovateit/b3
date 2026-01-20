@@ -10,7 +10,7 @@ import prisma from "@/lib/prisma";
 import * as repo from "@/repositories/team.repo";
 import { getCurrentStudent } from "@/lib/getCurrentStudent";
 import { generateTeamCode } from "@/utils/teamCode";
-import { CreateTeamDTO, JoinTeamDTO } from "@/types/team";
+import { CreateTeamDTO, JoinTeamDTO, UpdateTeamDTO } from "@/types/team";
 import { MAX_TEAM_CODE_GEN_TRIES, MAX_TEAM_SIZE } from "@/constants/team";
 
 // TODO: Create a regNo type 
@@ -174,6 +174,75 @@ export async function viewTeam() {
         throw err;
     }
 }
+
+
+export async function disbandTeam() {
+    const student = await getCurrentStudent();
+
+    // Ensure the student is in a team.
+    if (!student.teamId) {
+        throw new Error("Student is not a part of any team");
+    }
+
+    // Check whether the student is team leader or not
+    const team = await repo.getTeamById(student.teamId);
+
+    if (!team) {
+        throw new Error("Team not found");
+    }
+
+    // Creator cannot leave the team
+    if (team.createdById !== student.id) {
+        throw new Error("Only team leader can disband the team");
+    }
+
+    try {
+        // Delete team using transaction
+        await prisma.$transaction(async (tx) => {
+            // Only delete team if every student is removed from the team
+            await tx.vITStudent.updateMany({
+                where: { teamId: team.id },
+                data: { teamId: null },
+            });
+
+            await tx.team.delete({
+                where: { id: team.id },
+            });
+        });
+        return "Team deleted successfully"
+
+    } catch (err: any) {
+        throw err;
+    }
+}
+
+
+export async function updateTeam(payload: UpdateTeamDTO) {
+    const student = await getCurrentStudent();
+
+    // Ensure the student is in a team.
+    if (!student.teamId) {
+        throw new Error("Student is not a part of any team");
+    }
+
+    // Check whether the student is team leader or not
+    const team = await repo.getTeamById(student.teamId);
+
+    if (!team) {
+        throw new Error("Team not found");
+    }
+
+    // Creator cannot leave the team
+    if (team.createdById !== student.id) {
+        throw new Error("Only team leader can edit the team details");
+    }
+
+    return await repo.updateTeamById(team.id, payload);
+}
+
+
+
+
 
 
 
