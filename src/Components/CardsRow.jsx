@@ -26,54 +26,67 @@ export default function CardsRow() {
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [startIndex, setStartIndex] = useState(0);
   const [spotlightX, setSpotlightX] = useState(0);
+  const scrollContainerRef = useRef(null);
   const cardRefs = useRef([]);
 
   useEffect(() => {
-    let animationFrame;
-    const update = () => {
-      const relativeIndex = activeIndex - startIndex;
-      const activeEl = cardRefs.current[relativeIndex];
-      if (activeEl) {
-        const rect = activeEl.getBoundingClientRect();
-        const targetX = rect.left + rect.width / 2;
-        setSpotlightX(prev => prev + (targetX - prev) * 0.2);
+    const handleScroll = () => {
+      if (!scrollContainerRef.current) return;
+
+      const container = scrollContainerRef.current;
+      const viewportCenter = window.innerWidth / 2;
+
+      let closestIndex = 0;
+      let minDistance = Infinity;
+
+      cardRefs.current.forEach((card, index) => {
+        if (card) {
+          const rect = card.getBoundingClientRect();
+          const cardCenter = rect.left + rect.width / 2;
+          const distance = Math.abs(cardCenter - viewportCenter);
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestIndex = index;
+          }
+        }
+      });
+
+      setActiveIndex(closestIndex);
+
+      const activeCard = cardRefs.current[closestIndex];
+      if (activeCard) {
+        const rect = activeCard.getBoundingClientRect();
+        setSpotlightX(rect.left + rect.width / 2);
       }
-      animationFrame = requestAnimationFrame(update);
     };
-    update();
-    return () => cancelAnimationFrame(animationFrame);
-  }, [activeIndex, startIndex]);
 
-  const nextCard = () => {
-    const next = activeIndex + 1;
-    if (next >= cards.length) {
-      setActiveIndex(0);
-      setStartIndex(0);
-      return;
-    }
-    setActiveIndex(next);
-    if (next - startIndex >= 4) {
-        setStartIndex(Math.min(cards.length - 8, startIndex + 1));
-    }
-  };
+    const container = scrollContainerRef.current;
+    container.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
 
-  const prevCard = () => {
-    const prev = activeIndex - 1;
-    if (prev < 0) return;
-    setActiveIndex(prev);
-    if (prev < startIndex) {
-        setStartIndex(Math.max(0, startIndex - 1));
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
+  const scrollToIndex = (index) => {
+    if (index < 0 || index >= cards.length) return;
+    const targetCard = cardRefs.current[index];
+    if (targetCard && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const targetOffset = targetCard.offsetLeft - (container.offsetWidth / 2) + (targetCard.offsetWidth / 2);
+      container.scrollTo({ left: targetOffset, behavior: 'smooth' });
     }
   };
-
-  const visibleCards = cards.slice(startIndex, startIndex + 8);
 
   return (
-    <div className="w-screen h-screen bg-[#040704] relative overflow-hidden">
+    <div className="w-full min-h-screen bg-[#040704] relative overflow-hidden flex flex-col">
       
-      {/* PERSISTENT TOP GLOW - Condition activeIndex === 0 removed */}
+      {/* PERSISTENT TOP GLOW */}
       <div 
         className="absolute top-0 left-0 w-full h-[300px] pointer-events-none z-0"
         style={{
@@ -87,19 +100,29 @@ export default function CardsRow() {
         Timeline
       </div>
 
-      <div className="flex flex-col items-start justify-start h-screen pt-[160px] md:pt-[220px] px-6 md:pl-20 relative z-10">
-        <div className="text-[28px] md:text-[48px] font-normal text-white mb-8 transition-all duration-500">
+      <div className="flex flex-col items-start justify-center flex-grow pt-[120px] md:pt-[200px] relative z-10 overflow-visible">
+        
+        {/* Original Left Alignment maintained */}
+        <div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-normal text-white mb-4 md:mb-8 transition-all duration-500">
           {activeIndex <= 10 ? "Day 1 - Build & Break In" : "Day 2 - Stabilise & Ship"}
         </div>
 
-        <div className="relative overflow-visible w-full md:w-screen">
-          <div className="flex w-full justify-start gap-4 md:gap-8 transition-all duration-500 ease-in-out items-start">
-            {visibleCards.map((card, i) => {
-              const realIndex = startIndex + i;
-              const isActive = activeIndex === realIndex;
+        <div 
+          ref={scrollContainerRef}
+          className="relative overflow-x-auto overflow-y-visible w-full no-scrollbar snap-x snap-mandatory px-[10vw] md:px-[40vw]"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          <div className="flex w-max gap-6 md:gap-16 pb-32 pt-10 items-start overflow-visible">
+            {cards.map((card, i) => {
+              const isActive = activeIndex === i;
               return (
-                <div key={realIndex} ref={el => cardRefs.current[i] = el} className="flex-shrink-0 relative">
-                  <div className={`relative z-10 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-30'}`}>
+                <div 
+                  key={i} 
+                  ref={el => cardRefs.current[i] = el} 
+                  className="flex-shrink-0 snap-center transition-transform duration-500 overflow-visible"
+                >
+                  <div className={`relative z-10 transition-all duration-500 
+                    ${isActive ? 'opacity-100 scale-105 md:scale-110' : 'opacity-20 scale-90 md:scale-95 blur-[0.5px] md:blur-[1px]'}`}>
                     <Card isActive={isActive} index={card.index || (isActive ? "" : "End")} data={card} />
                   </div>
                 </div>
@@ -108,36 +131,43 @@ export default function CardsRow() {
           </div>
         </div>
 
+        {/* SPOTLIGHT FIX: bottom: 0 + fade mask to stop the horizontal cut */}
         <div
-          className="absolute pointer-events-none z-20 transition-all duration-0"
+          className="absolute pointer-events-none z-20 transition-all duration-300 ease-out"
           style={{
             left: spotlightX,
-            bottom: -60,
+            bottom: 0,
             transform: "translateX(-50%)",
-            width: "clamp(600px, 100vw, 1200px)",
+            width: "clamp(300px, 90vw, 1200px)",
             height: "420px",
             background: `radial-gradient(ellipse at 50% 100%, white 0%, rgba(140, 255, 132, 0.9) 15%, rgba(14, 179, 79, 0.5) 45%, transparent 80%)`,
             filter: 'blur(60px)',
-            WebkitMaskImage: `conic-gradient(from 300deg at 50% 100%, transparent 0deg, black 30deg, black 90deg, transparent 120deg), linear-gradient(to top, black 0%, transparent 100%)`,
+            // Masked with linear gradient at bottom to fade smoothly into FAQ
+            WebkitMaskImage: `conic-gradient(from 300deg at 50% 100%, transparent 0deg, black 30deg, black 90deg, transparent 120deg), linear-gradient(to top, black 25%, transparent 100%)`,
             WebkitMaskComposite: 'source-in',
             mixBlendMode: 'plus-lighter'
           }}
         />
       </div>
 
-      <div className="fixed bottom-6 right-6 md:bottom-8 md:right-12 z-50">
-        <div className="w-[140px] md:w-[170px] h-[60px] md:h-[70px] rounded-[24px] flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]" style={{ background: 'linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)' }}>
-          <div className="w-full h-full rounded-[22px] flex items-center justify-between relative" style={{ background: 'radial-gradient(60.5% 60.5% at 50% 50%, #19954B 59.15%, #0CAC4F 86.65%)' }}>
-            <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={prevCard}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
+      <div className="absolute bottom-6 right-6 md:bottom-8 md:right-12 z-50">
+        <div className="w-[120px] md:w-[170px] h-[50px] md:h-[70px] rounded-[18px] md:rounded-[24px] flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]" style={{ background: 'linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)' }}>
+          <div className="w-full h-full rounded-[16px] md:rounded-[22px] flex items-center justify-between relative" style={{ background: 'radial-gradient(60.5% 60.5% at 50% 50%, #19954B 59.15%, #0CAC4F 86.65%)' }}>
+            <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={() => scrollToIndex(activeIndex - 1)}>
+              <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
             </button>
-            <div className="w-[1px] h-[30px] md:h-[40px] bg-white opacity-20" />
-            <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={nextCard}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" /></svg>
+            <div className="w-[1px] h-[25px] md:h-[40px] bg-white opacity-20" />
+            <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={() => scrollToIndex(activeIndex + 1)}>
+              <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" /></svg>
             </button>
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   );
 }

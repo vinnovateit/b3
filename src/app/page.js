@@ -1,22 +1,22 @@
 import Image from "next/image";
 import CardsRow from "@/Components/CardsRow";
 import FAQ from "@/Components/FAQ";
-import Card from "@/Components/Card";
+
 export default function Home() {
   return (
-    <>
-  
- <main className="bg-[#040704]"> 
-      {/* CardsRow Section */}
-      <section className="relative overflow-hidden">
+    <main className="bg-[#040704]"> 
+      {/* Timeline Section */}
+      <section className="relative overflow-visible">
         <CardsRow />
       </section>
 
       {/* FAQ Section */}
-      <section className="relative overflow-hidden border-t border-white/5">
+      <section 
+        className="relative overflow-hidden bg-[#040704] z-10" 
+        style={{ marginTop: '-10px' }} // Small overlap to hide the seam
+      >
         <FAQ />
       </section>
     </main>
-    </>
   );
 }
