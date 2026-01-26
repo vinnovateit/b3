@@ -21,6 +21,7 @@ interface Round {
 }
 
 //Temporary rounds data
+//Retrieve from DB later
 const ROUNDS: Array<{ id: string; title: string; roundNo: number }> = [
   { id: "round-1", title: "Ideation", roundNo: 1 },
   { id: "round-2", title: "Prototype", roundNo: 2 },
