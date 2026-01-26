@@ -59,6 +59,10 @@ model User {
   // Relation to VIT student
   vitStudent VITStudent?
 
+  // Relation to Team by team code
+  teamCode String? @map("team_code")
+  team     Team?   @relation("TeamUsersByCode", fields: [teamCode], references: [code])
+
   @@map("users")
 }
 
@@ -99,7 +103,7 @@ model Team {
   name        String
   code        String   @unique // 6-character unique team code
   description String?
-  category    String
+  roundNo     Int      @default(1)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -114,18 +118,19 @@ model Team {
 
   // Relations
   vitStudents VITStudent[]
+  users       User[]       @relation("TeamUsersByCode")
 
   @@map("teams")
 }
 
 model Yantra {
-  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
   name               String?
-  email              String  @unique
+  email              String   @unique
   registrationNumber String?
-  isVITian           Boolean @default(false)
-  createdAt          String
-  updatedAt          String
+  isVITian           Boolean  @default(false)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
 
   @@map("yantra")
 }
