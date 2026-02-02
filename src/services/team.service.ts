@@ -96,7 +96,7 @@ export async function joinTeam(payload: JoinTeamDTO) {
         throw new Error("Invalid team code");
     }
 
-    if (team.vitStudents.length > MAX_TEAM_SIZE) {
+    if (team.vitStudents.length >= MAX_TEAM_SIZE) {
         throw new Error("Team is already full");
     }
 
