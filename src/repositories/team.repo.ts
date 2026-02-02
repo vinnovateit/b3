@@ -4,7 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 
 /**
@@ -32,10 +32,11 @@ export async function getTeamById(teamId: string) {
  * Add student to team
  */
 export async function attachStudentToTeam(
+    conn: PrismaClient | Prisma.TransactionClient,  // For transaction client
     studentId: string,
     teamId: string
 ) {
-    return prisma.vITStudent.update({
+    return conn.vITStudent.update({
         where: { id: studentId },
         data: { teamId },
     });

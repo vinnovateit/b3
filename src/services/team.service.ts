@@ -96,12 +96,19 @@ export async function joinTeam(payload: JoinTeamDTO) {
         throw new Error("Invalid team code");
     }
 
-    if (team.vitStudents.length >= MAX_TEAM_SIZE) {
-        throw new Error("Team is already full");
-    }
-
     try {
-        await repo.attachStudentToTeam(joiner.id, team.id);
+        // Use transaction to avoid max team size race condition
+        await prisma.$transaction(async (tx) => {
+            const memberCount = await tx.vITStudent.count({
+                where: { teamId: team.id },
+            });
+
+            if (memberCount >= MAX_TEAM_SIZE) {
+                throw new Error("Team is already full");
+            }
+
+            await repo.attachStudentToTeam(tx, joiner.id, team.id);;
+        });
         return {
             name: team.name,
             code: team.code,
