@@ -14,6 +14,7 @@ type Round = {
     figmaLink: string;
     pptLink: string;
     otherLinks: string;
+    progressNote: string;
   };
   teamInfo?: {
     track?: string | null;

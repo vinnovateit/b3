@@ -1,105 +1,99 @@
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import type { DefaultSession } from "next-auth";
 
 /**
- * Extend NextAuth session type to include teamCode
+ * Extend NextAuth session type to include teamCode and isTeamLeader
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: DefaultSession["user"] & {
-      teamCode?: string;
+      teamCode?: string | null;
+      isTeamLeader?: boolean;
     };
   }
 }
 
 declare module "next-auth" {
   interface JWT {
-    teamCode?: string;
+    teamCode?: string | null;
+    isTeamLeader?: boolean;
   }
 }
 
+// Validate email domain
+function isVITStudentEmail(email: string): boolean {
+  return email.endsWith("@vitstudent.ac.in");
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
-    Credentials({
-      name: "Team Code",
-      credentials: {
-        code: { label: "Team Code", type: "text", placeholder: "TEAM01" },
-      },
-      async authorize(credentials) {
-        const code = credentials?.code;
-
-        if (!code || typeof code !== "string") {
-          console.warn("[Auth] Missing or invalid team code");
-          return null;
-        }
-
-        const normalizedCode = code.trim().toUpperCase();
-
-        try {
-          // Find team by code
-          const team = await prisma.team.findUnique({
-            where: { code: normalizedCode },
-            include: {
-              users: {
-                take: 1,
-              },
-            },
-          });
-
-          if (!team) {
-            console.warn(`[Auth] Team not found with code: ${normalizedCode}`);
-            return null;
-          }
-
-          // Get or create a user for this team
-          let user = team.users[0];
-
-          if (!user) {
-            // Create a user for this team if none exists
-            user = await prisma.user.create({
-              data: {
-                email: `${normalizedCode.toLowerCase()}@team.local`,
-                name: team.name,
-                teamCode: normalizedCode,
-              },
-            });
-          }
-
-          // Return user object with team info
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            teamCode: team.code,
-          };
-        } catch (error) {
-          console.error("[Auth] Authorization error:", {
-            error: error instanceof Error ? error.message : "Unknown error",
-            code: normalizedCode,
-          });
-          return null;
-        }
-      },
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: false,
     }),
   ],
+  pages: {
+    error: "/",
+  },
   callbacks: {
+    async signIn({ user, email }) {
+      // Validate email domain
+      if (!user.email || !isVITStudentEmail(user.email)) {
+        console.warn(`[Auth] Unauthorized login attempt from non-VIT email: ${user.email}`);
+        return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
-        token.teamCode = (user as any).teamCode;
+        // Fetch team info from database
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          include: {
+            leadTeams: {
+              select: { code: true },
+              take: 1,
+            },
+          },
+        });
+
+        if (dbUser) {
+          // Check if user is leading any team
+          const leadsTeam = dbUser.leadTeams.length > 0;
+          token.teamCode = dbUser.teamCode;
+          token.isTeamLeader = leadsTeam;
+        }
+      } else if (token.email) {
+        // Refresh team info on each session check
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          include: {
+            leadTeams: {
+              select: { code: true },
+              take: 1,
+            },
+          },
+        });
+
+        if (dbUser) {
+          token.teamCode = dbUser.teamCode;
+          token.isTeamLeader = dbUser.leadTeams.length > 0;
+        }
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user && typeof token.teamCode === "string") {
-        session.user.teamCode = token.teamCode;
+      if (session.user) {
+        session.user.teamCode = (token.teamCode as string | null) || null;
+        session.user.isTeamLeader = (token.isTeamLeader as boolean) || false;
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/",
   },
   session: {
     strategy: "jwt",

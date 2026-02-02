@@ -60,8 +60,10 @@ model User {
   vitStudent VITStudent?
 
   // Relation to Team by team code
-  teamCode String? @map("team_code")
-  team     Team?   @relation("TeamUsersByCode", fields: [teamCode], references: [code])
+  teamCode  String? @map("team_code")
+  team      Team?   @relation("TeamUsersByCode", fields: [teamCode], references: [code], onDelete: SetNull, onUpdate: Cascade)
+  teamId    String? @map("team_id") @db.ObjectId
+  leadTeams Team[]  @relation("TeamLeader")
 
   @@map("users")
 }
@@ -115,6 +117,15 @@ model Team {
   figmaLink          String? @map("figma_link")
   pptLink            String? @map("ppt_link")
   otherLinks         String? @map("other_links")
+
+  // Round progress notes
+  round1Progress String? @map("round1_progress")
+  round2Progress String? @map("round2_progress")
+  round3Progress String? @map("round3_progress")
+
+  // Team Leader
+  teamLeaderId String? @map("team_leader_id") @db.ObjectId
+  teamLeader   User?   @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Relations
   vitStudents VITStudent[]

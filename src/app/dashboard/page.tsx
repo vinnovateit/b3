@@ -17,6 +17,7 @@ interface Round {
     figmaLink: string;
     pptLink: string;
     otherLinks: string;
+    progressNote: string;
   };
 }
 
@@ -35,23 +36,25 @@ export default async function Dashboard() {
     redirect("/");
   }
 
-  const teamCode = (session.user as any).teamCode;
+  const userSession = session.user as any;
+  const teamCode = userSession.teamCode;
 
+  // If user doesn't have a team, redirect to join page
   if (!teamCode) {
-    return (
-      <div className="p-6 text-center">
-        <h2>No Team Found</h2>
-        <p>No team is associated with your account. Please contact support.</p>
-      </div>
-    );
+    redirect("/join-team");
   }
 
-  let team: (Team & { users: any[] }) | null = null;
+  let team: (Team & { users: any[], teamLeader: any }) | null = null;
 
   try {
     team = await prisma.team.findUnique({
       where: { code: teamCode },
-      include: { users: true },
+      include: {
+        users: true,
+        teamLeader: {
+          select: { id: true, email: true, name: true },
+        },
+      },
     });
   } catch (error) {
     console.error("[Dashboard] Error fetching team:", {
@@ -70,6 +73,11 @@ export default async function Dashboard() {
   }
 
   const accessibleRounds = ROUNDS.filter(round => round.roundNo <= team.roundNo);
+  const progressByRound: Record<number, string> = {
+    1: team.round1Progress ?? "",
+    2: team.round2Progress ?? "",
+    3: team.round3Progress ?? "",
+  };
 
   const rounds: Round[] = accessibleRounds.map(round => {
     const isCurrent = team.roundNo === round.roundNo;
@@ -86,6 +94,7 @@ export default async function Dashboard() {
         figmaLink: team.figmaLink ?? "",
         pptLink: team.pptLink ?? "",
         otherLinks: team.otherLinks ?? "",
+        progressNote: progressByRound[round.roundNo] ?? "",
       },
       teamInfo: {
         track: team.track,
@@ -98,8 +107,14 @@ export default async function Dashboard() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#0b1021", color: "#e8ecf5" }}>
-      <header style={{ padding: "1rem 1.5rem", display: "flex", justifyContent: "flex-end" }}>
-        <ProfileMenu />
+      <header style={{ padding: "1rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 28 }}>Hey, {session.user.name || "Participant"}</h2>
+          <p style={{ margin: "0.25rem 0 0 0", color: "#a0a8c0" }}>
+            {team.name} : {team.code}
+          </p>
+        </div>
+        <ProfileMenu currentUserEmail={session.user.email} />
       </header>
       <main
         style={{
@@ -112,7 +127,7 @@ export default async function Dashboard() {
         <div style={{ width: "100%", maxWidth: 1100 }}>
           <RoundTabs rounds={rounds} />
         </div>
-        <TeamMembers team={team} />
+        <TeamMembers team={team} currentUserEmail={session.user.email!} teamLeaderEmail={team.teamLeader?.email} />
       </main>
     </div>
   );

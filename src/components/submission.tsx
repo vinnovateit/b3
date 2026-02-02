@@ -7,6 +7,7 @@ interface SubmissionFormData {
   figmaLink: string;
   pptLink: string;
   otherLinks: string;
+  progressNote: string;
 }
 
 interface TeamInfo {
@@ -83,6 +84,7 @@ export default function SubmissionBox({
           figmaLink: form.figmaLink.trim(),
           pptLink: form.pptLink.trim(),
           otherLinks: form.otherLinks.trim(),
+          progressNote: form.progressNote.trim(),
         }),
       });
 
@@ -247,23 +249,24 @@ export default function SubmissionBox({
       
         <div className="form-group">
           <label htmlFor="progress">Progress in R{teamInfo?.roundNo || roundNo}</label>
-          <div
+          <textarea
+            id="progress"
+            value={form.progressNote}
+            disabled={isLocked || saving}
+            onChange={(e) => handleChange("progressNote", e.target.value)}
+            placeholder={`Write your progress for Round ${teamInfo?.roundNo || roundNo}...`}
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
               minHeight: "100px",
-              background: "#0f162e",
+              padding: "0.75rem",
               border: "1px solid #26335c",
               borderRadius: "6px",
-              fontSize: "1.25rem",
-              fontWeight: 600,
-              color: "#10b981",
+              background: "#0f162e",
+              color: "#e8ecf5",
+              fontFamily: "inherit",
+              fontSize: "0.875rem",
+              resize: "vertical",
             }}
-          >
-            Round {teamInfo?.roundNo || roundNo}
-          </div>
+          />
         </div>
       </div>
 

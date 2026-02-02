@@ -1,15 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { validateSubmissionLinks } from "@/lib/validators";
 import { errorResponse, successResponse, parseJsonBody, logRequest, logResponse } from "@/lib/api-helpers";
+import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
 import type { NextResponse } from "next/server";
 
 interface SubmissionRequest {
   teamId: string;
+  roundNo?: number;
   githubLink?: string | null;
   figmaLink?: string | null;
   pptLink?: string | null;
   otherLinks?: string | null;
+  progressNote?: string | null;
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -17,6 +20,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     logRequest("POST", "/api/submit");
+
+    // Get authenticated user
+    const session = await auth();
+    if (!session?.user?.email) {
+      logResponse("POST", "/api/submit", 401, Date.now() - startTime);
+      return errorResponse("Unauthorized", 401);
+    }
 
     // Parse request body
     const body = await parseJsonBody(request);
@@ -27,6 +37,38 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!submissionData.teamId || typeof submissionData.teamId !== "string") {
       logResponse("POST", "/api/submit", 400);
       return errorResponse("teamId is required and must be a string", 400);
+    }
+
+    if (
+      typeof submissionData.roundNo !== "number" ||
+      !Number.isInteger(submissionData.roundNo) ||
+      submissionData.roundNo < 1 ||
+      submissionData.roundNo > 3
+    ) {
+      logResponse("POST", "/api/submit", 400);
+      return errorResponse("roundNo must be an integer between 1 and 3", 400);
+    }
+
+    // Verify team exists and user is a member
+    const team = await prisma.team.findUnique({
+      where: { id: submissionData.teamId },
+      include: {
+        users: {
+          where: { email: session.user.email },
+          select: { id: true },
+        },
+      },
+    });
+
+    if (!team) {
+      logResponse("POST", "/api/submit", 404, Date.now() - startTime);
+      return errorResponse("Team not found", 404);
+    }
+
+    // Check if user is a team member
+    if (team.users.length === 0) {
+      logResponse("POST", "/api/submit", 403, Date.now() - startTime);
+      return errorResponse("You are not a member of this team", 403);
     }
 
     // Validate submission links
@@ -42,18 +84,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse("Invalid submission links", 400, validation.errors);
     }
 
-    // Verify team exists
-    const team = await prisma.team.findUnique({
-      where: { id: submissionData.teamId },
-      select: { id: true },
-    });
-
-    if (!team) {
-      logResponse("POST", "/api/submit", 404, Date.now() - startTime);
-      return errorResponse("Team not found", 404);
-    }
-
     // Update team with cleaned links
+    const progressFieldByRound: Record<number, "round1Progress" | "round2Progress" | "round3Progress"> = {
+      1: "round1Progress",
+      2: "round2Progress",
+      3: "round3Progress",
+    };
+
+    const progressField = progressFieldByRound[submissionData.roundNo];
+    const progressNote = submissionData.progressNote?.trim() || "";
+
     await prisma.team.update({
       where: { id: submissionData.teamId },
       data: {
@@ -61,6 +101,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         figmaLink: validation.cleanedLinks.figmaLink || null,
         pptLink: validation.cleanedLinks.pptLink || null,
         otherLinks: validation.cleanedLinks.otherLinks || null,
+        [progressField]: progressNote || null,
       },
     });
 
