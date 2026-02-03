@@ -98,7 +98,7 @@ export default function Hero() {
         </div>
 
         {/* Glass morph block wrapper with ellipses */}
-        <div className="relative z-[6] w-full max-w-[950px] min-h-[474px] h-auto mx-auto mt-[24vh] md:max-w-[90%]">
+        <div className="relative z-[6] w-full min-h-[474px] h-auto mx-auto mt-[24vh]">
           
           {/* Ellipses behind the glass card - attached to wrapper */}
           <div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-[1] pointer-events-none">
