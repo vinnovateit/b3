@@ -1,10 +1,9 @@
-import Image from "next/image";
-import CardsRow from "@/Components/CardsRow";
-import FAQ from "@/Components/FAQ";
+import CardsRow from "./components/CardsRow";
+import FAQ from "./components/FAQ";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
-import Footer from "@/Components/footer/footer";
+import Footer from "./components/footer/footer";
 
 export default function Home() {
   return (
