@@ -24,3 +24,84 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.submissionBox {
+
+   display: "flex"; 
+   gap: "0.5rem";
+   max-width: 480;
+
+}
+.submissionBox input {
+   padding: "0.55rem 0.65rem";
+   border-radius: 8px;
+   border: "1px solid #324165";
+   background: "#0f162e";
+   color: "#e8ecf5";
+}
+
+.teamBox {
+  width: 100%;
+  max-width: 400px;
+  background: #111;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #222;
+}
+
+.teamTitle {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memberRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.memberInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.memberName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.memberEmail {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.leaderBadge {
+  background: #2e4d3a;
+  color: #a8f0c6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.removeBtn {
+  background: #2a2a2a;
+  color: #ddd;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.removeBtn:hover {
+  background: #3a3a3a;
+}
