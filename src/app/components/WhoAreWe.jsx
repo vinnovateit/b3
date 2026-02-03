@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Button from "./button";
 
 const CARDS = [
   { id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
@@ -244,9 +245,7 @@ const WhoAreWe = () => {
         <p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3]\ mb-12 font-normal antialiased">
           VinnovateIT is the one-stop destination for all you curious cats to satisfy your hunger in the diverse world of computer science. In other words… think of it as the place where genius meets curiosity — and the result is pure magic. So come immerse yourself, in what we like to believe is the closest thing to Hogwarts.
         </p>
-        <button className="px-[25px] py-[12px] btn-gradient-border text-base font-normal text-white shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
-          Read more
-        </button>
+        <Button text="Read more" link="https://vinnovateit.com/"/>
       </div>
 
       {/* --- CAROUSEL CONTAINER --- */}
