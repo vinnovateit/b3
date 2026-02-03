@@ -7,6 +7,8 @@ const Loader = () => {
     <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden text-white">
       
       <style>{`
+
+        
         /* Grid lines */
         .grid-lines {
           background-image: 
@@ -201,7 +203,51 @@ const Loader = () => {
         .cube-face-inner.left { animation-delay: 1s; }
         .cube-face-inner.top { animation-delay: 1.33s; }
         .cube-face-inner.bottom { animation-delay: 1.66s; }
+        /* HUD Corner Brackets */
+.hud-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+}
+
+.hud-corner::before,
+.hud-corner::after {
+  content: '';
+  position: absolute;
+  background: #00ff41;
+}
+
+/* horizontal line */
+.hud-corner::before {
+  width: 28px;
+  height: 2px;
+}
+
+/* vertical line */
+.hud-corner::after {
+  width: 2px;
+  height: 28px;
+}
+
+/* Positions */
+.hud-tl { top: 24px; left: 24px; }
+.hud-tr { top: 24px; right: 24px; }
+.hud-bl { bottom: 24px; left: 24px; }
+.hud-br { bottom: 24px; right: 24px; }
+
+/* Direction tweaks */
+.hud-tr::before { right: 0; }
+.hud-tr::after { right: 0; }
+
+.hud-bl::before { bottom: 0; }
+.hud-bl::after { bottom: 0; }
+
+.hud-br::before { right: 0; bottom: 0; }
+.hud-br::after { right: 0; bottom: 0; }
+
       `}</style>
+
+      
 
       {/* Background grid */}
       <div className="absolute inset-0 grid-lines"></div>
@@ -210,17 +256,12 @@ const Loader = () => {
       <div className="absolute inset-0 crosshair"></div>
 
       {/* Corner decorations */}
-      {/* Top left */}
-      <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#00ff41]"></div>
+      <div className="hud-corner hud-tl"></div>
+      <div className="hud-corner hud-tr"></div>
+      <div className="hud-corner hud-bl"></div>
+      <div className="hud-corner hud-br"></div>
+
       
-      {/* Top right */}
-      <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#00ff41]"></div>
-      
-      {/* Bottom left */}
-      <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-[#00ff41]"></div>
-      
-      {/* Bottom right */}
-      <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#00ff41]"></div>
 
       {/* Center orbital system */}
       <div className="orbit-container">
