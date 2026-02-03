@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -15,6 +15,18 @@ const WhoAreWe = () => {
   const [activeIndex, setActiveIndex] = useState(2); 
   const [hasEnteredView, setHasEnteredView] = useState(false); 
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const prevActiveIndexRef = useRef(2);
+  const carouselRef = useRef(null);
+  const wheelQueueRef = useRef(0);
+  const wheelProcessingRef = useRef(false);
+  const wheelIdleTimeoutRef = useRef(null);
+  const wheelResumeTimeoutRef = useRef(null);
+  const transitionEndRef = useRef(0);
+  const queueKickTimeoutRef = useRef(null);
+  const TRANSITION_MS = 600;
+  const wheelDeltaAccumRef = useRef(0);
+  const WHEEL_THRESHOLD = 80;
 
   // 1. START TIMERS ONLY WHEN VISIBLE
   useEffect(() => {
@@ -32,13 +44,95 @@ const WhoAreWe = () => {
   useEffect(() => {
     if (isAutoPlaying) {
       const interval = setInterval(() => {
+        transitionEndRef.current = performance.now() + TRANSITION_MS;
         setActiveIndex((prev) => (prev + 1) % CARDS.length);
       }, 3000); 
       return () => clearInterval(interval);
     }
   }, [isAutoPlaying]);
 
-  const getVariant = (offset) => {
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        setIsAutoPlaying(false);
+      } else if (hasEnteredView) {
+        setIsAutoPlaying(true);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [hasEnteredView]);
+
+  useEffect(() => {
+    const node = carouselRef.current;
+    if (!node) return;
+
+    const processWheelQueue = () => {
+      if (wheelQueueRef.current === 0) {
+        wheelProcessingRef.current = false;
+        return;
+      }
+      wheelProcessingRef.current = true;
+      const direction = wheelQueueRef.current > 0 ? 1 : -1;
+      wheelQueueRef.current -= direction;
+      transitionEndRef.current = performance.now() + TRANSITION_MS;
+      setActiveIndex((prev) => (prev + direction + CARDS.length) % CARDS.length);
+      setTimeout(() => {
+        processWheelQueue();
+      }, TRANSITION_MS);
+    };
+
+    const onWheel = (e) => {
+      if (!isHovering) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (!hasEnteredView) return;
+      wheelDeltaAccumRef.current += e.deltaY;
+      if (Math.abs(wheelDeltaAccumRef.current) < WHEEL_THRESHOLD) return;
+      const direction = wheelDeltaAccumRef.current > 0 ? 1 : -1;
+      wheelDeltaAccumRef.current = 0;
+      setIsAutoPlaying(false);
+      wheelQueueRef.current += direction;
+      if (wheelQueueRef.current > 2) wheelQueueRef.current = 2;
+      if (wheelQueueRef.current < -2) wheelQueueRef.current = -2;
+      if (!wheelProcessingRef.current) {
+        const now = performance.now();
+        const delay = Math.max(0, transitionEndRef.current - now);
+        if (delay > 0) {
+          if (queueKickTimeoutRef.current) clearTimeout(queueKickTimeoutRef.current);
+          queueKickTimeoutRef.current = setTimeout(() => {
+            processWheelQueue();
+          }, delay);
+        } else {
+          processWheelQueue();
+        }
+      }
+      if (wheelIdleTimeoutRef.current) clearTimeout(wheelIdleTimeoutRef.current);
+      wheelIdleTimeoutRef.current = setTimeout(() => {
+        wheelQueueRef.current = 0;
+      }, 120);
+      if (wheelResumeTimeoutRef.current) clearTimeout(wheelResumeTimeoutRef.current);
+      wheelResumeTimeoutRef.current = setTimeout(() => {
+        if (hasEnteredView) setIsAutoPlaying(true);
+      }, 1000);
+    };
+
+    node.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      node.removeEventListener("wheel", onWheel);
+      if (wheelIdleTimeoutRef.current) clearTimeout(wheelIdleTimeoutRef.current);
+      if (wheelResumeTimeoutRef.current) clearTimeout(wheelResumeTimeoutRef.current);
+      if (queueKickTimeoutRef.current) clearTimeout(queueKickTimeoutRef.current);
+    };
+  }, [hasEnteredView, isHovering]);
+
+  useEffect(() => {
+    prevActiveIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  const getVariant = (offset, isWrapping) => {
     // --- CENTER ---
     if (offset === 0) {
       return {
@@ -46,6 +140,7 @@ const WhoAreWe = () => {
         scale: 1,
         opacity: 1,
         zIndex: 50,
+        z: 0,
         rotateY: 0,
         x: "-50%", y: "-50%",
         transition: { duration: 0.6, ease: "easeOut" }
@@ -54,11 +149,12 @@ const WhoAreWe = () => {
     // --- MID LEFT ---
     if (offset === -1) {
       return {
-        left: "30%", 
+        left: "34%", 
         scale: 1,
         opacity: 1,
         zIndex: 40,
-        rotateY: 12,
+        z: -80,
+        rotateY: 38,
         x: "-50%", y: "-50%",
         transition: { duration: 0.6, ease: "easeInOut" }
       };
@@ -66,23 +162,33 @@ const WhoAreWe = () => {
     // --- FAR LEFT ---
     if (offset === -2) {
       return {
-        left: "16%",
+        left: "18%",
         scale: 0.9,
-        opacity: 0.8,
+        opacity: isWrapping ? [0, 0.8] : 0.8,
         zIndex: 30,
-        rotateY: 25,
+        z: -160,
+        rotateY: 60,
         x: "-50%", y: "-50%",
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: isWrapping
+          ? {
+              left: { duration: 0 },
+              x: { duration: 0 },
+              rotateY: { duration: 0 },
+              scale: { duration: 0 },
+              opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" }
+            }
+          : { duration: 0.6, ease: "easeInOut" }
       };
     }
     // --- MID RIGHT ---
     if (offset === 1) {
       return {
-        left: "70%",
+        left: "66%",
         scale: 1,
         opacity: 1,
         zIndex: 40,
-        rotateY: -12,
+        z: -80,
+        rotateY: -38,
         x: "-50%", y: "-50%",
         transition: { duration: 0.6, ease: "easeInOut" }
       };
@@ -90,13 +196,22 @@ const WhoAreWe = () => {
     // --- FAR RIGHT ---
     if (offset === 2) {
       return {
-        left: "84%",
+        left: "82%",
         scale: 0.9,
-        opacity: 0.8,
+        opacity: isWrapping ? [0, 0.8] : 0.8,
         zIndex: 30,
-        rotateY: -25,
+        z: -160,
+        rotateY: -60,
         x: "-50%", y: "-50%",
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: isWrapping
+          ? {
+              left: { duration: 0 },
+              x: { duration: 0 },
+              rotateY: { duration: 0 },
+              scale: { duration: 0 },
+              opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" }
+            }
+          : { duration: 0.6, ease: "easeInOut" }
       };
     }
     // --- HIDDEN ---
@@ -105,6 +220,7 @@ const WhoAreWe = () => {
       scale: 0,
       opacity: 0,
       zIndex: 0,
+      z: -200,
       rotateY: 0,
       x: "-50%", y: "-50%",
       transition: { duration: 0.6 }
@@ -125,7 +241,7 @@ const WhoAreWe = () => {
         <h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
           Who Are We ?
         </h2>
-        <p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.0] mb-12 font-normal antialiased">
+        <p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3]\ mb-12 font-normal antialiased">
           VinnovateIT is the one-stop destination for all you curious cats to satisfy your hunger in the diverse world of computer science. In other words… think of it as the place where genius meets curiosity — and the result is pure magic. So come immerse yourself, in what we like to believe is the closest thing to Hogwarts.
         </p>
         <button className="px-[25px] py-[12px] btn-gradient-border text-base font-normal text-white shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
@@ -137,14 +253,27 @@ const WhoAreWe = () => {
       {/* The onViewportEnter here triggers the entire sequence */}
       <motion.div 
         className="relative z-10 w-full max-w-[1400px] mx-auto h-[600px] perspective-1000 mt-4"
-        onViewportEnter={() => setHasEnteredView(true)}
-        viewport={{ once: true, amount: 0.5 }} // <--- Triggers when 50% visible
+        ref={carouselRef}
+        onViewportEnter={() => {
+          setHasEnteredView(true);
+          setIsAutoPlaying(true);
+        }}
+        onViewportLeave={() => {
+          setHasEnteredView(false);
+          setIsAutoPlaying(false);
+        }}
+        viewport={{ once: false, amount: 0.3 }} // <--- Triggers when 30% visible
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
       >
         
         {CARDS.map((card, index) => {
           const length = CARDS.length;
           let offset = (index - activeIndex + length) % length;
           if (offset > length / 2) offset -= length;
+          let prevOffset = (index - prevActiveIndexRef.current + length) % length;
+          if (prevOffset > length / 2) prevOffset -= length;
+          const isWrapping = (prevOffset === -2 && offset === 2) || (prevOffset === 2 && offset === -2);
 
           return (
             <motion.div
@@ -155,6 +284,7 @@ const WhoAreWe = () => {
                   : "w-[200px] h-[300px] md:w-[404.28px] md:h-[451.54px] glass-frame-side"
                 }
               `}
+              style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
               
               // INITIAL STATE: Hidden in center
               initial={{ 
@@ -167,7 +297,7 @@ const WhoAreWe = () => {
               // ANIMATE PROP: Checks if we have scrolled into view
               animate={
                 hasEnteredView 
-                  ? getVariant(offset) // If visible: Go to Calculated Position
+                  ? getVariant(offset, isWrapping) // If visible: Go to Calculated Position
                   : { left: "50%", x: "-50%", y: "-50%", scale: 0.8, opacity: 0 } // If not: Stay Hidden
               }
             >
