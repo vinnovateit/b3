@@ -169,7 +169,7 @@ export default function Hero() {
               }}
             >
               {/* LEFT ellipses */}
-              <div className="absolute top-[150%] -translate-y-1/2 right-1/2">
+              <div className="absolute top-[130%] -translate-y-1/2 right-1/2">
                 <span className="absolute top-1/2 -translate-y-1/2 right-0 w-[117.55px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
                 <span className="absolute top-1/2 -translate-y-1/2 right-0 w-[180.00px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
                 <span className="absolute top-1/2 -translate-y-1/2 right-0 w-[243.67px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
@@ -177,7 +177,7 @@ export default function Hero() {
                 <span className="absolute top-1/2 -translate-y-1/2 right-0 w-[360.00px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
               </div>
               {/* RIGHT ellipses */}
-              <div className="absolute top-3/2 -translate-y-1/2 left-1/2">
+              <div className="absolute top-[130%] -translate-y-1/2 left-1/2">
                 <span className="absolute top-1/2 -translate-y-1/2 left-0 w-[117.55px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
                 <span className="absolute top-1/2 -translate-y-1/2 left-0 w-[180.00px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
                 <span className="absolute top-1/2 -translate-y-1/2 left-0 w-[243.67px] h-[355.32px] border border-[rgba(200,255,220,0.25)] bg-transparent" style={{ filter: 'blur(0.5px)', borderRadius: '50%' }}></span>
