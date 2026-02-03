@@ -261,7 +261,7 @@ const Loader = () => {
       <div className="hud-corner hud-bl"></div>
       <div className="hud-corner hud-br"></div>
 
-      
+
 
       {/* Center orbital system */}
       <div className="orbit-container">
@@ -310,17 +310,7 @@ const Loader = () => {
 
       </div>
 
-      {/* Left side text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 flex items-center gap-3 text-white">
-        <div className="w-0 h-0 border-t-8 border-t-transparent border-r-12 border-r-white border-b-8 border-b-transparent"></div>
-        <div className="text-2xl font-bold tracking-[0.3em]">LOADING</div>
-      </div>
-
-      {/* Right side text */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex items-center gap-3 text-white">
-        <div className="text-2xl font-bold tracking-[0.3em]">LOADING</div>
-        <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent"></div>
-      </div>
+      
 
     </div>
   );
