@@ -1,4 +1,29 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 export default function Hero() {
+  const cardRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio > 0.2) {
+          setIsVisible(true);
+          observer.disconnect(); // only once
+        }
+      },
+      { threshold: [0.2] }
+    );
+
+    if (cardRef.current) observer.observe(cardRef.current);
+
+    return () => {
+      if (cardRef.current) observer.unobserve(cardRef.current);
+    };
+  }, []);
+
   return (
     <main className="relative w-screen min-h-[200vh] bg-[#05080a] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif]">
       {/* Scene root */}
@@ -189,7 +214,9 @@ export default function Hero() {
 
           {/* Glass morph card - sits on top */}
           <div 
-            className="relative z-[2] p-8 md:p-14 rounded-3xl border border-white/20"
+            ref={cardRef}
+            className={`relative z-[2] p-8 md:p-14 rounded-3xl border border-white/20 transform transition-transform transition-opacity duration-700 ease-out
+            ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-32"}`}
             style={{
               background: 'rgba(255, 255, 255, 0.03)',
               backdropFilter: 'blur(24px)',
@@ -197,7 +224,7 @@ export default function Hero() {
               boxShadow: `
                 0 8px 32px 0 rgba(0, 0, 0, 0.4),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.1)
-              `
+              `,
             }}
           >
             {/* Attached ambients */}
