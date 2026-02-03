@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/footer/footer";
 
 const satoshi = localFont({
   src: [
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
         className={satoshi.variable}
       >
         {children}
+        <Footer />
       </body>
     </html>
   );
