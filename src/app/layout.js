@@ -56,7 +56,6 @@ export default function RootLayout({ children }) {
         className={satoshi.variable}
       >
         {children}
-        <Footer />
       </body>
     </html>
   );
