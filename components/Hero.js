@@ -215,7 +215,7 @@ export default function Hero() {
           {/* Glass morph card - sits on top */}
           <div 
             ref={cardRef}
-            className={`relative z-[2] p-8 md:p-14 rounded-3xl border border-white/20 transform transition-transform transition-opacity duration-700 ease-out
+            className={`relative z-[2] p-8 md:p-14 rounded-3xl border border-white/20 transform transition-transform transition-opacity duration-1000 ease-out
             ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-32"}`}
             style={{
               background: 'rgba(255, 255, 255, 0.03)',
