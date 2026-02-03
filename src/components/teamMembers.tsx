@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {QRCodeSVG} from "qrcode.react";
 import type { Team, User } from "@prisma/client";
 
 interface TeamMembersProps {
@@ -18,6 +19,11 @@ export default function TeamMembers({ team, currentUserEmail, teamLeaderEmail }:
   const [removingEmail, setRemovingEmail] = useState<string | null>(null);
   const [disbanding, setDisbanding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shareableLink, setShareableLink] = useState<string>("");
+
+  useEffect(() => {
+    setShareableLink(`${window.location.origin}/join-team?code=${team.code}`);
+  }, [team.code]);
 
   const handleRemoveMember = async (userEmail: string) => {
     if (!window.confirm(`Remove ${userEmail} from the team?`)) {
@@ -91,6 +97,12 @@ export default function TeamMembers({ team, currentUserEmail, teamLeaderEmail }:
     );
   }
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareableLink).then(() => {
+      alert("Shareable link copied to clipboard!");
+    });
+  };
+
   return (
     <div className="teamBox">
       <h3 className="teamTitle">Team Details</h3>
@@ -102,6 +114,68 @@ export default function TeamMembers({ team, currentUserEmail, teamLeaderEmail }:
           <strong>Team Code:</strong> {team.code}
         </p>
       </div>
+
+      {/* Invite Members Section (visible to team leader) */}
+      {isCurrentUserLeader && (
+        <div style={{ marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: "1px solid #2b3566" }}>
+          <h4 style={{ margin: "0 0 0.8rem 0", fontSize: 14 }}>Invite Members</h4>
+          
+          {/* QR Code and Shareable Link */}
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1rem", alignItems: "flex-start" }}>
+            {/* QR Code */}
+            <a href={shareableLink} style={{ flex: "0 0 auto", textDecoration: "none" }}>
+              <div style={{ background: "white", padding: "0.5rem", borderRadius: 6, cursor: "pointer", transition: "transform 0.2s", display: "inline-block" }}>
+                <QRCodeSVG 
+                  value={shareableLink} 
+                  size={150} 
+                  level="H" 
+                />
+              </div>
+            </a>
+
+            {/* Shareable Link */}
+            <div style={{ flex: 1 }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontSize: 13, color: "#a0a8c0" }}>Shareable Link</label>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  value={shareableLink}
+                  readOnly
+                  style={{
+                    flex: 1,
+                    padding: "0.5rem 0.6rem",
+                    borderRadius: 6,
+                    border: "1px solid #2b3566",
+                    background: "#0f1530",
+                    color: "#a0a8c0",
+                    fontSize: 12,
+                    fontFamily: "monospace",
+                  }}
+                />
+                <button
+                  onClick={handleCopyLink}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    borderRadius: 6,
+                    background: "#4f6cff",
+                    color: "white",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
+              <p style={{ margin: "0.4rem 0 0 0", fontSize: 12, color: "#6b738c" }}>
+                Share this link or QR code with teammates to invite them
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="memberList">
         <h4>Members ({users.length})</h4>

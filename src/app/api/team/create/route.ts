@@ -35,12 +35,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Check if user already has a team
     const existingUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { teamCode: true },
+      select: { 
+        teamCode: true,
+        leadTeams: {
+          select: { id: true },
+          take: 1,
+        },
+      },
     });
 
-    if (existingUser?.teamCode) {
+    if (existingUser?.teamCode && existingUser.teamCode !== "") {
       logResponse("POST", "/api/team/create", 400, Date.now() - startTime);
       return errorResponse("You are already part of a team", 400);
+    }
+
+    if (existingUser?.leadTeams && existingUser.leadTeams.length > 0) {
+      logResponse("POST", "/api/team/create", 400, Date.now() - startTime);
+      return errorResponse("You are already leading a team", 400);
     }
 
     // Parse request body

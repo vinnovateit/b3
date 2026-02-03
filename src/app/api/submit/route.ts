@@ -6,6 +6,9 @@ import type { NextRequest } from "next/server";
 import type { NextResponse } from "next/server";
 
 interface SubmissionRequest {
+  projectTitle:string;
+  projectDescription:string;
+  track:string;
   teamId: string;
   roundNo?: number;
   githubLink?: string | null;

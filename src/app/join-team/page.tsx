@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function JoinTeamPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [mode, setMode] = useState<"join" | "create">("join");
   const [code, setCode] = useState("");
@@ -21,6 +22,14 @@ export default function JoinTeamPage() {
       router.push("/dashboard");
     }
   }, [session, router]);
+
+  useEffect(() => {
+    // Auto-fill team code from URL query parameter
+    const teamCode = searchParams.get("code");
+    if (teamCode) {
+      setCode(teamCode.toUpperCase());
+    }
+  }, [searchParams]);
 
   const handleJoinTeam = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -234,9 +243,10 @@ export default function JoinTeamPage() {
             </div>
 
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontSize: 14 }}>
-                Description <span style={{ color: "#6b738c", fontSize: 12 }}>(optional)</span>
-              </label>
+              <div style={{ display: "block", marginBottom: "0.5rem" }}>
+                <label style={{ fontSize: 14 }}>Description</label>
+                <span style={{ color: "#6b738c", fontSize: 12, marginLeft: "0.5rem" }}>(optional)</span>
+              </div>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

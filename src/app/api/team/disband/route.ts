@@ -57,10 +57,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const teamId = team.id;
     const teamCode = team.code;
 
-    // Remove team code from user first
+    // Remove team code from user and clear team leader status
     await prisma.user.update({
       where: { email: session.user.email },
-      data: { teamCode: null },
+      data: { 
+        teamCode: "",
+        leadTeams: {
+          disconnect: { id: teamId },
+        },
+      },
     });
 
     // Delete the team

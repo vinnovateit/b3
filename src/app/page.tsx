@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 
 export default function HomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const [isSigningIn, setIsSigningIn] = React.useState(false);
 
   useEffect(() => {
     // If user is already logged in, redirect appropriately
-    if (session?.user) {
+    if (status === "authenticated" && session?.user) {
       const userSession = session.user as any;
       if (userSession.teamCode) {
         // User has a team, go to dashboard
@@ -20,13 +22,33 @@ export default function HomePage() {
         router.push("/join-team");
       }
     }
-  }, [session, router]);
+  }, [session, router, status]);
+
+  // Show loading state while auth is being checked
+  if (status === "loading") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0b1021", color: "#e8ecf5", display: "grid", placeItems: "center" }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // If already authenticated, show loading instead of login form
+  if (status === "authenticated") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0b1021", color: "#e8ecf5", display: "grid", placeItems: "center" }}>
+        <p>Redirecting...</p>
+      </div>
+    );
+  }
 
   const handleGoogleSignIn = async () => {
     try {
+      setIsSigningIn(true);
       await signIn("google");
     } catch (error) {
       console.error("Sign in error:", error);
+      setIsSigningIn(false);
     }
   };
 
@@ -38,20 +60,20 @@ export default function HomePage() {
 
         <button
           onClick={handleGoogleSignIn}
-          disabled={status === "loading"}
+          disabled={isSigningIn}
           style={{
             width: "100%",
             padding: "0.75rem 1rem",
             borderRadius: 8,
-            background: status === "loading" ? "#2b3566" : "#4f6cff",
+            background: isSigningIn ? "#2b3566" : "#4f6cff",
             color: "white",
             border: "none",
-            cursor: status === "loading" ? "not-allowed" : "pointer",
+            cursor: isSigningIn ? "not-allowed" : "pointer",
             fontSize: 15,
             fontWeight: 500,
           }}
         >
-          {status === "loading" ? "Signing in..." : "Sign in with Google"}
+          {isSigningIn ? "Signing in..." : "Sign in with Google"}
         </button>
 
         <p style={{ margin: "1.5rem 0 0 0", fontSize: 12, color: "#6b738c" }}>

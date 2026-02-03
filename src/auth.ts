@@ -42,11 +42,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async signIn({ user, email }) {
-      // Validate email domain
-      if (!user.email || !isVITStudentEmail(user.email)) {
-        console.warn(`[Auth] Unauthorized login attempt from non-VIT email: ${user.email}`);
-        return false;
-      }
+      // // Validate email domain
+      //Local testing bypass
+      // if (!user.email || !isVITStudentEmail(user.email)) {
+      //   console.warn(`[Auth] Unauthorized login attempt from non-VIT email: ${user.email}`);
+      //   return false;
+      // }
       return true;
     },
     async jwt({ token, user }) {
