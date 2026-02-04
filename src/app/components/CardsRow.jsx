@@ -29,13 +29,15 @@ export default function CardsRow() {
   const [spotlightX, setSpotlightX] = useState(0);
   const scrollContainerRef = useRef(null);
   const cardRefs = useRef([]);
+  const isAutoScrolling = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
       if (!scrollContainerRef.current) return;
 
       const container = scrollContainerRef.current;
-      const viewportCenter = window.innerWidth / 2;
+      const rect = container.getBoundingClientRect();
+      const viewportCenter = rect.left + rect.width / 2;
 
       let closestIndex = 0;
       let minDistance = Infinity;
@@ -52,8 +54,10 @@ export default function CardsRow() {
           }
         }
       });
+      if (!isAutoScrolling.current) {
+        setActiveIndex(closestIndex);
+      }
 
-      setActiveIndex(closestIndex);
 
       const activeCard = cardRefs.current[closestIndex];
       if (activeCard) {
@@ -63,6 +67,7 @@ export default function CardsRow() {
     };
 
     const container = scrollContainerRef.current;
+    if(!container) return;
     container.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleScroll);
     handleScroll();
@@ -75,54 +80,68 @@ export default function CardsRow() {
 
   const scrollToIndex = (index) => {
     if (index < 0 || index >= cards.length) return;
+
     const targetCard = cardRefs.current[index];
-    if (targetCard && scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const targetOffset = targetCard.offsetLeft - (container.offsetWidth / 2) + (targetCard.offsetWidth / 2);
-      container.scrollTo({ left: targetOffset, behavior: 'smooth' });
-    }
+    const container = scrollContainerRef.current;
+    if (!targetCard || !container) return;
+
+    isAutoScrolling.current = true;
+
+    container.style.scrollSnapType = "none";
+
+    targetCard.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest"
+    });
+
+    setTimeout(() => {
+      container.style.scrollSnapType = "";
+      isAutoScrolling.current = false;
+      setActiveIndex(index);
+    }, 350);
   };
 
   return (
     <div className="w-full min-h-screen bg-[#040704] relative overflow-hidden flex flex-col">
-      
+
       {/* PERSISTENT TOP GLOW */}
-      <div 
-        className="absolute top-0 left-0 w-full h-[300px] pointer-events-none z-0"
+      <div
+        className="absolute top-0 left-0 w-full h-75 pointer-events-none z-0"
         style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(14, 179, 79, 0.25) 0%, rgba(14, 179, 79, 0.05) 40%, transparent 70%)',
           filter: 'blur(50px)',
-          opacity: 1, 
+          opacity: 1,
         }}
       />
 
-      <div className="w-full absolute top-[24px] md:top-[36px] left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent font-normal z-10 select-none">
+      <div className="w-full absolute top-6 md:top-9 left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-linear-to-b from-white to-gray-400 bg-clip-text text-transparent font-normal z-10 select-none">
         Timeline
       </div>
 
-      <div className="flex flex-col items-start justify-center flex-grow pt-[120px] md:pt-[200px] relative z-10 overflow-visible">
-        
+      <div className="flex flex-col items-start justify-center grow pt-30 md:pt-50 relative z-10 overflow-visible">
+
         {/* Original Left Alignment maintained */}
         <div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-normal text-white mb-4 md:mb-8 transition-all duration-500">
           {activeIndex <= 10 ? "Day 1 - Build & Break In" : "Day 2 - Stabilise & Ship"}
         </div>
 
-        <div 
+        <div
           ref={scrollContainerRef}
-          className="relative overflow-x-auto overflow-y-visible w-full no-scrollbar snap-x snap-mandatory px-[10vw] md:px-[40vw]"
+          className="relative overflow-x-auto overflow-y-visible w-full snap-mandatory snap-x no-scrollbar px-[10vw] md:px-[40vw]"
           style={{ scrollbarWidth: 'none' }}
         >
-          <div className="flex w-max gap-6 md:gap-16 pb-32 pt-10 items-start overflow-visible">
+          <div className="flex w-max gap-6 md:gap-16 pb-32 pt-10 overflow-visible">
             {cards.map((card, i) => {
               const isActive = activeIndex === i;
               return (
-                <div 
-                  key={i} 
-                  ref={el => cardRefs.current[i] = el} 
-                  className="flex-shrink-0 snap-center transition-transform duration-500 overflow-visible"
+                <div
+                  key={i}
+                  ref={el => cardRefs.current[i] = el}
+                  className="shrink-0 snap-center overflow-visible"
                 >
-                  <div className={`relative z-10 transition-all duration-500 
-                    ${isActive ? 'opacity-100 scale-105 md:scale-110' : 'opacity-20 scale-90 md:scale-95 blur-[0.5px] md:blur-[1px]'}`}>
+                  <div className={`relative z-10 transition-all duration-700 ease-out will-change-transform
+                    ${isActive ? 'opacity-100 z-20' : 'opacity-40 blur-[0.5px] md:blur-[1px] z-0'}`}>
                     <Card isActive={isActive} index={card.index || (isActive ? "" : "End")} data={card} />
                   </div>
                 </div>
@@ -135,7 +154,7 @@ export default function CardsRow() {
         <div
           className="absolute pointer-events-none z-20 transition-all duration-300 ease-out"
           style={{
-            left: spotlightX,
+            left: "50%",
             bottom: 0,
             transform: "translateX(-50%)",
             width: "clamp(300px, 90vw, 1200px)",
@@ -151,12 +170,12 @@ export default function CardsRow() {
       </div>
 
       <div className="absolute bottom-6 right-6 md:bottom-8 md:right-12 z-50">
-        <div className="w-[120px] md:w-[170px] h-[50px] md:h-[70px] rounded-[18px] md:rounded-[24px] flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]" style={{ background: 'linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)' }}>
-          <div className="w-full h-full rounded-[16px] md:rounded-[22px] flex items-center justify-between relative" style={{ background: 'radial-gradient(60.5% 60.5% at 50% 50%, #19954B 59.15%, #0CAC4F 86.65%)' }}>
+        <div className="w-30 md:w-42.5 h-12.5 md:h-17.5 rounded-[18px] md:rounded-3xl flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]" style={{ background: 'linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)' }}>
+          <div className="w-full h-full rounded-2xl md:rounded-[22px] flex items-center justify-between relative" style={{ background: 'radial-gradient(60.5% 60.5% at 50% 50%, #19954B 59.15%, #0CAC4F 86.65%)' }}>
             <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={() => scrollToIndex(activeIndex - 1)}>
               <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
             </button>
-            <div className="w-[1px] h-[25px] md:h-[40px] bg-white opacity-20" />
+            <div className="w-px h-6.25 md:h-10 bg-white opacity-20" />
             <button className="w-1/2 h-full flex items-center justify-center hover:bg-white/20 transition-all z-10" onClick={() => scrollToIndex(activeIndex + 1)}>
               <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" /></svg>
             </button>

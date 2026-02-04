@@ -28,7 +28,7 @@ export default function Card({ isActive = false, index = 1, data = {} }) {
         >
           {/* IMAGE SECTION - Only for regular cards */}
           {isActive && data.image && !data.isEnd && (
-            <div className="w-full h-[40%] relative mt-6 px-6 transition-all duration-700 delay-300 ease-out opacity-100 scale-100">
+            <div className="w-full h-[40%] relative mt-6 px-6 transition-all duration-500 delay-750 ease-out opacity-100 scale-100">
                <img 
                 src={data.image} 
                 alt={data.title}
