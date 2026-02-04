@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import Button from "./button";
 
 const CARDS = [
@@ -12,238 +12,277 @@ const CARDS = [
 	{ id: 5, src: "/Whoareweimg/fifth.png", alt: "Team" },
 ];
 
+// Position configs for each offset from center
+const POSITIONS = {
+	"-2": {
+		left: "18%",
+		scale: 0.7,
+		rotateY: 60,
+		translateZ: -150,
+		zIndex: 30,
+		opacity: 0.8,
+	},
+	"-1": {
+		left: "34%",
+		scale: 0.85,
+		rotateY: 38,
+		translateZ: -50,
+		zIndex: 40,
+		opacity: 1,
+	},
+	0: {
+		left: "50%",
+		scale: 1.1,
+		rotateY: 0,
+		translateZ: 100,
+		zIndex: 50,
+		opacity: 1,
+	},
+	1: {
+		left: "66%",
+		scale: 0.85,
+		rotateY: -38,
+		translateZ: -50,
+		zIndex: 40,
+		opacity: 1,
+	},
+	2: {
+		left: "82%",
+		scale: 0.7,
+		rotateY: -60,
+		translateZ: -150,
+		zIndex: 30,
+		opacity: 0.8,
+	},
+};
+
+// Mobile positions - only show 3 cards, hide outer edges
+const MOBILE_POSITIONS = {
+	"-2": {
+		left: "50%",
+		scale: 0,
+		rotateY: 0,
+		translateZ: -200,
+		zIndex: 10,
+		opacity: 0,
+	},
+	"-1": {
+		left: "15%",
+		scale: 0.75,
+		rotateY: 35,
+		translateZ: -80,
+		zIndex: 40,
+		opacity: 0.7,
+	},
+	0: {
+		left: "50%",
+		scale: 1,
+		rotateY: 0,
+		translateZ: 50,
+		zIndex: 50,
+		opacity: 1,
+	},
+	1: {
+		left: "85%",
+		scale: 0.75,
+		rotateY: -35,
+		translateZ: -80,
+		zIndex: 40,
+		opacity: 0.7,
+	},
+	2: {
+		left: "50%",
+		scale: 0,
+		rotateY: 0,
+		translateZ: -200,
+		zIndex: 10,
+		opacity: 0,
+	},
+};
+
 const WhoAreWe = () => {
 	const [activeIndex, setActiveIndex] = useState(2);
 	const [hasEnteredView, setHasEnteredView] = useState(false);
-	const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-	const [isHovering, setIsHovering] = useState(false);
-	const prevActiveIndexRef = useRef(2);
+	const [isInitialized, setIsInitialized] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
+
+	const sectionRef = useRef(null);
 	const carouselRef = useRef(null);
-	const wheelQueueRef = useRef(0);
-	const wheelProcessingRef = useRef(false);
-	const wheelIdleTimeoutRef = useRef(null);
-	const wheelResumeTimeoutRef = useRef(null);
-	const transitionEndRef = useRef(0);
-	const queueKickTimeoutRef = useRef(null);
-	const TRANSITION_MS = 600;
-	const wheelDeltaAccumRef = useRef(0);
-	const WHEEL_THRESHOLD = 80;
+	const cardRefs = useRef([]);
+	const autoPlayIntervalRef = useRef(null);
 
-	// 1. START TIMERS ONLY WHEN VISIBLE
+	// Detect mobile screen
 	useEffect(() => {
-		if (hasEnteredView) {
-			// Wait 2 seconds for the "Fan Out" to finish before cycling
-			const startTimeout = setTimeout(() => {
-				setIsAutoPlaying(true);
-			}, 2000);
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+		checkMobile();
+		window.addEventListener("resize", checkMobile);
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
 
-			return () => clearTimeout(startTimeout);
+	// Get positions based on screen size
+	const getPositions = useCallback(() => {
+		return isMobile ? MOBILE_POSITIONS : POSITIONS;
+	}, [isMobile]);
+
+	// Calculate offset for a card
+	const getOffset = useCallback(
+		(index) => {
+			const length = CARDS.length;
+			let offset = (index - activeIndex + length) % length;
+			if (offset > length / 2) offset -= length;
+			return offset;
+		},
+		[activeIndex],
+	);
+
+	// Animate all cards to their positions using GSAP
+	const animateCards = useCallback(
+		(instant = false) => {
+			const positions = getPositions();
+			cardRefs.current.forEach((card, index) => {
+				if (!card) return;
+
+				const offset = getOffset(index);
+				const pos = positions[offset.toString()];
+
+				if (!pos) {
+					// Hidden card
+					gsap.to(card, {
+						left: "50%",
+						xPercent: -50,
+						yPercent: -50,
+						scale: 0,
+						rotateY: 0,
+						z: 0,
+						opacity: 0,
+						zIndex: 0,
+						duration: instant ? 0 : 1.2,
+						ease: "power3.inOut",
+					});
+					return;
+				}
+
+				// Single animation with all properties including translateZ for smooth depth
+				gsap.to(card, {
+					left: pos.left,
+					xPercent: -50,
+					yPercent: -50,
+					scale: pos.scale,
+					rotateY: pos.rotateY,
+					z: pos.translateZ,
+					opacity: pos.opacity,
+					zIndex: pos.zIndex,
+					duration: instant ? 0 : 1.2,
+					ease: "power2.inOut",
+				});
+			});
+		},
+		[getOffset, getPositions],
+	);
+
+	// Intersection Observer - trigger fan-out once when carousel enters view
+	useEffect(() => {
+		const carousel = carouselRef.current;
+		if (!carousel) return;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting && !isInitialized) {
+					setHasEnteredView(true);
+				}
+			},
+			{ threshold: 0.1 },
+		);
+
+		observer.observe(carousel);
+
+		return () => observer.disconnect();
+	}, [isInitialized]);
+
+	// Trigger fan-out and start auto-play when entering view for the first time
+	useEffect(() => {
+		if (!hasEnteredView || isInitialized) return;
+
+		const positions = getPositions();
+
+		// Set initial state - all cards centered and hidden
+		cardRefs.current.forEach((card) => {
+			if (!card) return;
+			gsap.set(card, {
+				left: "50%",
+				xPercent: -50,
+				yPercent: -50,
+				scale: 0.6,
+				rotateY: 0,
+				z: 0,
+				opacity: 0,
+				zIndex: 1,
+			});
+		});
+
+		// Animate each card to its position with stagger
+		cardRefs.current.forEach((card, index) => {
+			if (!card) return;
+
+			const length = CARDS.length;
+			let offset = (index - activeIndex + length) % length;
+			if (offset > length / 2) offset -= length;
+
+			const pos = positions[offset.toString()];
+
+			if (!pos) return;
+
+			gsap.to(card, {
+				left: pos.left,
+				xPercent: -50,
+				yPercent: -50,
+				scale: pos.scale,
+				rotateY: pos.rotateY,
+				z: pos.translateZ,
+				opacity: pos.opacity,
+				zIndex: pos.zIndex,
+				duration: 1,
+				delay: 0.15 * Math.abs(offset),
+				ease: "power3.out",
+			});
+		});
+
+		setIsInitialized(true);
+	}, [hasEnteredView, isInitialized, activeIndex, getPositions]);
+
+	// Animate when activeIndex changes
+	useEffect(() => {
+		if (isInitialized) {
+			animateCards();
 		}
-	}, [hasEnteredView]);
+	}, [activeIndex, isInitialized, animateCards]);
 
-	// 2. AUTO-CYCLE LOGIC
+	// Auto-rotate interval - starts after initialization and runs forever
 	useEffect(() => {
-		if (isAutoPlaying) {
-			const interval = setInterval(() => {
-				transitionEndRef.current = performance.now() + TRANSITION_MS;
+		if (!isInitialized) return;
+
+		// Start auto-rotate after fan-out animation completes
+		const startTimeout = setTimeout(() => {
+			autoPlayIntervalRef.current = setInterval(() => {
 				setActiveIndex((prev) => (prev + 1) % CARDS.length);
 			}, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [isAutoPlaying]);
+		}, 1200);
 
-	useEffect(() => {
-		const onVisibilityChange = () => {
-			if (document.hidden) {
-				setIsAutoPlaying(false);
-			} else if (hasEnteredView) {
-				setIsAutoPlaying(true);
-			}
-		};
-		document.addEventListener("visibilitychange", onVisibilityChange);
 		return () => {
-			document.removeEventListener("visibilitychange", onVisibilityChange);
-		};
-	}, [hasEnteredView]);
-
-	useEffect(() => {
-		const node = carouselRef.current;
-		if (!node) return;
-
-		const processWheelQueue = () => {
-			if (wheelQueueRef.current === 0) {
-				wheelProcessingRef.current = false;
-				return;
+			clearTimeout(startTimeout);
+			if (autoPlayIntervalRef.current) {
+				clearInterval(autoPlayIntervalRef.current);
 			}
-			wheelProcessingRef.current = true;
-			const direction = wheelQueueRef.current > 0 ? 1 : -1;
-			wheelQueueRef.current -= direction;
-			transitionEndRef.current = performance.now() + TRANSITION_MS;
-			setActiveIndex(
-				(prev) => (prev + direction + CARDS.length) % CARDS.length,
-			);
-			setTimeout(() => {
-				processWheelQueue();
-			}, TRANSITION_MS);
 		};
-
-		const onWheel = (e) => {
-			if (!isHovering) return;
-			e.preventDefault();
-			e.stopPropagation();
-			if (!hasEnteredView) return;
-			wheelDeltaAccumRef.current += e.deltaY;
-			if (Math.abs(wheelDeltaAccumRef.current) < WHEEL_THRESHOLD) return;
-			const direction = wheelDeltaAccumRef.current > 0 ? 1 : -1;
-			wheelDeltaAccumRef.current = 0;
-			setIsAutoPlaying(false);
-			wheelQueueRef.current += direction;
-			if (wheelQueueRef.current > 2) wheelQueueRef.current = 2;
-			if (wheelQueueRef.current < -2) wheelQueueRef.current = -2;
-			if (!wheelProcessingRef.current) {
-				const now = performance.now();
-				const delay = Math.max(0, transitionEndRef.current - now);
-				if (delay > 0) {
-					if (queueKickTimeoutRef.current)
-						clearTimeout(queueKickTimeoutRef.current);
-					queueKickTimeoutRef.current = setTimeout(() => {
-						processWheelQueue();
-					}, delay);
-				} else {
-					processWheelQueue();
-				}
-			}
-			if (wheelIdleTimeoutRef.current)
-				clearTimeout(wheelIdleTimeoutRef.current);
-			wheelIdleTimeoutRef.current = setTimeout(() => {
-				wheelQueueRef.current = 0;
-			}, 120);
-			if (wheelResumeTimeoutRef.current)
-				clearTimeout(wheelResumeTimeoutRef.current);
-			wheelResumeTimeoutRef.current = setTimeout(() => {
-				if (hasEnteredView) setIsAutoPlaying(true);
-			}, 1000);
-		};
-
-		node.addEventListener("wheel", onWheel, { passive: false });
-		return () => {
-			node.removeEventListener("wheel", onWheel);
-			if (wheelIdleTimeoutRef.current)
-				clearTimeout(wheelIdleTimeoutRef.current);
-			if (wheelResumeTimeoutRef.current)
-				clearTimeout(wheelResumeTimeoutRef.current);
-			if (queueKickTimeoutRef.current)
-				clearTimeout(queueKickTimeoutRef.current);
-		};
-	}, [hasEnteredView, isHovering]);
-
-	useEffect(() => {
-		prevActiveIndexRef.current = activeIndex;
-	}, [activeIndex]);
-
-	const getVariant = (offset, isWrapping) => {
-		// --- CENTER ---
-		if (offset === 0) {
-			return {
-				left: "50%",
-				scale: 1,
-				opacity: 1,
-				zIndex: 50,
-				z: 0,
-				rotateY: 0,
-				x: "-50%",
-				y: "-50%",
-				transition: { duration: 0.6, ease: "easeOut" },
-			};
-		}
-		// --- MID LEFT ---
-		if (offset === -1) {
-			return {
-				left: "34%",
-				scale: 1,
-				opacity: 1,
-				zIndex: 40,
-				z: -80,
-				rotateY: 38,
-				x: "-50%",
-				y: "-50%",
-				transition: { duration: 0.6, ease: "easeInOut" },
-			};
-		}
-		// --- FAR LEFT ---
-		if (offset === -2) {
-			return {
-				left: "18%",
-				scale: 0.9,
-				opacity: isWrapping ? [0, 0.8] : 0.8,
-				zIndex: 30,
-				z: -160,
-				rotateY: 60,
-				x: "-50%",
-				y: "-50%",
-				transition: isWrapping
-					? {
-							left: { duration: 0 },
-							x: { duration: 0 },
-							rotateY: { duration: 0 },
-							scale: { duration: 0 },
-							opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" },
-						}
-					: { duration: 0.6, ease: "easeInOut" },
-			};
-		}
-		// --- MID RIGHT ---
-		if (offset === 1) {
-			return {
-				left: "66%",
-				scale: 1,
-				opacity: 1,
-				zIndex: 40,
-				z: -80,
-				rotateY: -38,
-				x: "-50%",
-				y: "-50%",
-				transition: { duration: 0.6, ease: "easeInOut" },
-			};
-		}
-		// --- FAR RIGHT ---
-		if (offset === 2) {
-			return {
-				left: "82%",
-				scale: 0.9,
-				opacity: isWrapping ? [0, 0.8] : 0.8,
-				zIndex: 30,
-				z: -160,
-				rotateY: -60,
-				x: "-50%",
-				y: "-50%",
-				transition: isWrapping
-					? {
-							left: { duration: 0 },
-							x: { duration: 0 },
-							rotateY: { duration: 0 },
-							scale: { duration: 0 },
-							opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" },
-						}
-					: { duration: 0.6, ease: "easeInOut" },
-			};
-		}
-		// --- HIDDEN ---
-		return {
-			left: "50%",
-			scale: 0,
-			opacity: 0,
-			zIndex: 0,
-			z: -200,
-			rotateY: 0,
-			x: "-50%",
-			y: "-50%",
-			transition: { duration: 0.6 },
-		};
-	};
+	}, [isInitialized]);
 
 	return (
-		<section className="relative w-full bg-[#040704] pt-16 pb-24 overflow-hidden flex flex-col items-center font-sans">
+		<section
+			ref={sectionRef}
+			className="relative w-full bg-[#040704] pt-16 pb-24 overflow-hidden flex flex-col items-center font-sans"
+		>
 			{/* Top green gradient transition */}
 			<div
 				className="absolute -top-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none"
@@ -304,88 +343,39 @@ const WhoAreWe = () => {
 			</div>
 
 			{/* --- CAROUSEL CONTAINER --- */}
-			{/* The onViewportEnter here triggers the entire sequence */}
-			<motion.div
-				className="relative z-10 w-full max-w-[1400px] mx-auto h-[600px] perspective-1000 mt-4"
+			<div
 				ref={carouselRef}
-				onViewportEnter={() => {
-					setHasEnteredView(true);
-					setIsAutoPlaying(true);
-				}}
-				onViewportLeave={() => {
-					setHasEnteredView(false);
-					setIsAutoPlaying(false);
-				}}
-				viewport={{ once: false, amount: 0.3 }} // <--- Triggers when 30% visible
-				onMouseEnter={() => setIsHovering(true)}
-				onMouseLeave={() => setIsHovering(false)}
+				className="relative z-10 w-full max-w-[1000px] mx-auto h-[280px] md:h-[350px] mt-4"
+				style={{ perspective: "1000px" }}
 			>
 				{CARDS.map((card, index) => {
-					const length = CARDS.length;
-					let offset = (index - activeIndex + length) % length;
-					if (offset > length / 2) offset -= length;
-					let prevOffset =
-						(index - prevActiveIndexRef.current + length) % length;
-					if (prevOffset > length / 2) prevOffset -= length;
-					const isWrapping =
-						(prevOffset === -2 && offset === 2) ||
-						(prevOffset === 2 && offset === -2);
-
 					return (
-						<motion.div
+						<div
 							key={card.id}
-							className={`absolute top-1/2 
-                ${
-									offset === 0
-										? "w-[90vw] h-[500px] md:w-[477.83px] md:h-[534px] glass-frame-center"
-										: "w-[200px] h-[300px] md:w-[404.28px] md:h-[451.54px] glass-frame-side"
-								}
-              `}
+							ref={(el) => (cardRefs.current[index] = el)}
+							className="absolute top-1/2 w-[180px] h-[230px] md:w-[260px] md:h-[300px] glass-frame-side"
 							style={{
 								transformStyle: "preserve-3d",
 								backfaceVisibility: "hidden",
-							}}
-							// INITIAL STATE: Hidden in center
-							initial={{
 								left: "50%",
-								x: "-50%",
-								y: "-50%",
-								scale: 0.8,
+								transform: "translate(-50%, -50%) scale(0.8)",
 								opacity: 0,
 							}}
-							// ANIMATE PROP: Checks if we have scrolled into view
-							animate={
-								hasEnteredView
-									? getVariant(offset, isWrapping) // If visible: Go to Calculated Position
-									: {
-											left: "50%",
-											x: "-50%",
-											y: "-50%",
-											scale: 0.8,
-											opacity: 0,
-										} // If not: Stay Hidden
-							}
 						>
-							<div
-								className={`relative z-10 w-full h-full overflow-hidden bg-black 
-                  ${offset === 0 ? "rounded-[64px]" : "rounded-[58px]"}`}
-							>
+							<div className="relative z-10 w-full h-full overflow-hidden bg-black rounded-[40px] md:rounded-[58px]">
 								<Image
 									src={card.src}
 									alt={card.alt}
 									fill
 									className="object-cover opacity-90"
-									priority={offset === 0}
+									priority={index === 2}
 								/>
-
-								{offset === 0 && (
-									<div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-								)}
+								<div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
 							</div>
-						</motion.div>
+						</div>
 					);
 				})}
-			</motion.div>
+			</div>
 
 			{/* Bottom green gradient transition */}
 			<div
