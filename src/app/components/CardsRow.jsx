@@ -278,22 +278,23 @@ export default function CardsRow() {
 						})}
 					</div>
 				</div>
+			</div>
 
-				{/* SPOTLIGHT FIX: bottom: 0 + fade mask to stop the horizontal cut */}
+			{/* Centered solid neon green bar aligned with move buttons */}
+			{/* Solid neon bar centered and slightly raised with subtle shadow glow */}
+			<div
+				className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+				style={{ bottom: "44px", zIndex: 13 }}
+			>
 				<div
-					className="absolute pointer-events-none z-20 transition-all duration-300 ease-out"
 					style={{
-						left: "50%",
-						bottom: 0,
-						transform: "translateX(-50%)",
-						width: "clamp(300px, 90vw, 1200px)",
-						height: "420px",
-						background: `radial-gradient(ellipse at 50% 100%, white 0%, rgba(140, 255, 132, 0.9) 15%, rgba(14, 179, 79, 0.5) 45%, transparent 80%)`,
-						filter: "blur(60px)",
-						// Masked with linear gradient at bottom to fade smoothly into FAQ
-						WebkitMaskImage: `conic-gradient(from 300deg at 50% 100%, transparent 0deg, black 30deg, black 90deg, transparent 120deg), linear-gradient(to top, black 25%, transparent 100%)`,
-						WebkitMaskComposite: "source-in",
-						mixBlendMode: "plus-lighter",
+						width: "420px",
+						height: "6px",
+						margin: "0 auto",
+						borderRadius: "6px",
+						background: "linear-gradient(90deg,#9effa6,#00ff66)",
+						boxShadow:
+							"0 6px 20px rgba(0,255,102,0.9), 0 0 36px rgba(0,255,102,0.25)",
 					}}
 				/>
 			</div>
