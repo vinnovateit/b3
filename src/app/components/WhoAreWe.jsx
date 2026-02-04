@@ -87,10 +87,12 @@ const WhoAreWe = () => {
 
     const onWheel = (e) => {
       if (!isHovering) return;
+      if (!hasEnteredView) return;
+      const isVertical = Math.abs(e.deltaY) > Math.abs(e.deltaX);
+      if (isVertical) return;
       e.preventDefault();
       e.stopPropagation();
-      if (!hasEnteredView) return;
-      wheelDeltaAccumRef.current += e.deltaY;
+      wheelDeltaAccumRef.current += e.deltaX;
       if (Math.abs(wheelDeltaAccumRef.current) < WHEEL_THRESHOLD) return;
       const direction = wheelDeltaAccumRef.current > 0 ? 1 : -1;
       wheelDeltaAccumRef.current = 0;
@@ -236,16 +238,13 @@ const WhoAreWe = () => {
 
       {/* TEXT CONTENT */}
       <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center mb-16">
-        <div className="mb-8 w-[194px] h-[51px] rounded-[38px] border border-[rgba(255,255,255,0.28)] bg-[rgba(255,255,255,0.08)] backdrop-blur-md flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
-             <span className="text-white text-lg font-normal tracking-wide">About us</span>
-        </div>
         <h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
           Who Are We ?
         </h2>
         <p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3]\ mb-12 font-normal antialiased">
           VinnovateIT is the one-stop destination for all you curious cats to satisfy your hunger in the diverse world of computer science. In other words… think of it as the place where genius meets curiosity — and the result is pure magic. So come immerse yourself, in what we like to believe is the closest thing to Hogwarts.
         </p>
-        <Button text="Read more" link="https://vinnovateit.com/"/>
+        <Button text="Read more" link="https://vinnovateit.com/" className="cursor-pointer" />
       </div>
 
       {/* --- CAROUSEL CONTAINER --- */}
