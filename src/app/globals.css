@@ -89,14 +89,10 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-
-
   .btn-gradient-border:hover {
     transform: scale(1.05);
     box-shadow: 0 0 30px rgba(74, 222, 128, 0.4);
   }
-
-
 
   .btn-gradient-border {
     display: flex;
@@ -117,94 +113,158 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-
-
   .btn-gradient-border:hover {
     transform: scale(1.05);
     box-shadow: 0 0 30px rgba(74, 222, 128, 0.4);
   }
 
-
-
   @layer utilities {
-  .glass-frame-center {
-    position: relative;
-    display: flex;      
-    padding: 15.5px;    
-    border-radius: 79px;
+    .glass-frame-center {
+      position: relative;
+      display: flex;
+      padding: 15.5px;
+      border-radius: 79px;
 
-    background: linear-gradient(rgba(64, 162, 105, 0.1), rgba(64, 162, 105, 0.1));
-    backdrop-filter: blur(4px);
+      background: linear-gradient(rgba(64, 162, 105, 0.1), rgba(64, 162, 105, 0.1));
+      backdrop-filter: blur(4px);
 
-    box-shadow: inset 4px 5px 6px rgba(5, 36, 18, 0.5), inset 0 0 20px rgba(74, 222, 128, 0.1);
+      box-shadow: inset 4px 5px 6px rgba(5, 36, 18, 0.5),
+                  inset 0 0 20px rgba(74, 222, 128, 0.1);
+    }
 
-  }
+    .glass-frame-center::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 79px;
+      padding: 1px;
+      pointer-events: none;
 
-  .glass-frame-center::before {
+      background: linear-gradient(180deg, #BDDAC9 0%, #114728 100%);
 
-    content: "";
-    position: absolute;
-    inset: 0;          
-    border-radius: 79px;
-    padding: 1px;       
-    pointer-events: none; 
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
 
-    background: linear-gradient(180deg, #BDDAC9 0%, #114728 100%);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
 
-    -webkit-mask:
-       linear-gradient(#fff 0 0) content-box,
-       linear-gradient(#fff 0 0);
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-       linear-gradient(#fff 0 0);
+    .glass-frame-side {
+      position: relative;
+      display: flex;
+      padding: 12px;
+      border-radius: 70px;
 
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
+      background: linear-gradient(rgba(19, 114, 59, 0.1), rgba(19, 114, 59, 0.1));
+      backdrop-filter: blur(2px);
 
-  .glass-frame-side {
-    position: relative;
-    display: flex;
-    padding: 12px;     
-    border-radius: 70px;
+      box-shadow: inset 4px 5px 6px rgba(0, 0, 0, 0.3);
+    }
 
-    background: linear-gradient(rgba(19, 114, 59, 0.1), rgba(19, 114, 59, 0.1));
-    backdrop-filter: blur(2px);
+    .glass-frame-side {
+      position: relative;
+      display: flex;
+      padding: 12px;
+      border-radius: 70px;
 
-    box-shadow: inset 4px 5px 6px rgba(0, 0, 0, 0.3);
-  }
+      background: linear-gradient(rgba(64, 162, 105, 0.1), rgba(64, 162, 105, 0.1));
+      backdrop-filter: blur(4px);
+      box-shadow: inset 4px 5px 6px rgba(5, 36, 18, 0.5),
+                  inset 0 0 20px rgba(74, 222, 128, 0.1);
+    }
 
-  .glass-frame-side {
-    position: relative;
-    display: flex;
-    padding: 12px;
-    border-radius: 70px;
-    
-    /* Matching Glass Effect */
-    background: linear-gradient(rgba(64, 162, 105, 0.1), rgba(64, 162, 105, 0.1));
-    backdrop-filter: blur(4px);
-    box-shadow: inset 4px 5px 6px rgba(5, 36, 18, 0.5), inset 0 0 20px rgba(74, 222, 128, 0.1); 
-  }
+    .glass-frame-side::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 70px;
+      padding: 1px;
+      pointer-events: none;
 
-  .glass-frame-side::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 70px;
-    padding: 1px;
-    pointer-events: none;
-    
-    background: linear-gradient(180deg, #BDDAC9 0%, #114728 100%);
-    
-    -webkit-mask: 
-       linear-gradient(#fff 0 0) content-box, 
-       linear-gradient(#fff 0 0);
-    mask:
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+      background: linear-gradient(180deg, #BDDAC9 0%, #114728 100%);
+
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
   }
 }
 
+
+
+.loader-root {
+  background: #000 !important;
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(to right, rgba(0,255,65,0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,255,65,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background: rgba(0,255,65,0.2);
+  pointer-events: none;
+}
+
+.crosshair::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.crosshair::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: rgba(0,255,65,0.15);
+  overflow: hidden;
+  z-index: 50;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #00ff41;
+  box-shadow: 0 0 22px rgba(0,255,65,0.95);
+  animation: verticalFill 2.5s ease-in-out infinite;
+}
+
+.progress-left { left: 0; }
+.progress-right { right: 0; }
+
+@keyframes verticalFill {
+  0% { transform: scaleY(0); transform-origin: bottom; }
+  50% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: top; }
+}
+
+.cube-face-inner {
+  box-shadow: 0 0 38px rgba(0,255,65,0.95);
 }
