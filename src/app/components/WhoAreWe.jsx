@@ -332,7 +332,7 @@ const WhoAreWe = () => {
 				<h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
 					Who Are We ?
 				</h2>
-				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3]\ mb-12 font-normal antialiased">
+				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3] mb-12 font-normal antialiased">
 					VinnovateIT is the one-stop destination for all you curious cats to
 					satisfy your hunger in the diverse world of computer science. In other
 					words… think of it as the place where genius meets curiosity — and the
@@ -368,8 +368,8 @@ const WhoAreWe = () => {
 									alt={card.alt}
 									fill
 									className="object-cover opacity-90"
-									priority={index === 2}
-								/>
+									priority={true}								unoptimized={true}
+								loading="eager"								/>
 								<div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
 							</div>
 						</div>
