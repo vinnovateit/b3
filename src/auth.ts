@@ -35,19 +35,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: false,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          hd: "vitstudent.ac.in",
+        },
+      },
     }),
   ],
   pages: {
     error: "/",
   },
   callbacks: {
-    async signIn({ user, email }) {
-      // // Validate email domain
-      //Local testing bypass
-      // if (!user.email || !isVITStudentEmail(user.email)) {
-      //   console.warn(`[Auth] Unauthorized login attempt from non-VIT email: ${user.email}`);
-      //   return false;
-      // }
+    async signIn({ user }) {
+      // Validate email domain
+      if (!user.email || !isVITStudentEmail(user.email)) {
+        return "/?error=vit_email_only";
+      }
       return true;
     },
     async jwt({ token, user }) {

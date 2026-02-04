@@ -56,9 +56,6 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  // Relation to VIT student
-  // vitStudent VITStudent?
-
   // Relation to Team by team code
   teamCode  String  @map("team_code") @default("")
   team      Team?   @relation("TeamUsersByCode", fields: [teamCode], references: [code], onDelete: NoAction, onUpdate: Cascade)
@@ -78,27 +75,6 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-// model VITStudent {
-//   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-//   name          String
-//   regNo         String   @unique
-//   year          Int
-//   phone         String
-//   accommodation String // "dayscholar" or "hostel"
-//   hostelType    String? // "lh" or "mh" (optional, only for hostel students)
-//   block         String? // optional, only for hostel students
-//   room          String? // optional, only for hostel students
-//   createdAt     DateTime @default(now())
-//   updatedAt     DateTime @updatedAt
-
-//   teamId String? @map("team_id") @db.ObjectId
-//   team   Team?   @relation(fields: [teamId], references: [id])
-
-//   userId String? @unique @map("user_id") @db.ObjectId
-//   user   User?   @relation(fields: [userId], references: [id], onDelete: NoAction)
-
-//   @@map("vit_students")
-// }
 
 model Team {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -119,15 +95,13 @@ model Team {
   otherLinks         String? @map("other_links")
 
   // Round progress notes
-  round1Progress String? @map("round1_progress")
-  round2Progress String? @map("round2_progress")
+  round1Progress String? @default("") @map("round1_progress")
+  round2Progress String? @default("") @map("round2_progress")
 
   // Team Leader
   teamLeaderId String? @map("team_leader_id") @db.ObjectId
   teamLeader   User?   @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Relations
-  // vitStudents VITStudent[]
   users       User[]       @relation("TeamUsersByCode")
 
   @@map("teams")

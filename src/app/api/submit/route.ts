@@ -18,6 +18,75 @@ interface SubmissionRequest {
   progressNote?: string | null;
 }
 
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const startTime = Date.now();
+
+  try {
+    logRequest("GET", "/api/submit");
+
+    const session = await auth();
+    if (!session?.user?.email) {
+      logResponse("GET", "/api/submit", 401, Date.now() - startTime);
+      return errorResponse("Unauthorized", 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    const teamId = searchParams.get("teamId");
+
+    if (!teamId) {
+      logResponse("GET", "/api/submit", 400, Date.now() - startTime);
+      return errorResponse("teamId is required as query parameter", 400);
+    }
+
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: {
+        users: {
+          where: { email: session.user.email },
+          select: { id: true },
+        },
+      },
+    });
+
+    if (!team) {
+      logResponse("GET", "/api/submit", 404, Date.now() - startTime);
+      return errorResponse("Team not found", 404);
+    }
+
+    if (team.users.length === 0) {
+      logResponse("GET", "/api/submit", 403, Date.now() - startTime);
+      return errorResponse("You are not a member of this team", 403);
+    }
+
+    const submission = {
+      teamId: team.id,
+      projectTitle: team.projectTitle,
+      projectDescription: team.projectDescription,
+      track: team.track,
+      githubLink: team.githubLink,
+      figmaLink: team.figmaLink,
+      pptLink: team.pptLink,
+      otherLinks: team.otherLinks,
+      round1Progress: team.round1Progress,
+      round2Progress: team.round2Progress,
+      currentRound: team.roundNo,
+    };
+
+    logResponse("GET", "/api/submit", 200, Date.now() - startTime);
+    return successResponse(submission, "Submission data retrieved successfully");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("[API] GET /api/submit error:", {
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      duration: `${Date.now() - startTime}ms`,
+    });
+
+    logResponse("GET", "/api/submit", 500, Date.now() - startTime);
+    return errorResponse("Failed to retrieve submission. Please try again.", 500);
+  }
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
@@ -88,10 +157,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Update team with cleaned links
-    const progressFieldByRound: Record<number, "round1Progress" | "round2Progress" | "round3Progress"> = {
+    const progressFieldByRound: Record<number, "round1Progress" | "round2Progress"> = {
       1: "round1Progress",
       2: "round2Progress",
-      3: "round3Progress",
     };
 
     const progressField = progressFieldByRound[submissionData.roundNo];
