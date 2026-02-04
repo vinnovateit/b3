@@ -55,12 +55,27 @@ export default function App() {
     progressR1: ''
   });
 
+  const [copiedSharableLink, setCopiedSharableLink] = useState(false);
+
   useEffect(() => {
     const update = () => setCurrentReview(getCurrentReview());
     update();
 
     const intervalId = setInterval(update, 60 * 1000);
     return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
   }, []);
 
   useEffect(() => {
@@ -120,10 +135,20 @@ export default function App() {
     gsap.to(el, { scale, duration: 0.2, ease: 'power2.out' });
   };
 
+  const handleCopySharableLink = async (value) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedSharableLink(true);
+      window.setTimeout(() => setCopiedSharableLink(false), 1200);
+    } catch {
+      setCopiedSharableLink(false);
+    }
+  };
+
   // Dummy team members data
   return (
     <div
-      className="min-h-screen font-sans overflow-hidden"
+      className="h-screen overflow-hidden font-sans"
       style={{
         background:
           'radial-gradient(880px 320px at 30% 30%, rgba(34,197,94,0.20), transparent 62%), radial-gradient(760px 320px at 26% 78%, rgba(34,197,94,0.12), transparent 60%), linear-gradient(180deg, #050705, #0b120c)'
@@ -142,9 +167,6 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-5">
-            <button className="h-9 px-9 rounded-full bg-gray-600/70 hover:bg-gray-600/80 text-white text-sm">
-              Logout
-            </button>
             <div className="relative">
               <button
                 ref={avatarButtonRef}
@@ -176,7 +198,7 @@ export default function App() {
       </header>
 
       <div className="mx-auto max-w-[1400px] px-6 pb-10">
-        <div className="grid grid-cols-[1fr_380px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
           {/* Main Content */}
           <main className="pt-6 space-y-6">
           {/* Review Timeline Card */}
@@ -439,15 +461,19 @@ export default function App() {
                     // SECURITY: backend will generate team ID
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <div className="text-gray-300 text-sm">Sharable Link</div>
                   <input
                     type="text"
                     value={`https://team.example.com/invite/${dashboardData.team.id}`}
                     readOnly
                     className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    onClick={(e) => handleCopySharableLink(e.currentTarget.value)}
                     // SECURITY: backend will generate invite link & QR
                   />
+                  {copiedSharableLink && (
+                    <div className="absolute right-0 -top-1 text-gray-300 text-xs">Copied!</div>
+                  )}
                 </div>
               </div>
 
