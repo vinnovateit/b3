@@ -1,321 +1,393 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import gsap from "gsap";
 import Button from "./button";
 
 const CARDS = [
-  { id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
-  { id: 2, src: "/Whoareweimg/second.png", alt: "Team" },
-  { id: 3, src: "/Whoareweimg/third.png", alt: "Team" },
-  { id: 4, src: "/Whoareweimg/fourth.jpg", alt: "Team" },
-  { id: 5, src: "/Whoareweimg/fifth.png", alt: "Team" }
+	{ id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
+	{ id: 2, src: "/Whoareweimg/second.png", alt: "Team" },
+	{ id: 3, src: "/Whoareweimg/third.png", alt: "Team" },
+	{ id: 4, src: "/Whoareweimg/fourth.jpg", alt: "Team" },
+	{ id: 5, src: "/Whoareweimg/fifth.png", alt: "Team" },
 ];
 
+// Position configs for each offset from center
+const POSITIONS = {
+	"-2": {
+		left: "18%",
+		scale: 0.7,
+		rotateY: 60,
+		translateZ: -150,
+		zIndex: 30,
+		opacity: 0.8,
+	},
+	"-1": {
+		left: "34%",
+		scale: 0.85,
+		rotateY: 38,
+		translateZ: -50,
+		zIndex: 40,
+		opacity: 1,
+	},
+	0: {
+		left: "50%",
+		scale: 1.1,
+		rotateY: 0,
+		translateZ: 100,
+		zIndex: 50,
+		opacity: 1,
+	},
+	1: {
+		left: "66%",
+		scale: 0.85,
+		rotateY: -38,
+		translateZ: -50,
+		zIndex: 40,
+		opacity: 1,
+	},
+	2: {
+		left: "82%",
+		scale: 0.7,
+		rotateY: -60,
+		translateZ: -150,
+		zIndex: 30,
+		opacity: 0.8,
+	},
+};
+
+// Mobile positions - only show 3 cards, hide outer edges
+const MOBILE_POSITIONS = {
+	"-2": {
+		left: "50%",
+		scale: 0,
+		rotateY: 0,
+		translateZ: -200,
+		zIndex: 10,
+		opacity: 0,
+	},
+	"-1": {
+		left: "15%",
+		scale: 0.75,
+		rotateY: 35,
+		translateZ: -80,
+		zIndex: 40,
+		opacity: 0.7,
+	},
+	0: {
+		left: "50%",
+		scale: 1,
+		rotateY: 0,
+		translateZ: 50,
+		zIndex: 50,
+		opacity: 1,
+	},
+	1: {
+		left: "85%",
+		scale: 0.75,
+		rotateY: -35,
+		translateZ: -80,
+		zIndex: 40,
+		opacity: 0.7,
+	},
+	2: {
+		left: "50%",
+		scale: 0,
+		rotateY: 0,
+		translateZ: -200,
+		zIndex: 10,
+		opacity: 0,
+	},
+};
+
 const WhoAreWe = () => {
-  const [activeIndex, setActiveIndex] = useState(2); 
-  const [hasEnteredView, setHasEnteredView] = useState(false); 
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const prevActiveIndexRef = useRef(2);
-  const carouselRef = useRef(null);
-  const wheelQueueRef = useRef(0);
-  const wheelProcessingRef = useRef(false);
-  const wheelIdleTimeoutRef = useRef(null);
-  const wheelResumeTimeoutRef = useRef(null);
-  const transitionEndRef = useRef(0);
-  const queueKickTimeoutRef = useRef(null);
-  const TRANSITION_MS = 600;
-  const wheelDeltaAccumRef = useRef(0);
-  const WHEEL_THRESHOLD = 80;
+	const [activeIndex, setActiveIndex] = useState(2);
+	const [hasEnteredView, setHasEnteredView] = useState(false);
+	const [isInitialized, setIsInitialized] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 
-  // 1. START TIMERS ONLY WHEN VISIBLE
-  useEffect(() => {
-    if (hasEnteredView) {
-      // Wait 2 seconds for the "Fan Out" to finish before cycling
-      const startTimeout = setTimeout(() => {
-        setIsAutoPlaying(true);
-      }, 2000);
+	const sectionRef = useRef(null);
+	const carouselRef = useRef(null);
+	const cardRefs = useRef([]);
+	const autoPlayIntervalRef = useRef(null);
 
-      return () => clearTimeout(startTimeout);
-    }
-  }, [hasEnteredView]);
+	// Detect mobile screen
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+		checkMobile();
+		window.addEventListener("resize", checkMobile);
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
 
-  // 2. AUTO-CYCLE LOGIC
-  useEffect(() => {
-    if (isAutoPlaying) {
-      const interval = setInterval(() => {
-        transitionEndRef.current = performance.now() + TRANSITION_MS;
-        setActiveIndex((prev) => (prev + 1) % CARDS.length);
-      }, 3000); 
-      return () => clearInterval(interval);
-    }
-  }, [isAutoPlaying]);
+	// Get positions based on screen size
+	const getPositions = useCallback(() => {
+		return isMobile ? MOBILE_POSITIONS : POSITIONS;
+	}, [isMobile]);
 
-  useEffect(() => {
-    const onVisibilityChange = () => {
-      if (document.hidden) {
-        setIsAutoPlaying(false);
-      } else if (hasEnteredView) {
-        setIsAutoPlaying(true);
-      }
-    };
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, [hasEnteredView]);
+	// Calculate offset for a card
+	const getOffset = useCallback(
+		(index) => {
+			const length = CARDS.length;
+			let offset = (index - activeIndex + length) % length;
+			if (offset > length / 2) offset -= length;
+			return offset;
+		},
+		[activeIndex],
+	);
 
-  useEffect(() => {
-    const node = carouselRef.current;
-    if (!node) return;
+	// Animate all cards to their positions using GSAP
+	const animateCards = useCallback(
+		(instant = false) => {
+			const positions = getPositions();
+			cardRefs.current.forEach((card, index) => {
+				if (!card) return;
 
-    const processWheelQueue = () => {
-      if (wheelQueueRef.current === 0) {
-        wheelProcessingRef.current = false;
-        return;
-      }
-      wheelProcessingRef.current = true;
-      const direction = wheelQueueRef.current > 0 ? 1 : -1;
-      wheelQueueRef.current -= direction;
-      transitionEndRef.current = performance.now() + TRANSITION_MS;
-      setActiveIndex((prev) => (prev + direction + CARDS.length) % CARDS.length);
-      setTimeout(() => {
-        processWheelQueue();
-      }, TRANSITION_MS);
-    };
+				const offset = getOffset(index);
+				const pos = positions[offset.toString()];
 
-    const onWheel = (e) => {
-      if (!isHovering) return;
-      e.preventDefault();
-      e.stopPropagation();
-      if (!hasEnteredView) return;
-      wheelDeltaAccumRef.current += e.deltaY;
-      if (Math.abs(wheelDeltaAccumRef.current) < WHEEL_THRESHOLD) return;
-      const direction = wheelDeltaAccumRef.current > 0 ? 1 : -1;
-      wheelDeltaAccumRef.current = 0;
-      setIsAutoPlaying(false);
-      wheelQueueRef.current += direction;
-      if (wheelQueueRef.current > 2) wheelQueueRef.current = 2;
-      if (wheelQueueRef.current < -2) wheelQueueRef.current = -2;
-      if (!wheelProcessingRef.current) {
-        const now = performance.now();
-        const delay = Math.max(0, transitionEndRef.current - now);
-        if (delay > 0) {
-          if (queueKickTimeoutRef.current) clearTimeout(queueKickTimeoutRef.current);
-          queueKickTimeoutRef.current = setTimeout(() => {
-            processWheelQueue();
-          }, delay);
-        } else {
-          processWheelQueue();
-        }
-      }
-      if (wheelIdleTimeoutRef.current) clearTimeout(wheelIdleTimeoutRef.current);
-      wheelIdleTimeoutRef.current = setTimeout(() => {
-        wheelQueueRef.current = 0;
-      }, 120);
-      if (wheelResumeTimeoutRef.current) clearTimeout(wheelResumeTimeoutRef.current);
-      wheelResumeTimeoutRef.current = setTimeout(() => {
-        if (hasEnteredView) setIsAutoPlaying(true);
-      }, 1000);
-    };
+				if (!pos) {
+					// Hidden card
+					gsap.to(card, {
+						left: "50%",
+						xPercent: -50,
+						yPercent: -50,
+						scale: 0,
+						rotateY: 0,
+						z: 0,
+						opacity: 0,
+						zIndex: 0,
+						duration: instant ? 0 : 1.2,
+						ease: "power3.inOut",
+					});
+					return;
+				}
 
-    node.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      node.removeEventListener("wheel", onWheel);
-      if (wheelIdleTimeoutRef.current) clearTimeout(wheelIdleTimeoutRef.current);
-      if (wheelResumeTimeoutRef.current) clearTimeout(wheelResumeTimeoutRef.current);
-      if (queueKickTimeoutRef.current) clearTimeout(queueKickTimeoutRef.current);
-    };
-  }, [hasEnteredView, isHovering]);
+				// Single animation with all properties including translateZ for smooth depth
+				gsap.to(card, {
+					left: pos.left,
+					xPercent: -50,
+					yPercent: -50,
+					scale: pos.scale,
+					rotateY: pos.rotateY,
+					z: pos.translateZ,
+					opacity: pos.opacity,
+					zIndex: pos.zIndex,
+					duration: instant ? 0 : 1.2,
+					ease: "power2.inOut",
+				});
+			});
+		},
+		[getOffset, getPositions],
+	);
 
-  useEffect(() => {
-    prevActiveIndexRef.current = activeIndex;
-  }, [activeIndex]);
+	// Intersection Observer - trigger fan-out once when carousel enters view
+	useEffect(() => {
+		const carousel = carouselRef.current;
+		if (!carousel) return;
 
-  const getVariant = (offset, isWrapping) => {
-    // --- CENTER ---
-    if (offset === 0) {
-      return {
-        left: "50%",
-        scale: 1,
-        opacity: 1,
-        zIndex: 50,
-        z: 0,
-        rotateY: 0,
-        x: "-50%", y: "-50%",
-        transition: { duration: 0.6, ease: "easeOut" }
-      };
-    }
-    // --- MID LEFT ---
-    if (offset === -1) {
-      return {
-        left: "34%", 
-        scale: 1,
-        opacity: 1,
-        zIndex: 40,
-        z: -80,
-        rotateY: 38,
-        x: "-50%", y: "-50%",
-        transition: { duration: 0.6, ease: "easeInOut" }
-      };
-    }
-    // --- FAR LEFT ---
-    if (offset === -2) {
-      return {
-        left: "18%",
-        scale: 0.9,
-        opacity: isWrapping ? [0, 0.8] : 0.8,
-        zIndex: 30,
-        z: -160,
-        rotateY: 60,
-        x: "-50%", y: "-50%",
-        transition: isWrapping
-          ? {
-              left: { duration: 0 },
-              x: { duration: 0 },
-              rotateY: { duration: 0 },
-              scale: { duration: 0 },
-              opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" }
-            }
-          : { duration: 0.6, ease: "easeInOut" }
-      };
-    }
-    // --- MID RIGHT ---
-    if (offset === 1) {
-      return {
-        left: "66%",
-        scale: 1,
-        opacity: 1,
-        zIndex: 40,
-        z: -80,
-        rotateY: -38,
-        x: "-50%", y: "-50%",
-        transition: { duration: 0.6, ease: "easeInOut" }
-      };
-    }
-    // --- FAR RIGHT ---
-    if (offset === 2) {
-      return {
-        left: "82%",
-        scale: 0.9,
-        opacity: isWrapping ? [0, 0.8] : 0.8,
-        zIndex: 30,
-        z: -160,
-        rotateY: -60,
-        x: "-50%", y: "-50%",
-        transition: isWrapping
-          ? {
-              left: { duration: 0 },
-              x: { duration: 0 },
-              rotateY: { duration: 0 },
-              scale: { duration: 0 },
-              opacity: { duration: 0.3, delay: 0.05, ease: "easeOut" }
-            }
-          : { duration: 0.6, ease: "easeInOut" }
-      };
-    }
-    // --- HIDDEN ---
-    return {
-      left: "50%",
-      scale: 0,
-      opacity: 0,
-      zIndex: 0,
-      z: -200,
-      rotateY: 0,
-      x: "-50%", y: "-50%",
-      transition: { duration: 0.6 }
-    };
-  };
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting && !isInitialized) {
+					setHasEnteredView(true);
+				}
+			},
+			{ threshold: 0.1 },
+		);
 
-  return (
-    <section className="relative w-full bg-black py-24 overflow-hidden flex flex-col items-center font-sans">
-      
-      {/* ILLUMINATION */}
-      <div className="absolute top-[100px] left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-gradient-to-b from-[#22522C] to-[#040704] blur-[80px] pointer-events-none opacity-90" />
+		observer.observe(carousel);
 
-      {/* TEXT CONTENT */}
-      <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center mb-16">
-        <div className="mb-8 w-[194px] h-[51px] rounded-[38px] border border-[rgba(255,255,255,0.28)] bg-[rgba(255,255,255,0.08)] backdrop-blur-md flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
-             <span className="text-white text-lg font-normal tracking-wide">About us</span>
-        </div>
-        <h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
-          Who Are We ?
-        </h2>
-        <p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3]\ mb-12 font-normal antialiased">
-          VinnovateIT is the one-stop destination for all you curious cats to satisfy your hunger in the diverse world of computer science. In other words… think of it as the place where genius meets curiosity — and the result is pure magic. So come immerse yourself, in what we like to believe is the closest thing to Hogwarts.
-        </p>
-        <Button text="Read more" link="https://vinnovateit.com/"/>
-      </div>
+		return () => observer.disconnect();
+	}, [isInitialized]);
 
-      {/* --- CAROUSEL CONTAINER --- */}
-      {/* The onViewportEnter here triggers the entire sequence */}
-      <motion.div 
-        className="relative z-10 w-full max-w-[1400px] mx-auto h-[600px] perspective-1000 mt-4"
-        ref={carouselRef}
-        onViewportEnter={() => {
-          setHasEnteredView(true);
-          setIsAutoPlaying(true);
-        }}
-        onViewportLeave={() => {
-          setHasEnteredView(false);
-          setIsAutoPlaying(false);
-        }}
-        viewport={{ once: false, amount: 0.3 }} // <--- Triggers when 30% visible
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
-        
-        {CARDS.map((card, index) => {
-          const length = CARDS.length;
-          let offset = (index - activeIndex + length) % length;
-          if (offset > length / 2) offset -= length;
-          let prevOffset = (index - prevActiveIndexRef.current + length) % length;
-          if (prevOffset > length / 2) prevOffset -= length;
-          const isWrapping = (prevOffset === -2 && offset === 2) || (prevOffset === 2 && offset === -2);
+	// Trigger fan-out and start auto-play when entering view for the first time
+	useEffect(() => {
+		if (!hasEnteredView || isInitialized) return;
 
-          return (
-            <motion.div
-              key={card.id}
-              className={`absolute top-1/2 
-                ${offset === 0 
-                  ? "w-[90vw] h-[500px] md:w-[477.83px] md:h-[534px] glass-frame-center" 
-                  : "w-[200px] h-[300px] md:w-[404.28px] md:h-[451.54px] glass-frame-side"
-                }
-              `}
-              style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
-              
-              // INITIAL STATE: Hidden in center
-              initial={{ 
-                left: "50%", 
-                x: "-50%", y: "-50%", 
-                scale: 0.8, 
-                opacity: 0 
-              }}
-              
-              // ANIMATE PROP: Checks if we have scrolled into view
-              animate={
-                hasEnteredView 
-                  ? getVariant(offset, isWrapping) // If visible: Go to Calculated Position
-                  : { left: "50%", x: "-50%", y: "-50%", scale: 0.8, opacity: 0 } // If not: Stay Hidden
-              }
-            >
-              <div className={`relative z-10 w-full h-full overflow-hidden bg-black 
-                  ${offset === 0 ? "rounded-[64px]" : "rounded-[58px]"}`}
-              >
-                <Image src={card.src} alt={card.alt} fill className="object-cover opacity-90" priority={offset === 0} />
-                
-                {offset === 0 && (
-                   <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
+		const positions = getPositions();
 
-      </motion.div>
-    </section>
-  );
+		// Set initial state - all cards centered and hidden
+		cardRefs.current.forEach((card) => {
+			if (!card) return;
+			gsap.set(card, {
+				left: "50%",
+				xPercent: -50,
+				yPercent: -50,
+				scale: 0.6,
+				rotateY: 0,
+				z: 0,
+				opacity: 0,
+				zIndex: 1,
+			});
+		});
+
+		// Animate each card to its position with stagger
+		cardRefs.current.forEach((card, index) => {
+			if (!card) return;
+
+			const length = CARDS.length;
+			let offset = (index - activeIndex + length) % length;
+			if (offset > length / 2) offset -= length;
+
+			const pos = positions[offset.toString()];
+
+			if (!pos) return;
+
+			gsap.to(card, {
+				left: pos.left,
+				xPercent: -50,
+				yPercent: -50,
+				scale: pos.scale,
+				rotateY: pos.rotateY,
+				z: pos.translateZ,
+				opacity: pos.opacity,
+				zIndex: pos.zIndex,
+				duration: 1,
+				delay: 0.15 * Math.abs(offset),
+				ease: "power3.out",
+			});
+		});
+
+		setIsInitialized(true);
+	}, [hasEnteredView, isInitialized, activeIndex, getPositions]);
+
+	// Animate when activeIndex changes
+	useEffect(() => {
+		if (isInitialized) {
+			animateCards();
+		}
+	}, [activeIndex, isInitialized, animateCards]);
+
+	// Auto-rotate interval - starts after initialization and runs forever
+	useEffect(() => {
+		if (!isInitialized) return;
+
+		// Start auto-rotate after fan-out animation completes
+		const startTimeout = setTimeout(() => {
+			autoPlayIntervalRef.current = setInterval(() => {
+				setActiveIndex((prev) => (prev + 1) % CARDS.length);
+			}, 3000);
+		}, 1200);
+
+		return () => {
+			clearTimeout(startTimeout);
+			if (autoPlayIntervalRef.current) {
+				clearInterval(autoPlayIntervalRef.current);
+			}
+		};
+	}, [isInitialized]);
+
+	return (
+		<section
+			ref={sectionRef}
+			className="relative w-full bg-[#040704] pt-16 pb-24 overflow-hidden flex flex-col items-center font-sans"
+		>
+			{/* Top green gradient transition */}
+			<div
+				className="absolute -top-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none"
+				style={{
+					background:
+						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
+					filter: "blur(60px)",
+				}}
+			></div>
+
+			{/* Green glow effects */}
+			<div
+				className="absolute top-[20%] -left-[150px] w-[400px] h-[400px] pointer-events-none opacity-50"
+				style={{
+					background:
+						"radial-gradient(circle at center, rgba(57, 221, 124, 0.4) 0%, rgba(57, 221, 124, 0.15) 40%, transparent 70%)",
+					filter: "blur(60px)",
+				}}
+			></div>
+			<div
+				className="absolute top-[40%] -right-[150px] w-[350px] h-[350px] pointer-events-none opacity-40"
+				style={{
+					background:
+						"radial-gradient(circle at center, rgba(5, 124, 53, 0.5) 0%, rgba(5, 124, 53, 0.2) 45%, transparent 70%)",
+					filter: "blur(50px)",
+				}}
+			></div>
+			<div
+				className="absolute bottom-[15%] left-[20%] w-[300px] h-[300px] pointer-events-none opacity-30"
+				style={{
+					background:
+						"radial-gradient(circle at center, rgba(120, 255, 200, 0.5) 0%, rgba(90, 220, 160, 0.2) 50%, transparent 75%)",
+					filter: "blur(55px)",
+				}}
+			></div>
+			<div
+				className="absolute bottom-[20%] right-[15%] w-[320px] h-[320px] pointer-events-none opacity-35"
+				style={{
+					background:
+						"radial-gradient(circle at center, rgba(57, 221, 124, 0.45) 0%, rgba(57, 221, 124, 0.15) 45%, transparent 70%)",
+					filter: "blur(55px)",
+				}}
+			></div>
+
+			{/* TEXT CONTENT */}
+			<div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center mb-16">
+				<h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
+					Who Are We ?
+				</h2>
+				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3] mb-12 font-normal antialiased">
+					VinnovateIT is the one-stop destination for all you curious cats to
+					satisfy your hunger in the diverse world of computer science. In other
+					words… think of it as the place where genius meets curiosity — and the
+					result is pure magic. So come immerse yourself, in what we like to
+					believe is the closest thing to Hogwarts.
+				</p>
+				<Button text="Read more" link="https://vinnovateit.com/" />
+			</div>
+
+			{/* --- CAROUSEL CONTAINER --- */}
+			<div
+				ref={carouselRef}
+				className="relative z-10 w-full max-w-[1000px] mx-auto h-[280px] md:h-[350px] mt-4"
+				style={{ perspective: "1000px" }}
+			>
+				{CARDS.map((card, index) => {
+					return (
+						<div
+							key={card.id}
+							ref={(el) => (cardRefs.current[index] = el)}
+							className="absolute top-1/2 w-[180px] h-[230px] md:w-[260px] md:h-[300px] glass-frame-side"
+							style={{
+								transformStyle: "preserve-3d",
+								backfaceVisibility: "hidden",
+								left: "50%",
+								transform: "translate(-50%, -50%) scale(0.8)",
+								opacity: 0,
+							}}
+						>
+							<div className="relative z-10 w-full h-full overflow-hidden bg-black rounded-[40px] md:rounded-[58px]">
+								<Image
+									src={card.src}
+									alt={card.alt}
+									fill
+									className="object-cover opacity-90"
+									priority={true}								unoptimized={true}
+								loading="eager"								/>
+								<div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
+							</div>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* Bottom green gradient transition */}
+			<div
+				className="absolute -bottom-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-10"
+				style={{
+					background:
+						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
+					filter: "blur(60px)",
+				}}
+			></div>
+		</section>
+	);
 };
 
 export default WhoAreWe;
