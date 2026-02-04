@@ -386,6 +386,16 @@ const WhoAreWe = () => {
 					);
 				})}
 			</motion.div>
+
+			{/* Bottom green gradient transition */}
+			<div
+				className="absolute -bottom-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-10"
+				style={{
+					background:
+						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
+					filter: "blur(60px)",
+				}}
+			></div>
 		</section>
 	);
 };
