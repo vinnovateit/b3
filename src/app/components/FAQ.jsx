@@ -101,17 +101,17 @@ const sweepVariants = {
 };
 
 const FAQ = () => {
-  const categories = Object.keys(FAQ_DATA);
-  const [[page, direction], setPage] = useState([0, 0]);
-  const [openIndex, setOpenIndex] = useState(null);
+	const categories = Object.keys(FAQ_DATA);
+	const [[page, direction], setPage] = useState([0, 0]);
+	const [openIndex, setOpenIndex] = useState(null);
 
-  const activeTab = categories[page];
+	const activeTab = categories[page];
 
-  const paginate = (newPageIndex) => {
-    const newDirection = newPageIndex > page ? 1 : -1;
-    setOpenIndex(null);
-    setPage([newPageIndex, newDirection]);
-  };
+	const paginate = (newPageIndex) => {
+		const newDirection = newPageIndex > page ? 1 : -1;
+		setOpenIndex(null);
+		setPage([newPageIndex, newDirection]);
+	};
 
   return (
     <div className="relative min-h-screen w-full bg-[#050505] text-white flex flex-col items-center justify-start md:justify-center font-sans p-4 md:p-8 overflow-hidden">
