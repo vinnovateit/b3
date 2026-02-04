@@ -34,7 +34,18 @@ export default function Loader() {
           transform: translateX(-50%);
         }
 
-        
+        /* ===== LOADING TEXT ===== */
+        .loading-text {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 2rem;
+          font-weight: bold;
+          color: white;
+          opacity: 0;
+          animation: fadeIn 3s forwards;
+        }
 
         @keyframes fadeIn {
           0% { opacity: 0; transform: translate(-50%, -60%); }
@@ -77,8 +88,10 @@ export default function Loader() {
           to { transform: rotate(360deg); }
         }
 
-     
-       
+        /* ===== REFINED UPDATES & OVERRIDES ===== */
+        
+        /* Hide original center text */
+        .loading-text { display: none !important; }
 
         /* L-Shape Logic & Pulse Animation */
         .hud-corner {
