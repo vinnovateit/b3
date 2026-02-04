@@ -25,7 +25,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <main className="relative w-screen min-h-[200vh] bg-[#05080a] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-x-hidden">
+    <section className="relative w-full min-h-[200vh] bg-[#05080a] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-hidden">
       <style jsx>{`
         @keyframes traceEllipseLeft {
           0% {
@@ -68,7 +68,7 @@ export default function Hero() {
       `}</style>
 
       {/* Scene root */}
-      <div className="relative w-screen min-h-[200vh] overflow-x-hidden">
+      <div className="relative w-full min-h-[200vh]">
 
         {/* Triangle gradient wrapper */}
         <div className="absolute inset-0 z-[1] pointer-events-none">
@@ -341,6 +341,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
