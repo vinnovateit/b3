@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 
 
 
@@ -57,7 +58,7 @@ useEffect(() => {
                  after:h-[2px] after:w-0 after:bg-white
                  after:transition-all after:duration-300
                  hover:after:w-full">
-    <a href="#home">Home</a>
+    <Link href="#home">Home</Link>
   </li>
 
 {/* About */}
@@ -66,13 +67,13 @@ useEffect(() => {
                  after:h-[2px] after:w-0 after:bg-white
                  after:transition-all after:duration-300
                  hover:after:w-full">
-    <a href="#about">About</a>
+    <Link href="#about">About</Link>
   </li>
 
 {/* Rules Dropdown */}
   <li className="relative group cursor-pointer opacity-80 hover:opacity-100 transition">
     <div className="flex items-center gap-1">
-      <a href="#rules" className="flex items-center gap-1">
+      <Link href="#rules" className="flex items-center gap-1">
       Rules
       <svg
   className="w-3 h-3 mt-[1px]"
@@ -82,7 +83,7 @@ useEffect(() => {
 
   <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" />
 </svg>
-      </a>
+      </Link>
     </div>
 
     <ul className="absolute top-full left-0 mt-3 w-44
@@ -94,13 +95,13 @@ useEffect(() => {
                    transition-all duration-200">
 
       <li className="px-4 py-2 text-white hover:bg-white/10 rounded-t-xl">
-         <a href="#rules">General Rules</a>
+         <Link href="#rules">General Rules</Link>
       </li>
       <li className="px-4 py-2 text-white hover:bg-white/10">
-        <a href="#rules">Participation</a>
+        <Link href="#rules">Participation</Link>
       </li>
       <li className="px-4 py-2 text-white hover:bg-white/10 rounded-b-xl">
-        <a href="#rules">Submission</a>
+        <Link href="#rules">Submission</Link>
       </li>
 
     </ul>
@@ -112,13 +113,13 @@ useEffect(() => {
                  after:h-[2px] after:w-0 after:bg-white
                  after:transition-all after:duration-300
                  hover:after:w-full">
-    <a href="#faq">FAQs</a>
+    <Link href="#faq">FAQs</Link>
   </li>
 
 </ul>
 
         {/* Login Button */}
-<a
+<Link
   href="#login"
   className="flex items-center overflow-hidden
              rounded-full bg-green-500
@@ -149,7 +150,7 @@ useEffect(() => {
       <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
     </svg>
   </span>
-</a>
+</Link>
 
 
 
