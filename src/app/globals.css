@@ -73,13 +73,7 @@ body {
 		background:
 			radial-gradient(60.5% 60.5% at 50% 50%, #19954b 59.15%, #0cac4f 86.65%)
 				padding-box,
-			linear-gradient(
-					90deg,
-					#8CFF84 0%,
-					#0EB337 27%,
-					#42D774 79%,
-					#85FFB0 100%
-				)
+			linear-gradient(90deg, #8cff84 0%, #0eb337 27%, #42d774 79%, #85ffb0 100%)
 				border-box;
 
 		color: white;
@@ -109,13 +103,7 @@ body {
 		background:
 			radial-gradient(60.5% 60.5% at 50% 50%, #19954b 59.15%, #0cac4f 86.65%)
 				padding-box,
-			linear-gradient(
-					90deg,
-					#8CFF84 0%,
-					#0EB337 27%,
-					#42D774 79%,
-					#85FFB0 100%
-				)
+			linear-gradient(90deg, #8cff84 0%, #0eb337 27%, #42d774 79%, #85ffb0 100%)
 				border-box;
 
 		transform: scale(1);

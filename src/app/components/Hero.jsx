@@ -1,32 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Button from "./button"
+import Button from "./button";
 
 export default function Hero() {
 	const cardRef = useRef(null);
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.intersectionRatio > 0.2) {
-					setIsVisible(true);
-					observer.disconnect(); // only once
-				}
-			},
-			{ threshold: [0.2] },
-		);
+		// Start animations immediately after a short delay (for loading screen)
+		const timer = setTimeout(() => {
+			setIsVisible(true);
+		}, 100); // Small delay to ensure page is ready
 
-		if (cardRef.current) observer.observe(cardRef.current);
-
-		return () => {
-			if (cardRef.current) observer.unobserve(cardRef.current);
-		};
+		return () => clearTimeout(timer);
 	}, []);
 
 	return (
-		<main className="relative w-full bg-[#05080a] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-hidden">
+		<main className="relative w-full bg-[#040704] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-hidden">
 			<style jsx>{`
 				@keyframes traceEllipseLeft {
 					0% {
@@ -53,13 +44,13 @@ export default function Hero() {
 				.ellipse-animate-left {
 					stroke-dashoffset: 0;
 					stroke-dasharray: 0.5 1;
-					animation: traceEllipseLeft 2s ease-in forwards;
+					animation: traceEllipseLeft 3s ease-out forwards;
 				}
 
 				.ellipse-animate-right {
 					stroke-dashoffset: 0;
 					stroke-dasharray: 0.5 1;
-					animation: traceEllipseRight 2s ease-in forwards;
+					animation: traceEllipseRight 3s ease-out forwards;
 				}
 
 				/* Hide all ellipses by default */
@@ -136,7 +127,6 @@ export default function Hero() {
 						></div>
 					</div>
 				</div>
-
 				{/* Hero text stack */}
 				<div className="relative z-[5] text-center pt-[15vh]">
 					<h1
@@ -162,13 +152,11 @@ export default function Hero() {
 						Build. Block. Break.
 					</p>
 				</div>
-
-				<div className="flex justify-center mt-8">
-					<Button text="Explore Tracks" className="mt-8"/>
+				<div className="flex justify-center mt-12 mb-8">
+					<Button text="Explore Tracks" />
 				</div>
-
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-[6] w-full max-w-[900px] min-h-[474px] h-auto mx-auto mt-[24vh] px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-[6] w-full max-w-[900px] min-h-[474px] h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
 					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-[1] pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
@@ -619,24 +607,6 @@ export default function Hero() {
 							}}
 						></div>
 
-						<div
-							className="absolute -bottom-[140px] -right-[160px] w-[320px] h-[320px] pointer-events-none opacity-60"
-							style={{
-								background:
-									"radial-gradient(circle at center, rgba(90, 220, 160, 0.9) 0%, rgba(90, 220, 160, 0.45) 38%, rgba(90, 220, 160, 0.2) 58%, transparent 78%)",
-								filter: "blur(45px)",
-							}}
-						></div>
-
-						<div
-							className="absolute left-1/2 -bottom-[560px] -translate-x-1/2 w-[380px] h-[380px] pointer-events-none opacity-100"
-							style={{
-								background:
-									"radial-gradient(ellipse at center, rgba(217, 217, 217, 0.6) 17%, rgba(94, 163, 122, 0.7) 46%, rgba(5, 124, 53, 0.5) 71%, rgba(0, 0, 0, 1) 100%)",
-								filter: "blur(50.88px)",
-							}}
-						></div>
-
 						{/* Glass content */}
 						<h2
 							className="text-[clamp(2rem,5vw,4rem)] mb-6 text-center bg-clip-text text-transparent"
@@ -679,6 +649,16 @@ export default function Hero() {
 					</div>
 				</div>
 			</div>
+
+			{/* Bottom green gradient transition */}
+			<div
+				className="absolute -bottom-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-10"
+				style={{
+					background:
+						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
+					filter: "blur(60px)",
+				}}
+			></div>
 		</main>
 	);
 }
