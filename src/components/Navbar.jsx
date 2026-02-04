@@ -7,6 +7,7 @@ import Link from "next/link";
 
 const Navbar = () => {
   const [show, setShow] = useState(true);
+  const [open, setOpen] = useState(false);
 const lastScrollY = useRef(0);
 
 
@@ -117,6 +118,26 @@ useEffect(() => {
   </li>
 
 </ul>
+{/* Mobile menu button */}
+<button
+  onClick={() => setOpen(!open)}
+  className="md:hidden text-white"
+>
+  <svg
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4 6h16M4 12h16M4 18h16"
+    />
+  </svg>
+</button>
+
 
         {/* Login Button */}
 <Link
@@ -151,6 +172,21 @@ useEffect(() => {
     </svg>
   </span>
 </Link>
+{/* Mobile menu */}
+{open && (
+  <div className="absolute top-full left-0 mt-4 w-full
+                  bg-white/10 backdrop-blur-lg
+                  border border-white/20
+                  rounded-xl shadow-lg
+                  flex flex-col gap-4 px-6 py-4 md:hidden">
+
+    <Link href="#home" onClick={() => setOpen(false)}>Home</Link>
+    <Link href="#about" onClick={() => setOpen(false)}>About</Link>
+    <Link href="#rules" onClick={() => setOpen(false)}>Rules</Link>
+    <Link href="#faq" onClick={() => setOpen(false)}>FAQs</Link>
+    <Link href="#login" onClick={() => setOpen(false)}>Login</Link>
+  </div>
+)}
 
 
 
