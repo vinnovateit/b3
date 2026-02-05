@@ -1,7 +1,6 @@
 import SetupLayout from "@/app/components/SetupLayout";
 import SetupHeader from "@/app/components/SetupHeader";
-import Button from "@/app/components/Button";
-
+import CustomButton from "@/app/components/CustomButton";
 export default function CodePage() {
 	return (
 		<SetupLayout>
@@ -16,9 +15,9 @@ export default function CodePage() {
 				style={{ height: "20vh" }}
 				className="flex items-start border-2 border-red-500"
 			>
-				<Button className="px-15 py-7 rounded-xl text-lg font-medium w-2/12">
+				<CustomButton className="px-15 py-7 rounded-xl text-lg font-medium w-2/12">
 					Next Step
-				</Button>
+				</CustomButton>
 			</div>
 		</SetupLayout>
 	);

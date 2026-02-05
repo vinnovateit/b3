@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ChevronDown } from "lucide-react";
 import SetupLayout from "../../components/SetupLayout";
-import Button from "../../components/Button";
+import CustomButton from "../../components/CustomButton";
 
 // --- 1. Custom GSAP Input ---
 const CustomInput = ({ label, placeholder, value, onChange }) => {
@@ -274,7 +274,7 @@ export default function SetupProfilePage() {
 
                 {/* Footer Section */}
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button 
+                    <CustomButton 
                         size="lg" 
                         text="Next Step" 
                         onClick={() => console.log({ name, residence, hostelType, block })}
