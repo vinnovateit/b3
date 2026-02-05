@@ -49,5 +49,5 @@ export default function Home() {
 				<Footer />
 			</section>
 		</main>
-	);
+  );
 }

@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React from "react";
+import { useEffect, useState } from "react";
 
 const CornerShape = ({ className }) => (
-  <svg className={`absolute w-16 h-16 ${className}`} viewBox="0 0 100 100" fill="none">
-    <path 
-      d="M 10,20 H 45 L 65,40 V 75" 
-      stroke="#0A9143" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-      className="drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]"
-    />
-  </svg>
+	<svg
+		className={`absolute w-16 h-16 ${className}`}
+		viewBox="0 0 100 100"
+		fill="none"
+	>
+		<path
+			d="M 10,20 H 45 L 65,40 V 75"
+			stroke="#0A9143"
+			strokeWidth="3"
+			strokeLinecap="round"
+			className="drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]"
+		/>
+	</svg>
 );
 
-
 const Loader = () => {
-  const [showDiv, setDiv] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDiv(true);;
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [])
-  return (
-    <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden text-white">
-    <div className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center isolate"></div>  
+	const [showDiv, setDiv] = useState(false);
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDiv(true);
+		}, 1000);
+		return () => clearTimeout(timer);
+	}, []);
+	return (
+		<div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden text-white">
+			<div className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center isolate"></div>
 
-
-
-
-      <style>{`
+			<style>{`
 
 
     /*FADE-IN LOADING TEXT*/
@@ -352,123 +352,121 @@ const Loader = () => {
         }
        `}</style>
 
-      <CornerShape className="top-8 left-8 -rotate-90" />
-      <CornerShape className="top-8 right-8 " />
-      <CornerShape className="bottom-8 left-8 -rotate-180" />
-      <CornerShape className="bottom-8 right-8 rotate-90" />
-      
-      {/* Background grid */}
-      <div className="absolute inset-0 grid-lines"></div>
+			<CornerShape className="top-8 left-8 -rotate-90" />
+			<CornerShape className="top-8 right-8 " />
+			<CornerShape className="bottom-8 left-8 -rotate-180" />
+			<CornerShape className="bottom-8 right-8 rotate-90" />
 
-      {/* Crosshair */}
-      <div className="absolute inset-0 crosshair"></div>
+			{/* Background grid */}
+			<div className="absolute inset-0 grid-lines"></div>
 
-      {/* Corner decorations */}
-      <div className="hud-corner hud-tl"></div>
-      <div className="hud-corner hud-tr"></div>
-      <div className="hud-corner hud-bl"></div>
-      <div className="hud-corner hud-br"></div>
+			{/* Crosshair */}
+			<div className="absolute inset-0 crosshair"></div>
 
-      {/* loading text fade-in*/}
+			{/* Corner decorations */}
+			<div className="hud-corner hud-tl"></div>
+			<div className="hud-corner hud-tr"></div>
+			<div className="hud-corner hud-bl"></div>
+			<div className="hud-corner hud-br"></div>
 
-      <div className="absolute left-10 top-1/2 -translate-y-1/2">
-          <div className="text-[#ffff] font-bold text-xl tracking-[0.4em]"
-          style={{ animation: 'edgeSlideLeft 7s linear infinite' }}>
-            LOADING</div>
-        </div>
-        <div className="absolute right-10 top-1/2 -translate-y-1/2">
-          <div className="text-[#ffff] font-bold text-xl tracking-[0.6em] opacity-0" style={{ animation: 'edgeSlideRight 7s linear infinite' }}>LOADING</div>
-        </div>
+			{/* loading text fade-in*/}
 
-        {/*VERTICAL BARS*/}
-        {/* LEFT BAR */}
+			{/* Animated LOADING text - hidden on mobile */}
+			{/* Animated LOADING text - desktop only */}
+			<div className="hidden md:block absolute left-10 top-1/2 -translate-y-1/2">
+				<div
+					className="text-[#ffff] font-bold text-xl tracking-[0.4em]"
+					style={{ animation: "edgeSlideLeft 7s linear infinite" }}
+				>
+					LOADING
+				</div>
+			</div>
+			<div className="hidden md:block absolute right-10 top-1/2 -translate-y-1/2">
+				<div
+					className="text-[#ffff] font-bold text-xl tracking-[0.4em]"
+					style={{ animation: "edgeSlideRight 7s linear infinite" }}
+				>
+					LOADING
+				</div>
+			</div>
 
-      <div className="absolute left-11 top-[115px] bottom-[115px] w-1 bg-white/5">
-  <div className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]" 
-       style={{ animation: 'doubleFill 7.5s ease-in-out infinite' }}></div>
-</div>
+			{/*VERTICAL BARS*/}
+			{/* LEFT BAR */}
+			<div className="absolute left-11 top-28.75 bottom-28.75 w-1 bg-white/5">
+				<div
+					className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]"
+					style={{ animation: "doubleFill 7.5s ease-in-out infinite" }}
+				></div>
+			</div>
 
-{/* RIGHT BAR */}
-<div className="absolute right-13 top-[115px] bottom-[115px] w-1 bg-white/5">
-  <div className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]" 
-       style={{ animation: 'doubleFill 7.5s ease-in-out infinite' }}></div>
-</div>
-      
+			{/* RIGHT BAR - use same left/right value for symmetry */}
+			<div className="absolute right-11 top-28.75 bottom-28.75 w-1 bg-white/5">
+				<div
+					className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]"
+					style={{ animation: "doubleFill 7.5s ease-in-out infinite" }}
+				></div>
+			</div>
 
+			{/* Center orbital system */}
+			<div className="orbit-container">
+				{/* Outer rotating ring - centered, desktop only */}
+				<div
+					className="hidden md:block absolute top-1/2 left-1/2 w-87.5 h-87.5 border-[3px] border-[#0A9143] rounded-full"
+					style={{
+						marginLeft: "-175px",
+						marginTop: "-175px",
+						animation: "outerRing 12s linear infinite",
+					}}
+				></div>
 
+				{/* REVOLVING ELLIPSE SYSTEM - desktop only */}
+				<div className="hidden md:block ellipse-system">
+					<div className="orbit-set-1">
+						<div className="orbit orbit-1"></div>
+						<div className="orbit orbit-2"></div>
+					</div>
+					<div className="orbit-set-2">
+						<div className={`orbit orbit-3`}></div>
+						<div className="orbit orbit-4"></div>
+					</div>
+					{/* <div className="orbit orbit-5"></div> */}
+				</div>
 
+				{/* 3D Cubes in center */}
+				<div className="cube-scene">
+					{/* Outer Cube - Bigger */}
+					<div className="cube-outer">
+						<div className="cube-face-outer front"></div>
+						<div className="cube-face-outer back"></div>
+						<div className="cube-face-outer right"></div>
+						<div className="cube-face-outer left"></div>
+						<div className="cube-face-outer top"></div>
+						<div className="cube-face-outer bottom"></div>
 
-   {/* Center orbital system */}
-      <div className="orbit-container">
+						{/* Mid Cube - Medium size */}
+						<div className="cube-mid">
+							<div className="cube-face-mid front"></div>
+							<div className="cube-face-mid back"></div>
+							<div className="cube-face-mid right"></div>
+							<div className="cube-face-mid left"></div>
+							<div className="cube-face-mid top"></div>
+							<div className="cube-face-mid bottom"></div>
+						</div>
 
-        {/* Outer rotating ring - centered */}
-        <div
-          className="absolute top-1/2 left-1/2 w-87.5 h-87.5 border-[3px] border-[#0A9143] rounded-full"
-          style={{
-            marginLeft: '-175px',
-            marginTop: '-175px',
-            animation: 'outerRing 12s linear infinite'
-          }}
-        ></div>
-
-        {/* REVOLVING ELLIPSE SYSTEM - NOW WITH 5 ELLIPSES */}
-        <div className="ellipse-system">
-          <div className="orbit-set-1">
-            <div className="orbit orbit-1"></div>
-            <div className="orbit orbit-2"></div>
-          </div>
-          <div className="orbit-set-2">
-            <div className={`orbit orbit-3`}></div>
-            <div className="orbit orbit-4"></div>
-          </div>
-          {/* <div className="orbit orbit-5"></div> */}
-        </div>
-
-        {/* 3D Cubes in center */}
-        <div className="cube-scene">
-          {/* Outer Cube - Bigger */}
-          <div className="cube-outer">
-            <div className="cube-face-outer front"></div>
-            <div className="cube-face-outer back"></div>
-            <div className="cube-face-outer right"></div>
-            <div className="cube-face-outer left"></div>
-            <div className="cube-face-outer top"></div>
-            <div className="cube-face-outer bottom"></div>
-
-            {/* Mid Cube - Medium size */}
-            <div className="cube-mid">
-              <div className="cube-face-mid front"></div>
-              <div className="cube-face-mid back"></div>
-              <div className="cube-face-mid right"></div>
-              <div className="cube-face-mid left"></div>
-              <div className="cube-face-mid top"></div>
-              <div className="cube-face-mid bottom"></div>
-            </div>
-
-
-            {/* Inner Cube - Smaller, rotating opposite direction */}
-            <div className="cube-inner">
-              <div className="cube-face-inner front"></div>
-              <div className="cube-face-inner back"></div>
-              <div className="cube-face-inner right"></div>
-              <div className="cube-face-inner left"></div>
-              <div className="cube-face-inner top"></div>
-              <div className="cube-face-inner bottom"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-
-
-    </div>
-  );
+						{/* Inner Cube - Smaller, rotating opposite direction */}
+						<div className="cube-inner">
+							<div className="cube-face-inner front"></div>
+							<div className="cube-face-inner back"></div>
+							<div className="cube-face-inner right"></div>
+							<div className="cube-face-inner left"></div>
+							<div className="cube-face-inner top"></div>
+							<div className="cube-face-inner bottom"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
-
-
-
-
 export default Loader;
-
