@@ -127,9 +127,9 @@ export default function Hero() {
 					</div>
 				</div>
 				{/* Hero text stack */}
-				<div className="relative z-5 text-center pt-[15vh]">
+				<div className="relative z-5 text-center pt-24 sm:pt-32 md:pt-[15vh]">
 					<h1
-						className="text-[7rem] bg-clip-text text-transparent"
+						className="text-[clamp(5rem,22vw,10rem)] bg-clip-text text-transparent leading-tight"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -140,7 +140,7 @@ export default function Hero() {
 						B³
 					</h1>
 					<p
-						className="mt-1 text-[4.5rem] bg-clip-text text-transparent"
+						className="mt-1 text-[clamp(2.2rem,9vw,4.5rem)] bg-clip-text text-transparent leading-snug"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -151,11 +151,11 @@ export default function Hero() {
 						Build. Block. Break.
 					</p>
 				</div>
-				<div className="flex justify-center mt-12 mb-8">
+				<div className="flex justify-center mt-24 mb-40 md:mt-24 md:mb-44">
 					<CustomButton text="Explore Tracks" />
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[48vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
 					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
