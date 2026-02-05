@@ -1,9 +1,9 @@
 import CardsRow from "./components/CardsRow";
 import FAQ from "./components/FAQ";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero.jsx";
+import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
-import Footer from "./components/footer/footer";
+import Footer from "./components/Footer";
 
 export default function Home() {
 	return (
