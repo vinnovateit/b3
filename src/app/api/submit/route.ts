@@ -40,8 +40,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const team = await prisma.team.findUnique({
       where: { id: teamId },
       include: {
-        users: {
-          where: { email: session.user.email },
+        vitStudents: {
+          where: { 
+            user: {
+              email: session.user.email
+            }
+          },
           select: { id: true },
         },
       },
@@ -52,7 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return errorResponse("Team not found", 404);
     }
 
-    if (team.users.length === 0) {
+    if (team.vitStudents.length === 0) {
       logResponse("GET", "/api/submit", 403, Date.now() - startTime);
       return errorResponse("You are not a member of this team", 403);
     }
