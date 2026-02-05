@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import Button from "./button";
+import Button from "./Button";
 
 const CARDS = [
 	{ id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
