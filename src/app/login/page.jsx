@@ -3,10 +3,10 @@ import Button from "../components/Button";
 
 export default function LoginPage() {
 	return (
-		<div className="flex min-h-screen w-full">
+		<div className="flex flex-col md:flex-row min-h-screen w-full">
 			{/* Left: Gradient + Grid + Dots */}
 			<div
-				className="relative w-[60vw] h-screen overflow-hidden"
+				className="relative min-h-screen w-full md:w-[60vw] overflow-hidden hidden md:block"
 				style={{
 					background: "linear-gradient(0deg, #0CAC4F 0%, #040704 100%)",
 				}}
@@ -78,11 +78,11 @@ export default function LoginPage() {
 			</div>
 
 			{/* Right: Hero + Login UI */}
-			<div className="w-[40vw] h-screen bg-black flex flex-col">
+			<div className="w-full md:w-[40vw] h-screen bg-black flex flex-col">
 				{/* Top 50vh: Hero text, top-left with padding */}
 				<div className="flex flex-col items-start pt-16 pl-16 h-[50vh]">
 					<h1
-						className="text-[6rem] font-bold bg-clip-text text-transparent text-left"
+						className="text-[5rem] md:text-[4.5rem] font-bold bg-clip-text text-transparent text-left"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -93,7 +93,7 @@ export default function LoginPage() {
 						B³
 					</h1>
 					<p
-						className="text-3xl font-semibold text-gray-200 mb-4 text-left"
+						className="text-2xl md:text-2xl font-semibold text-gray-200 mb-4 text-left"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
