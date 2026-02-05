@@ -2,11 +2,26 @@
 import Button from "../components/CustomButton";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
+	const [isMobile, setIsMobile] = useState(false);
+
+	// Check if device is mobile
+	useEffect(() => {
+		const checkMobile = () => {
+			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+			const mobileCheck = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+			const widthCheck = window.innerWidth <= 768;
+			setIsMobile(mobileCheck || widthCheck);
+		};
+		
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+		return () => window.removeEventListener('resize', checkMobile);
+	}, []);
 
 	// Redirect logic after login
 	useEffect(() => {
@@ -34,6 +49,29 @@ export default function LoginPage() {
 				});
 		}
 	}, [status, session, router]);
+
+	// Show mobile warning if on mobile device
+	if (isMobile) {
+		return (
+			<div className="flex min-h-screen w-full items-center justify-center bg-black">
+				<div className="max-w-md mx-auto px-6 text-center">
+					<div className="mb-6">
+						<svg className="w-24 h-24 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+							<line x1="6" y1="12" x2="18" y2="12" stroke="currentColor" strokeWidth={2} />
+						</svg>
+					</div>
+					<h1 className="text-3xl font-bold text-white mb-4">Desktop Only</h1>
+					<p className="text-gray-300 text-lg mb-2">
+						This application is designed for desktop use only.
+					</p>
+					<p className="text-gray-400 text-sm">
+						Please access this website from a desktop or laptop computer for the best experience.
+					</p>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex min-h-screen w-full">

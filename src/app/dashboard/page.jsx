@@ -329,12 +329,6 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-5">
-            <button 
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="h-9 px-9 rounded-full bg-gray-600/70 hover:bg-gray-600/80 text-white text-sm"
-            >
-              Logout
-            </button>
             <div className="relative">
               <button
                 ref={avatarButtonRef}
@@ -347,20 +341,29 @@ export default function App() {
               {showProfilePopup && (
                 <div
                   ref={profilePopupRef}
-                  className="absolute right-0 top-full w-[220px] rounded-xl px-4 py-3 z-50"
+                  className="absolute right-0 top-full mt-2 w-[220px] rounded-xl px-4 py-3 z-50"
                   style={{
                     background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))',
-                    boxShadow: '0 4px 20px rgba(34,197,94,0.15)'
+                    boxShadow: '0 4px 20px rgba(34,197,94,0.15)',
+                    backdropFilter: 'blur(10px)'
                   }}
                 >
                   <div className="text-white text-base font-medium leading-tight">{dashboardData.user.name}</div>
                   <div className="text-gray-300 text-xs mt-1">{dashboardData.user.email}</div>
-                  <button 
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="mt-3 w-full rounded-full bg-gray-600/70 hover:bg-gray-600/80 text-white text-sm py-2"
-                  >
-                    Logout
-                  </button>
+                  <div className="mt-3 space-y-2">
+                    <button 
+                      onClick={() => router.push('/setup/profile')}
+                      className="w-full rounded-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 transition-colors"
+                    >
+                      Update Profile
+                    </button>
+                    <button 
+                      onClick={() => signOut({ callbackUrl: '/' })}
+                      className="w-full rounded-full bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium py-2 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

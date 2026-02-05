@@ -17,6 +17,14 @@ interface UserProfile {
   vitStudent?: {
     id: string;
     teamId: string | null;
+    name: string;
+    regNo: string;
+    year: number;
+    phone: string;
+    accommodation: string;
+    hostelType: string | null;
+    block: string | null;
+    room: string | null;
   } | null;
   createdAt: string;
   updatedAt: string;
@@ -52,6 +60,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             teamId: true,
+            name: true,
+            regNo: true,
+            year: true,
+            phone: true,
+            accommodation: true,
+            hostelType: true,
+            block: true,
+            room: true,
           },
         },
         createdAt: true,
@@ -110,6 +126,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             teamId: true,
+            name: true,
+            regNo: true,
+            year: true,
+            phone: true,
+            accommodation: true,
+            hostelType: true,
+            block: true,
+            room: true,
           },
         },
         createdAt: true,
@@ -136,6 +160,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             select: {
               id: true,
               teamId: true,
+              name: true,
+              regNo: true,
+              year: true,
+              phone: true,
+              accommodation: true,
+              hostelType: true,
+              block: true,
+              room: true,
             },
           },
           createdAt: true,

@@ -152,6 +152,7 @@ export default function SetupProfilePage() {
     const [roomNo, setRoomNo] = useState("");
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -160,7 +161,7 @@ export default function SetupProfilePage() {
         }
     }, [status, router]);
 
-    // Check if user has already completed setup
+    // Check if user is editing their profile or doing initial setup
     useEffect(() => {
         const checkSetup = async () => {
             if (status !== "authenticated") return;
@@ -170,12 +171,15 @@ export default function SetupProfilePage() {
                 const data = await response.json();
 
                 if (response.ok && data.data?.isRegistered && data.data?.vitStudent?.id) {
-                    // User has completed profile setup, redirect based on team status
-                    if (data.data?.vitStudent?.teamId) {
-                        router.push("/dashboard");
-                    } else {
-                        router.push("/setup/team");
-                    }
+                    // User has completed profile setup, pre-fill the form with existing data
+                    const vit = data.data.vitStudent;
+                    setRegNo(vit.regNo || "");
+                    setPhone(vit.phone || "");
+                    setResidence(vit.accommodation === "hostel" ? "Hosteller" : "Day Scholar");
+                    setHostelType(vit.hostelType === "mh" ? "Mens" : vit.hostelType === "lh" ? "Ladies" : "");
+                    setBlock(vit.block || "");
+                    setRoomNo(vit.room || "");
+                    setIsEditMode(true); // User is editing existing profile
                 }
             } catch (error) {
                 console.error("Error checking setup status:", error);
@@ -326,7 +330,8 @@ export default function SetupProfilePage() {
                 throw new Error(data.message || "Failed to save profile");
             }
 
-            router.push("/setup/team");
+            // Redirect based on context: dashboard if editing, team setup if new user
+            router.push(isEditMode ? "/dashboard" : "/setup/team");
         } catch (err) {
             setError(err.message);
             console.error("Profile save error:", err);
@@ -469,7 +474,7 @@ export default function SetupProfilePage() {
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
                     <Button 
                         size="lg" 
-                        text={isSaving ? "Saving..." : "Next Step"}
+                        text={isSaving ? "Saving..." : (isEditMode ? "Save and Go to Dashboard" : "Next Step")}
                         onClick={handleNextStep}
                         disabled={isSaving}
                     />
