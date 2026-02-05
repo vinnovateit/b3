@@ -616,7 +616,7 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							What is B³?
+							What is B³
 						</h2>
 
 						<p
@@ -628,11 +628,50 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							B³ (Block. Build. Break.) is a 24-hour Web3 hackathon where teams
-							transform existing Web2 projects into decentralized Web3
-							solutions.
+							B³ (B-Cube) is a 30-hour blockchain hackathon by VinnovateIT, one
+							of Yantra’26’s flagship events, where Web2 ideas are reimagined
+							and built on-chain.
 						</p>
 
+						<h3
+							className="text-[clamp(2.2rem,5vw,3.5rem)] font-semibold text-center mt-6 mb-2 bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Why Blockchain?
+						</h3>
+
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Most of the internet today runs on Web2, apps and platforms
+							controlled by companies that manage our data, content, and
+							experiences. It’s convenient, but do we really have true ownership
+							or control?
+						</p>
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Web3 changes the game. Powered by blockchain, it puts power back
+							in the hands of users with decentralized, secure, and transparent
+							systems where you own your identity and digital assets.
+						</p>
 						<p
 							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto text-center bg-clip-text text-transparent"
 							style={{
@@ -642,8 +681,9 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							Participants migrate architecture, integrate blockchain protocols,
-							and rework security and scalability for Web3.
+							It’s the shift from platforms controlling everything to people
+							building and owning the internet themselves, a smarter, fairer,
+							and more open web for everyone.
 						</p>
 					</div>
 				</div>
