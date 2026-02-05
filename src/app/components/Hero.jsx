@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Button from "./Button";
+import Button from "./CustomButton";
 
 export default function Hero() {
 	const cardRef = useRef(null);

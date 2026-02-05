@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import Button from "./Button";
+import Button from "./CustomButton";
 
 export default function Footer() {
   // REMOVED <HTMLDivElement> to fix the JSX error

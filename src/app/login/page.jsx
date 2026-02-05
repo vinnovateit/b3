@@ -1,7 +1,40 @@
 "use client";
-import Button from "../components/Button";
+import Button from "../components/CustomButton";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LoginPage() {
+	const router = useRouter();
+	const { data: session, status } = useSession();
+
+	// Redirect logic after login
+	useEffect(() => {
+		if (status === "authenticated" && session?.user?.email) {
+			// Check user registration status
+			fetch("/api/users/profile")
+				.then((res) => res.json())
+				.then((data) => {
+					if (data.success && data.data) {
+						// If user is registered and has VIT student profile, go to dashboard
+						if (data.data.isRegistered && data.data.vitStudent?.id) {
+							router.push("/dashboard");
+						} else {
+							// New user - go to setup
+							router.push("/setup/profile");
+						}
+					} else {
+						// Default to setup
+						router.push("/setup/profile");
+					}
+				})
+				.catch(() => {
+					// On error, default to setup
+					router.push("/setup/profile");
+				});
+		}
+	}, [status, session, router]);
+
 	return (
 		<div className="flex min-h-screen w-full">
 			{/* Left: Gradient + Grid + Dots */}
@@ -143,8 +176,12 @@ export default function LoginPage() {
 					{/* 3. Google login button */}
 					<Button
 						className="bg-green-500 hover:bg-green-600 rounded-full flex items-center gap-2 px-4 py-2 text-base font-semibold shadow-lg min-w-[180px] max-w-[220px]"
-						onClick={() => {
-							/* Google login logic here */
+						onClick={async () => {
+							try {
+								await signIn("google");
+							} catch (error) {
+								console.error("Login failed:", error);
+							}
 						}}
 					>
 						<svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="white">

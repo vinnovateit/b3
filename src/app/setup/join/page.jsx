@@ -1,25 +1,104 @@
-import SetupLayout from "@/app/components/SetupLayout";
-import SetupHeader from "@/app/components/SetupHeader";
-import Button from "@/app/components/Button";
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import gsap from "gsap";
+import SetupLayout from "../../components/SetupLayout";
+import Button from "../../components/CustomButton";
 
-export default function JoinPage() {
-	return (
-		<SetupLayout>
-			<SetupHeader />
-			<div
-				style={{ height: "50vh" }}
-				className="flex items-end border-2 gap-4 pb-6    border-red-500"
-			></div>
+const CustomInput = ({ label, placeholder, value, onChange }) => {
+    const lineRef = useRef(null);
+    return (
+        <div className="flex flex-col gap-3 w-full group relative">
+            <label className="text-3xl font-bold text-white mb-2">{label}</label>
+            <input
+                type="text"
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                onFocus={() => gsap.to(lineRef.current, { scaleX: 1, duration: 0.4, ease: "power2.out" })}
+                onBlur={() => gsap.to(lineRef.current, { scaleX: 0, duration: 0.3, ease: "power2.in" })}
+                className="w-full bg-transparent border-b border-white/20 py-4 text-xl text-white placeholder:text-white/50 focus:outline-none transition-colors"
+            />
+            <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 origin-left scale-x-0" />
+        </div>
+    );
+};
 
-			{/* Button: 15vh, align top-left */}
-			<div
-				style={{ height: "20vh" }}
-				className="flex items-start border-2 border-red-500"
-			>
-				<Button className="px-15 py-7 rounded-xl text-lg font-medium w-2/12">
-					Next Step
-				</Button>
-			</div>
-		</SetupLayout>
-	);
+export default function JoinTeamPage() {
+    const router = useRouter();
+    const { status } = useSession();
+    const containerRef = useRef(null);
+    const stripRef = useRef(null);
+    const [teamCode, setTeamCode] = useState("");
+
+    // Redirect if not authenticated
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/login");
+        }
+    }, [status, router]);
+
+    // Check if user already has a team
+    useEffect(() => {
+        const checkTeam = async () => {
+            if (status !== "authenticated") return;
+
+            try {
+                const response = await fetch("/api/users/profile");
+                const data = await response.json();
+
+                if (response.ok && data.data?.vitStudent?.teamId) {
+                    // User already has a team, redirect to dashboard
+                    router.push("/dashboard");
+                }
+            } catch (error) {
+                console.error("Error checking team status:", error);
+            }
+        };
+
+        checkTeam();
+    }, [status, router]);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.from(".gsap-entry", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 });
+            if(stripRef.current) {
+                gsap.to(stripRef.current, { yPercent: -66.66, duration: 2.5, ease: "power3.inOut", delay: 0.2 });
+            }
+        }, containerRef);
+        return () => ctx.revert();
+    }, []);
+
+    const handleJoin = () => {
+        console.log("Joining team with code:", teamCode);
+    };
+
+    return (
+        <SetupLayout step={3}>
+            <div ref={containerRef} className="flex flex-col h-full">
+                <div className="h-[30vh] flex flex-col justify-end pb-10">
+                    <div className="gsap-entry flex items-end">
+                        <h1 className="text-7.5xl font-bold text-white leading-none" style={{ fontSize: "5.5rem" }}>B</h1>
+                        <div className="h-12 w-8 overflow-hidden relative mb-7.5 ml-1">
+                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-12">
+                                <span>1</span><span>2</span><span>3</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="gsap-entry"><p className="text-4xl text-gray-300 mt-4 font-light">Let’s set things up</p></div>
+                </div>
+
+                <div className="flex-1 flex flex-col gap-8 pt-10 relative z-20">
+                    <div className="gsap-entry w-full md:w-1/2">
+                        <CustomInput label="Enter a team code" placeholder="uxD34a" value={teamCode} onChange={(e) => setTeamCode(e.target.value)} />
+                    </div>
+                </div>
+
+                <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
+                    <Button size="lg" text="Join Team" onClick={handleJoin} />
+                </div>
+            </div>
+        </SetupLayout>
+    );
 }
