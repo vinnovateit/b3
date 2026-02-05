@@ -11,17 +11,27 @@ export default function Home() {
 		<main className="bg-[#040704]">
 			<SmoothScroller/>
 			<Navbar />
-			<Hero />
-			<WhoAreWe />
+
+			{/* Home Section */}
+			<section id="home">
+				<Hero />
+			</section>
+
+			{/* About Section */}
+			<section id="about">
+				<WhoAreWe />
+			</section>
+
 			{/* Timeline Section */}
-			<section className="relative overflow-visible">
+			<section id="timeline" className="relative overflow-visible">
 				<CardsRow />
 			</section>
 
 			{/* FAQ Section */}
 			<section
+				id="faq"
 				className="relative overflow-hidden bg-[#040704] z-10"
-				style={{ marginTop: "-10px" }} // Small overlap to hide the seam
+				style={{ marginTop: "-10px" }}
 			>
 				<FAQ />
 				<Footer />
