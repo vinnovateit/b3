@@ -237,13 +237,13 @@ export default function CardsRow() {
 				}}
 			/>
 
-			<div className="w-full absolute top-6 md:top-9 left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-linear-to-b from-white to-gray-400 bg-clip-text text-transparent font-normal z-10 select-none">
+			<div className="w-full absolute top-6 md:top-9 left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-linear-to-b from-white to-gray-400 bg-clip-text text-transparent font-sans font-bold z-10 select-none">
 				Timeline
 			</div>
 
 			<div className="flex flex-col items-start justify-center grow pt-30 md:pt-50 relative z-10 overflow-visible">
 				{/* Original Left Alignment maintained */}
-				<div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-normal text-white mb-4 md:mb-8 transition-all duration-500">
+				<div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-sans text-white mb-4 md:mb-8 transition-all duration-500">
 					{activeIndex <= 10
 						? "Day 1 - Build & Break In"
 						: "Day 2 - Stabilise & Ship"}
