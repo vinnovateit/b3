@@ -5,16 +5,11 @@ import FAQ from "./components/FAQ";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
-import Footer from "./components/footer/footer";
-import Loader from "./components/Loader";
-
-// src/app/page.js
-
-
+import Footer from "./components/Footer";
+import SmoothScroller from "./components/SmoothScroller";
 import { useEffect, useState } from 'react';
-
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 7000);
@@ -23,33 +18,35 @@ export default function Home() {
 
   if (loading) return <Loader />;
 
-  return (
-    <main>
-      {/* your existing home page content */}
-    </main>
-  );
+	return (
+		<main className="bg-[#040704]">
+			<SmoothScroller/>
+			<Navbar />
+
+			{/* Home Section */}
+			<section id="home">
+				<Hero />
+			</section>
+
+			{/* About Section */}
+			<section id="about">
+				<WhoAreWe />
+			</section>
+
+			{/* Timeline Section */}
+			<section id="timeline" className="relative overflow-visible">
+				<CardsRow />
+			</section>
+
+			{/* FAQ Section */}
+			<section
+				id="faq"
+				className="relative overflow-hidden bg-[#040704] z-10"
+				style={{ marginTop: "-10px" }}
+			>
+				<FAQ />
+				<Footer />
+			</section>
+		</main>
+	);
 }
-
-
-// export default function Home() {
-//   return (
-//     <main className="bg-[#040704]">
-//       <Navbar />
-//       <Hero />
-//       <WhoAreWe />
-//       {/* Timeline Section */}
-//       <section className="relative overflow-visible">
-//         <CardsRow />
-//       </section>
-
-//       {/* FAQ Section */}
-//       <section 
-//         className="relative overflow-hidden bg-[#040704] z-10" 
-//         style={{ marginTop: '-10px' }} // Small overlap to hide the seam
-//       >
-//       <FAQ />
-//       <Footer />
-//       </section>
-//     </main>
-//   );
-// }

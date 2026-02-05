@@ -4,9 +4,9 @@ export default function Card({ isActive = false, index = 1, data = {} }) {
   const borderRadius = isActive ? "40px" : "70px";
 
   return (
-    <div className="flex-shrink-0">
+    <div className="shrink-0 font-sans">
       <div
-        className="p-[2px] transition-all duration-700 ease-in-out"
+        className="p-0.5 transition-all duration-700 ease-in-out"
         style={{
           borderRadius: borderRadius,
           background: isActive
@@ -23,12 +23,11 @@ export default function Card({ isActive = false, index = 1, data = {} }) {
             height: "clamp(350px, 60vh, 460px)",
             borderRadius: isActive ? "38px" : "68px",
             background: "#000000",
-            fontFamily: 'Satoshi, sans-serif'
           }}
         >
           {/* IMAGE SECTION - Only for regular cards */}
           {isActive && data.image && !data.isEnd && (
-            <div className="w-full h-[40%] relative mt-6 px-6 transition-all duration-700 delay-300 ease-out opacity-100 scale-100">
+            <div className="w-full h-[40%] relative mt-6 px-6 transition-all duration-500 delay-750 ease-out opacity-100 scale-100">
                <img 
                 src={data.image} 
                 alt={data.title}
@@ -39,7 +38,7 @@ export default function Card({ isActive = false, index = 1, data = {} }) {
 
           {/* COLLAPSED INDEX */}
           <span 
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 font-medium ${isActive ? 'opacity-0 scale-50' : 'opacity-20 scale-100'}`}
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 font-sans font-medium ${isActive ? 'opacity-0 scale-50' : 'opacity-20 scale-100'}`}
             style={{ color: "white", fontSize: "clamp(32px, 5vw, 64px)" }}
           >
             {index}
@@ -51,7 +50,7 @@ export default function Card({ isActive = false, index = 1, data = {} }) {
               isActive ? 'opacity-100 delay-500 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
             } ${data.isEnd ? 'justify-center items-center text-center' : 'justify-start items-start mt-4'}`}
           >
-            <h2 className="text-white text-2xl md:text-4xl font-bold mb-2">
+            <h2 className="text-white text-2xl md:text-4xl font-bold font-sans mb-2">
               {data.isEnd ? data.text : data.title}
             </h2>
             
