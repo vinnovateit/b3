@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Button from "./CustomButton";
+import CustomButton from "./CustomButton";
 
 export default function Hero() {
 	const cardRef = useRef(null);
@@ -127,9 +127,9 @@ export default function Hero() {
 					</div>
 				</div>
 				{/* Hero text stack */}
-				<div className="relative z-5 text-center pt-[15vh]">
+				<div className="relative z-5 text-center pt-24 sm:pt-32 md:pt-[15vh]">
 					<h1
-						className="text-[7rem] bg-clip-text text-transparent"
+						className="text-[clamp(5rem,22vw,10rem)] bg-clip-text text-transparent leading-tight"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -140,7 +140,7 @@ export default function Hero() {
 						B³
 					</h1>
 					<p
-						className="mt-1 text-[4.5rem] bg-clip-text text-transparent"
+						className="mt-1 text-[clamp(2.2rem,9vw,4.5rem)] bg-clip-text text-transparent leading-snug"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -151,11 +151,11 @@ export default function Hero() {
 						Build. Block. Break.
 					</p>
 				</div>
-				<div className="flex justify-center mt-12 mb-8">
-					<Button text="Explore Tracks" />
+				<div className="flex justify-center mt-24 mb-40 md:mt-24 md:mb-44">
+					<CustomButton text="Explore Tracks" />
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[48vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
 					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
@@ -616,7 +616,7 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							What is B³?
+							What is B³
 						</h2>
 
 						<p
@@ -628,11 +628,50 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							B³ (Block. Build. Break.) is a 24-hour Web3 hackathon where teams
-							transform existing Web2 projects into decentralized Web3
-							solutions.
+							B³ (B-Cube) is a 30-hour blockchain hackathon by VinnovateIT, one
+							of Yantra’26’s flagship events, where Web2 ideas are reimagined
+							and built on-chain.
 						</p>
 
+						<h3
+							className="text-[clamp(2rem,5vw,3rem)] mb-6 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Why Blockchain?
+						</h3>
+
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Most of the internet today runs on Web2, apps and platforms
+							controlled by companies that manage our data, content, and
+							experiences. It’s convenient, but do we really have true ownership
+							or control?
+						</p>
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Web3 changes the game. Powered by blockchain, it puts power back
+							in the hands of users with decentralized, secure, and transparent
+							systems where you own your identity and digital assets.
+						</p>
 						<p
 							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto text-center bg-clip-text text-transparent"
 							style={{
@@ -642,8 +681,9 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							Participants migrate architecture, integrate blockchain protocols,
-							and rework security and scalability for Web3.
+							It’s the shift from platforms controlling everything to people
+							building and owning the internet themselves, a smarter, fairer,
+							and more open web for everyone.
 						</p>
 					</div>
 				</div>

@@ -1,6 +1,6 @@
 "use client";
 
-export default function Button({
+export default function CustomButton({
 	children,
 	text = "Read more",
 	className = "",

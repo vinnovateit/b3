@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import Button from "./CustomButton";
+import CustomButton from "./CustomButton";
 
 const CARDS = [
 	{ id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
 	{ id: 2, src: "/Whoareweimg/second.png", alt: "Team" },
 	{ id: 3, src: "/Whoareweimg/third.png", alt: "Team" },
-	{ id: 4, src: "/Whoareweimg/fourth.jpg", alt: "Team" },
+	{ id: 4, src: "/Whoareweimg/fourth.png", alt: "Team" },
 	{ id: 5, src: "/Whoareweimg/fifth.png", alt: "Team" },
 ];
 
@@ -330,16 +330,16 @@ const WhoAreWe = () => {
 			{/* TEXT CONTENT */}
 			<div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center mb-16">
 				<h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
-					Who Are We ?
+					What We’re about
 				</h2>
 				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3] mb-12 font-normal antialiased">
-					VinnovateIT is the one-stop destination for all you curious cats to
-					satisfy your hunger in the diverse world of computer science. In other
-					words… think of it as the place where genius meets curiosity — and the
-					result is pure magic. So come immerse yourself, in what we like to
-					believe is the closest thing to Hogwarts.
+					The builders of MessIT are back with another hackathon. VinnovateIT is
+					where curiosity turns into creation. A community of builders and
+					innovators exploring technology beyond classrooms, through hands-on
+					learning and real problem solving. We don’t just learn tech, we build
+					with it. Because real innovation begins when ideas meet execution.
 				</p>
-				<Button text="Learn More" link="https://vinnovateit.com/" />
+				<CustomButton text="Learn More" link="https://vinnovateit.com/" />
 			</div>
 
 			{/* --- CAROUSEL CONTAINER --- */}
@@ -368,8 +368,10 @@ const WhoAreWe = () => {
 									alt={card.alt}
 									fill
 									className="object-cover opacity-90"
-									priority={true}								unoptimized={true}
-								loading="eager"								/>
+									priority={true}
+									unoptimized={true}
+									loading="eager"
+								/>
 								<div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
 							</div>
 						</div>
