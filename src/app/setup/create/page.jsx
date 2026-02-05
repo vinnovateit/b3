@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Copy } from "lucide-react";
 import SetupLayout from "../../components/SetupLayout";
-import Button from "../../components/Button";
+import Button from "../../components/CustomButton";
 
 // --- Custom Input ---
 const CustomInput = ({ label, placeholder, value, onChange }) => {

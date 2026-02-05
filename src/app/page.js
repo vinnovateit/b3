@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/Footer";
-import SmoothScroller from "./components/SmoothScroller";
 
 export default function Home() {
 	return (
