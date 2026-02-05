@@ -1,11 +1,19 @@
 'use client';
 
 import React from 'react';
+import { useEffect, useState } from 'react';
 
 const Loader = () => {
+  const [showDiv, setDiv] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDiv(true);;
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [])
   return (
     <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden text-white">
-      
+
       <style>{`
 
         
@@ -49,8 +57,8 @@ const Loader = () => {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 400px;
-          height: 400px;
+          width: 450px;
+          height: 450px;
           perspective: 1000px;
           transform-style: preserve-3d;
         }
@@ -61,37 +69,72 @@ const Loader = () => {
           top: 50%;
           left: 50%;
           width: 300px;
-          height: 300px;
+          height: 400px;
           margin-left: -150px;
-          margin-top: -150px;
+          margin-top: -200px;
+          perspective: 800px;
           transform-style: preserve-3d;
           animation: revolveSystem 15s linear infinite;
         }
 
-        @keyframes revolveSystem {
-          0% { transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
-          100% { transform: rotateX(20deg) rotateY(360deg) rotateZ(0deg); }
-        }
+        /*@keyframes revolveSystem {
+           0% { transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
+           100% { transform: rotateX(20deg) rotateY(360deg) rotateZ(0deg); }
+         }*/
 
         .orbit {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: 300px;
-          height: 300px;
-          margin-left: -150px;
-          margin-top: -150px;
-          border: 2px solid rgba(0, 255, 65, 0.4);
+          width: 350px;
+          height: 350px;
+          margin-left: -175px;
+          margin-top: -175px;
+          border: 3px solid #0A9143;
           border-radius: 50%;
           transform-style: preserve-3d;
         }
 
         /* 5 orbits tilted at different angles (72 degrees apart for even distribution) */
-        .orbit-1 { transform: rotateX(0deg) rotateY(0deg); }
-        .orbit-2 { transform: rotateX(36deg) rotateY(0deg); }
-        .orbit-3 { transform: rotateX(72deg) rotateY(0deg); }
-        .orbit-4 { transform: rotateX(108deg) rotateY(0deg); }
+        .orbit-1 { transform: rotateX(110deg) rotateY(0deg); }
+        .orbit-2 { transform: rotateX(0deg) rotateY(70deg); }
+        .orbit-3 { transform: rotateX(65deg) rotateY(30deg); }
+        .orbit-4 { transform: rotateX(245deg) rotateY(210deg); }
         .orbit-5 { transform: rotateX(144deg) rotateY(0deg); }
+
+        /* Timeline is 6s total */
+
+        .orbit-set-1 {
+          animation: showHideA 7s linear infinite;
+        }
+
+        .orbit-set-2 {
+          animation: showHideB 7s linear infinite;
+        }
+
+        @keyframes showHideA {
+          0%   { opacity: 0; }
+          25%  { opacity: 0; }
+          30%  { opacity: 1; }
+          38%  { opacity: 1; }
+          42%  { opacity: 0; }
+          50%  { opacity: 0; }
+          80%  { opacity: 0; }
+          85%  { opacity: 1; }
+          100% { opacity: 1; }
+        }
+
+        @keyframes showHideB {
+          0%   { opacity: 0; }
+          52%  { opacity: 0; }
+          57%  { opacity: 1; }
+          66%  { opacity: 1; }
+          71%  { opacity: 0; }
+          80%  { opacity: 0; }
+          85%  { opacity: 1; }
+          100% { opacity: 1; }
+        }
+
 
         /* 3D Outer Cube - Made bigger */
         .cube-scene {
@@ -104,8 +147,8 @@ const Loader = () => {
         }
 
         .cube-outer {
-          width: 120px;
-          height: 120px;
+          width: 144px;
+          height: 144px;
           position: relative;
           transform-style: preserve-3d;
           animation: rotateCubeOuter 12s linear infinite;
@@ -118,26 +161,81 @@ const Loader = () => {
 
         .cube-face-outer {
           position: absolute;
-          width: 120px;
-          height: 120px;
-          border: 2px solid #00ff41;
+          width: 144px;
+          height: 144px;
+          border: 3px solid #0A9143;
           background: rgba(0, 255, 65, 0.05);
-          box-shadow: 
+          /*box-shadow: 
             0 0 15px rgba(0, 255, 65, 0.3),
-            inset 0 0 15px rgba(0, 255, 65, 0.1);
+            inset 0 0 15px rgba(0, 255, 65, 0.1);*/
         }
 
-        .cube-face-outer.front  { transform: rotateY(0deg) translateZ(60px); }
-        .cube-face-outer.back   { transform: rotateY(180deg) translateZ(60px); }
-        .cube-face-outer.right  { transform: rotateY(90deg) translateZ(60px); }
-        .cube-face-outer.left   { transform: rotateY(-90deg) translateZ(60px); }
-        .cube-face-outer.top    { transform: rotateX(90deg) translateZ(60px); }
-        .cube-face-outer.bottom { transform: rotateX(-90deg) translateZ(60px); }
+        .cube-face-outer.front  { transform: rotateY(0deg) translateZ(72px); }
+        .cube-face-outer.back   { transform: rotateY(180deg) translateZ(72px); }
+        .cube-face-outer.right  { transform: rotateY(90deg) translateZ(72px); }
+        .cube-face-outer.left   { transform: rotateY(-90deg) translateZ(72px); }
+        .cube-face-outer.top    { transform: rotateX(90deg) translateZ(72px); }
+        .cube-face-outer.bottom { transform: rotateX(-90deg) translateZ(72px); }
+
+        /* Mid Cube - Between outer and inner */
+        .cube-mid {
+          width: 94px;
+          height: 94px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-left: -45px;
+          margin-top: -45px;
+          transform-style: preserve-3d;
+          animation: rotateCubeMid 10s linear infinite;
+        }
+
+        @keyframes rotateCubeMid {
+          0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+          100% { transform: rotateX(-360deg) rotateY(360deg) rotateZ(180deg); }
+        }
+
+        .cube-face-mid {
+          position: absolute;
+          width: 94px;
+          height: 94px;
+          border: 3px solid #0A9143;
+          background: rgba(0, 255, 65, 0.12);
+          /*box-shadow:
+            0 0 18px rgba(0, 255, 65, 0.4),
+            inset 0 0 18px rgba(0, 255, 65, 0.25);*/
+        }
+
+        /* Mid cube faces */
+        .cube-face-mid.front  { transform: rotateY(0deg) translateZ(47px); }
+        .cube-face-mid.back   { transform: rotateY(180deg) translateZ(47px); }
+        .cube-face-mid.right  { transform: rotateY(90deg) translateZ(47px); }
+        .cube-face-mid.left   { transform: rotateY(-90deg) translateZ(47px); }
+        .cube-face-mid.top    { transform: rotateX(90deg) translateZ(47px); }
+        .cube-face-mid.bottom { transform: rotateX(-90deg) translateZ(47px); }
+
+        /* Pulse animation for mid cube */
+        @keyframes facePulseMid {
+          0%, 100% { background: rgba(0, 255, 65, 0.12); }
+          50% { background: rgba(0, 255, 65, 0.3); }
+        }
+
+        .cube-face-mid {
+          animation: facePulseMid 2.5s ease-in-out infinite;
+        }
+
+        .cube-face-mid.front { animation-delay: 0s; }
+        .cube-face-mid.right { animation-delay: 0.4s; }
+        .cube-face-mid.back { animation-delay: 0.8s; }
+        .cube-face-mid.left { animation-delay: 1.2s; }
+        .cube-face-mid.top { animation-delay: 1.6s; }
+        .cube-face-mid.bottom { animation-delay: 2s; }
+
 
         /* Inner Cube - Smaller and rotating opposite direction */
         .cube-inner {
-          width: 60px;
-          height: 60px;
+          width: 48px;
+          height: 48px;
           position: absolute;
           top: 50%;
           left: 50%;
@@ -154,21 +252,21 @@ const Loader = () => {
 
         .cube-face-inner {
           position: absolute;
-          width: 60px;
-          height: 60px;
-          border: 2px solid #00ff41;
+          width: 48px;
+          height: 48px;
+          border: 3px solid #0A9143;
           background: rgba(0, 255, 65, 0.2);
-          box-shadow: 
+          /*box-shadow: 
             0 0 20px rgba(0, 255, 65, 0.5),
-            inset 0 0 20px rgba(0, 255, 65, 0.3);
+            inset 0 0 20px rgba(0, 255, 65, 0.3);*/
         }
 
-        .cube-face-inner.front  { transform: rotateY(0deg) translateZ(30px); }
-        .cube-face-inner.back   { transform: rotateY(180deg) translateZ(30px); }
-        .cube-face-inner.right  { transform: rotateY(90deg) translateZ(30px); }
-        .cube-face-inner.left   { transform: rotateY(-90deg) translateZ(30px); }
-        .cube-face-inner.top    { transform: rotateX(90deg) translateZ(30px); }
-        .cube-face-inner.bottom { transform: rotateX(-90deg) translateZ(30px); }
+        .cube-face-inner.front  { transform: rotateY(0deg) translateZ(24px); }
+        .cube-face-inner.back   { transform: rotateY(180deg) translateZ(24px); }
+        .cube-face-inner.right  { transform: rotateY(90deg) translateZ(24px); }
+        .cube-face-inner.left   { transform: rotateY(-90deg) translateZ(24px); }
+        .cube-face-inner.top    { transform: rotateX(90deg) translateZ(24px); }
+        .cube-face-inner.bottom { transform: rotateX(-90deg) translateZ(24px); }
 
         /* Pulsing animation for outer cube faces */
         @keyframes facePulseOuter {
@@ -214,7 +312,7 @@ const Loader = () => {
 .hud-corner::after {
   content: '';
   position: absolute;
-  background: #00ff41;
+  background: #0A9143;
 }
 
 /* horizontal line */
@@ -247,11 +345,11 @@ const Loader = () => {
 
       `}</style>
 
-      
+
 
       {/* Background grid */}
       <div className="absolute inset-0 grid-lines"></div>
-      
+
       {/* Crosshair */}
       <div className="absolute inset-0 crosshair"></div>
 
@@ -265,24 +363,28 @@ const Loader = () => {
 
       {/* Center orbital system */}
       <div className="orbit-container">
-        
+
         {/* Outer rotating ring - centered */}
-        <div 
-          className="absolute top-1/2 left-1/2 w-[350px] h-[350px] border-2 border-[#00ff41]/30 rounded-full" 
+        <div
+          className="absolute top-1/2 left-1/2 w-87.5 h-87.5 border-[3px] border-[#0A9143] rounded-full"
           style={{
             marginLeft: '-175px',
             marginTop: '-175px',
             animation: 'outerRing 12s linear infinite'
           }}
         ></div>
-        
+
         {/* REVOLVING ELLIPSE SYSTEM - NOW WITH 5 ELLIPSES */}
         <div className="ellipse-system">
-          <div className="orbit orbit-1"></div>
-          <div className="orbit orbit-2"></div>
-          <div className="orbit orbit-3"></div>
-          <div className="orbit orbit-4"></div>
-          <div className="orbit orbit-5"></div>
+          <div className="orbit-set-1">
+            <div className="orbit orbit-1"></div>
+            <div className="orbit orbit-2"></div>
+          </div>
+          <div className="orbit-set-2">
+            <div className={`orbit orbit-3`}></div>
+            <div className="orbit orbit-4"></div>
+          </div>
+          {/* <div className="orbit orbit-5"></div> */}
         </div>
 
         {/* 3D Cubes in center */}
@@ -295,7 +397,18 @@ const Loader = () => {
             <div className="cube-face-outer left"></div>
             <div className="cube-face-outer top"></div>
             <div className="cube-face-outer bottom"></div>
-            
+
+            {/* Mid Cube - Medium size */}
+            <div className="cube-mid">
+              <div className="cube-face-mid front"></div>
+              <div className="cube-face-mid back"></div>
+              <div className="cube-face-mid right"></div>
+              <div className="cube-face-mid left"></div>
+              <div className="cube-face-mid top"></div>
+              <div className="cube-face-mid bottom"></div>
+            </div>
+
+
             {/* Inner Cube - Smaller, rotating opposite direction */}
             <div className="cube-inner">
               <div className="cube-face-inner front"></div>
@@ -310,7 +423,7 @@ const Loader = () => {
 
       </div>
 
-      
+
 
     </div>
   );
