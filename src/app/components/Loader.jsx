@@ -3,6 +3,19 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 
+const CornerShape = ({ className }) => (
+  <svg className={`absolute w-16 h-16 ${className}`} viewBox="0 0 100 100" fill="none">
+    <path 
+      d="M 10,20 H 45 L 65,40 V 75" 
+      stroke="#0A9143" 
+      strokeWidth="3" 
+      strokeLinecap="round" 
+      className="drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]"
+    />
+  </svg>
+);
+
+
 const Loader = () => {
   const [showDiv, setDiv] = useState(false);
   useEffect(() => {
@@ -13,10 +26,38 @@ const Loader = () => {
   }, [])
   return (
     <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden text-white">
+    <div className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center isolate"></div>  
+
+
+
 
       <style>{`
 
-        
+
+    /*FADE-IN LOADING TEXT*/
+      @keyframes edgeSlideRight {
+  0% { transform: translateX(20px); opacity: 0; }
+  28% {transform: translateX(-40px); opacity: 1;}
+  71% { transform: translateX(-40px); opacity: 1;}
+  100%{transform: translateX(-60px); opacity: 0;}
+}
+
+@keyframes edgeSlideLeft {
+  0% { transform: translateX(-20px); opacity: 0; }
+  28% {transform: translateX(40px); opacity: 1;}
+  71% { transform: translateX(40px); opacity: 1;}
+  100%{transform: translateX(60px); opacity: 0;}
+}
+  /*VERTICAL BARS*/
+
+@keyframes doubleFill {
+  0% { height: 0%; opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { height: 100%; opacity: 0; }
+}
+
+ 
+
         /* Grid lines */
         .grid-lines {
           background-image: 
@@ -214,11 +255,12 @@ const Loader = () => {
         .cube-face-mid.top    { transform: rotateX(90deg) translateZ(47px); }
         .cube-face-mid.bottom { transform: rotateX(-90deg) translateZ(47px); }
 
-        /* Pulse animation for mid cube */
+        /* Pulse animation for mid cube 
         @keyframes facePulseMid {
           0%, 100% { background: rgba(0, 255, 65, 0.12); }
           50% { background: rgba(0, 255, 65, 0.3); }
-        }
+        }*/
+          
 
         .cube-face-mid {
           animation: facePulseMid 2.5s ease-in-out infinite;
@@ -268,11 +310,11 @@ const Loader = () => {
         .cube-face-inner.top    { transform: rotateX(90deg) translateZ(24px); }
         .cube-face-inner.bottom { transform: rotateX(-90deg) translateZ(24px); }
 
-        /* Pulsing animation for outer cube faces */
+        /* Pulsing animation for outer cube faces 
         @keyframes facePulseOuter {
           0%, 100% { background: rgba(0, 255, 65, 0.05); }
           50% { background: rgba(0, 255, 65, 0.15); }
-        }
+        }*/
 
         .cube-face-outer {
           animation: facePulseOuter 3s ease-in-out infinite;
@@ -285,11 +327,11 @@ const Loader = () => {
         .cube-face-outer.top { animation-delay: 2s; }
         .cube-face-outer.bottom { animation-delay: 2.5s; }
 
-        /* Pulsing animation for inner cube faces */
+        /* Pulsing animation for inner cube faces 
         @keyframes facePulseInner {
           0%, 100% { background: rgba(0, 255, 65, 0.2); }
           50% { background: rgba(0, 255, 65, 0.4); }
-        }
+        }*/
 
         .cube-face-inner {
           animation: facePulseInner 2s ease-in-out infinite;
@@ -301,52 +343,20 @@ const Loader = () => {
         .cube-face-inner.left { animation-delay: 1s; }
         .cube-face-inner.top { animation-delay: 1.33s; }
         .cube-face-inner.bottom { animation-delay: 1.66s; }
+
         /* HUD Corner Brackets */
-.hud-corner {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-}
+         @keyframes doubleFill {
+          0% { height: 0%; opacity: 0; }
+          10%, 90% { opacity: 1; }
+          100% { height: 100%; opacity: 0; }
+        }
+       `}</style>
 
-.hud-corner::before,
-.hud-corner::after {
-  content: '';
-  position: absolute;
-  background: #0A9143;
-}
-
-/* horizontal line */
-.hud-corner::before {
-  width: 28px;
-  height: 2px;
-}
-
-/* vertical line */
-.hud-corner::after {
-  width: 2px;
-  height: 28px;
-}
-
-/* Positions */
-.hud-tl { top: 24px; left: 24px; }
-.hud-tr { top: 24px; right: 24px; }
-.hud-bl { bottom: 24px; left: 24px; }
-.hud-br { bottom: 24px; right: 24px; }
-
-/* Direction tweaks */
-.hud-tr::before { right: 0; }
-.hud-tr::after { right: 0; }
-
-.hud-bl::before { bottom: 0; }
-.hud-bl::after { bottom: 0; }
-
-.hud-br::before { right: 0; bottom: 0; }
-.hud-br::after { right: 0; bottom: 0; }
-
-      `}</style>
-
-
-
+      <CornerShape className="top-8 left-8 -rotate-90" />
+      <CornerShape className="top-8 right-8 " />
+      <CornerShape className="bottom-8 left-8 -rotate-180" />
+      <CornerShape className="bottom-8 right-8 rotate-90" />
+      
       {/* Background grid */}
       <div className="absolute inset-0 grid-lines"></div>
 
@@ -359,9 +369,36 @@ const Loader = () => {
       <div className="hud-corner hud-bl"></div>
       <div className="hud-corner hud-br"></div>
 
+      {/* loading text fade-in*/}
+
+      <div className="absolute left-10 top-1/2 -translate-y-1/2">
+          <div className="text-[#ffff] font-bold text-xl tracking-[0.4em]"
+          style={{ animation: 'edgeSlideLeft 7s linear infinite' }}>
+            LOADING</div>
+        </div>
+        <div className="absolute right-10 top-1/2 -translate-y-1/2">
+          <div className="text-[#ffff] font-bold text-xl tracking-[0.6em] opacity-0" style={{ animation: 'edgeSlideRight 7s linear infinite' }}>LOADING</div>
+        </div>
+
+        {/*VERTICAL BARS*/}
+        {/* LEFT BAR */}
+
+      <div className="absolute left-11 top-[115px] bottom-[115px] w-1 bg-white/5">
+  <div className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]" 
+       style={{ animation: 'doubleFill 7.5s ease-in-out infinite' }}></div>
+</div>
+
+{/* RIGHT BAR */}
+<div className="absolute right-13 top-[115px] bottom-[115px] w-1 bg-white/5">
+  <div className="w-full bg-[#0A9143] shadow-[0_0_15px_#00ff41]" 
+       style={{ animation: 'doubleFill 7.5s ease-in-out infinite' }}></div>
+</div>
+      
 
 
-      {/* Center orbital system */}
+
+
+   {/* Center orbital system */}
       <div className="orbit-container">
 
         {/* Outer rotating ring - centered */}
