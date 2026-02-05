@@ -55,7 +55,7 @@ export default function SetupLayout({ children, step = 1 }) {
 
             {/* Inner Shadow Overlay */}
             <div 
-                className="absolute inset-0 z-[1] pointer-events-none"
+                className="absolute inset-0 z-1 pointer-events-none"
                 style={{ boxShadow: "inset 0 0 50px #14753B" }}
             />
             

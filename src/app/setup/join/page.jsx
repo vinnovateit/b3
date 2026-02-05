@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import SetupLayout from "../../components/SetupLayout";
-import Button from "../../components/Button";
+import Button from "../../components/CustomButton";
 
 const CustomInput = ({ label, placeholder, value, onChange }) => {
     const lineRef = useRef(null);
@@ -18,7 +18,7 @@ const CustomInput = ({ label, placeholder, value, onChange }) => {
                 onBlur={() => gsap.to(lineRef.current, { scaleX: 0, duration: 0.3, ease: "power2.in" })}
                 className="w-full bg-transparent border-b border-white/20 py-4 text-xl text-white placeholder:text-white/50 focus:outline-none transition-colors"
             />
-            <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-[2px] bg-green-500 origin-left scale-x-0" />
+            <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 origin-left scale-x-0" />
         </div>
     );
 };
@@ -48,8 +48,8 @@ export default function JoinTeamPage() {
                 <div className="h-[30vh] flex flex-col justify-end pb-10">
                     <div className="gsap-entry flex items-end">
                         <h1 className="text-7.5xl font-bold text-white leading-none" style={{ fontSize: "5.5rem" }}>B</h1>
-                        <div className="h-[48px] w-[32px] overflow-hidden relative mb-[30px] ml-1">
-                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-[48px]">
+                        <div className="h-12 w-8 overflow-hidden relative mb-7.5 ml-1">
+                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-12">
                                 <span>1</span><span>2</span><span>3</span>
                             </div>
                         </div>
@@ -64,7 +64,7 @@ export default function JoinTeamPage() {
                 </div>
 
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button size="lg" text="Join Team" onClick={handleJoin} />
+                    <CustomButton size="lg" text="Join Team" onClick={handleJoin} />
                 </div>
             </div>
         </SetupLayout>

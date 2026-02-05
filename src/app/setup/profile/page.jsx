@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ChevronDown, Plus, Link as LinkIcon } from "lucide-react";
 import SetupLayout from "../../components/SetupLayout";
-import Button from "../../components/Button";
+import CustomButton from "../../components/CustomButton";
 
 // --- Liquid Glass Card ---
 const TeamCard = ({ icon: Icon, title, description, isSelected, onClick }) => {
@@ -222,7 +222,14 @@ export default function SetupProfilePage() {
 
                 {/* Footer */}
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button size="lg" text="Next Step" onClick={handleNextStep} />
+                    <CustomButton
+                        size="lg"
+                        text="Next Step"
+                        onClick={() => {
+                            console.log({ name, residence, hostelType, block });
+                            handleNextStep();
+                        }}
+                    />
                 </div>
             </div>
         </SetupLayout>

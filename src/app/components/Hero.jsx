@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Button from "./Button";
+import CustomButton from "./CustomButton";
 
 export default function Hero() {
 	const cardRef = useRef(null);
@@ -152,7 +152,7 @@ export default function Hero() {
 					</p>
 				</div>
 				<div className="flex justify-center mt-12 mb-8">
-					<Button text="Explore Tracks" />
+					<CustomButton text="Explore Tracks" />
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
 				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">

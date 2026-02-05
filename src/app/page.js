@@ -9,7 +9,6 @@ import SmoothScroller from "./components/SmoothScroller";
 export default function Home() {
 	return (
 		<main className="bg-[#040704]">
-			<SmoothScroller/>
 			<Navbar />
 
 			{/* Home Section */}

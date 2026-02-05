@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import Button from "./Button";
+import CustomButton from "./CustomButton";
 
 const CARDS = [
 	{ id: 1, src: "/Whoareweimg/first.png", alt: "Team" },
@@ -339,7 +339,7 @@ const WhoAreWe = () => {
 					result is pure magic. So come immerse yourself, in what we like to
 					believe is the closest thing to Hogwarts.
 				</p>
-				<Button text="Learn More" link="https://vinnovateit.com/" />
+				<CustomButton text="Learn More" link="https://vinnovateit.com/" />
 			</div>
 
 			{/* --- CAROUSEL CONTAINER --- */}

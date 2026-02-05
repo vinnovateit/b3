@@ -20,7 +20,7 @@ const CustomInput = ({ label, placeholder, value, onChange }) => {
                 onBlur={() => gsap.to(lineRef.current, { scaleX: 0, duration: 0.3, ease: "power2.in" })}
                 className="w-full bg-transparent border-b border-white/20 py-4 text-xl text-white placeholder:text-white/50 focus:outline-none transition-colors"
             />
-            <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-[2px] bg-green-500 origin-left scale-x-0" />
+            <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 origin-left scale-x-0" />
         </div>
     );
 };
@@ -31,7 +31,7 @@ const CodeCard = ({ code }) => {
         <div 
             className="
                 code-card-entry opacity-0 scale-95
-                w-full md:w-[500px] h-[250px]
+                w-full md:w-125 h-62.5
                 flex flex-col justify-center items-center gap-6
                 bg-[#617B5F]/30 backdrop-blur-md
                 border border-white/20
@@ -119,8 +119,8 @@ export default function CreateTeamPage() {
                 <div className="h-[30vh] flex flex-col justify-end pb-10">
                     <div className="gsap-entry flex items-end">
                         <h1 className="text-7.5xl font-bold text-white leading-none" style={{ fontSize: "5.5rem" }}>B</h1>
-                        <div className="h-[48px] w-[32px] overflow-hidden relative mb-[30px] ml-1">
-                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-[48px]">
+                        <div className="h-12 w-8 overflow-hidden relative mb-7.5 ml-1">
+                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-12">
                                 <span>1</span><span>2</span><span>3</span>
                             </div>
                         </div>

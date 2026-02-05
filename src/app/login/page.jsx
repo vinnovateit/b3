@@ -1,5 +1,5 @@
 "use client";
-import Button from "../components/Button";
+import CustomButton from "../components/CustomButton";
 
 export default function LoginPage() {
 	return (
@@ -141,7 +141,7 @@ export default function LoginPage() {
 						Login with your VIT Email to access the dashboard
 					</div>
 					{/* 3. Google login button */}
-					<Button
+					<CustomButton
 						className="bg-green-500 hover:bg-green-600 rounded-full flex items-center gap-2 px-4 py-2 text-base font-semibold shadow-lg min-w-[180px] max-w-[220px]"
 						onClick={() => {
 							/* Google login logic here */
@@ -151,7 +151,7 @@ export default function LoginPage() {
 							<path d="M21.805 10.023h-9.765v3.954h5.617c-.242 1.242-1.484 3.648-5.617 3.648-3.375 0-6.133-2.789-6.133-6.25s2.758-6.25 6.133-6.25c1.922 0 3.211.82 3.953 1.523l2.703-2.633c-1.711-1.594-3.922-2.57-6.656-2.57-5.523 0-10 4.477-10 10s4.477 10 10 10c5.742 0 9.547-4.023 9.547-9.711 0-.656-.07-1.156-.156-1.531z" />
 						</svg>
 						<span className="whitespace-nowrap">Login with Google</span>
-					</Button>
+					</CustomButton>
 				</div>
 			</div>
 		</div>
