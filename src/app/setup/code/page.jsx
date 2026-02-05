@@ -1,6 +1,6 @@
 import SetupLayout from "@/app/components/SetupLayout";
 import SetupHeader from "@/app/components/SetupHeader";
-import CustomButton from "../components/CustomButton";
+import CustomButton from "@/app/components/CustomButton";
 export default function CodePage() {
 	return (
 		<SetupLayout>
