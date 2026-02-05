@@ -304,7 +304,7 @@ const FAQ = () => {
                 x: springConfig,
                 opacity: { duration: 0.2 },
               }}
-              className="relative z-10 w-full p-99 md:p-5"
+              className="relative z-10 w-full p-4 md:p-5"
             >
               <div className="space-y-4">
                 {FAQ_DATA[activeTab].map((item, index) => (
