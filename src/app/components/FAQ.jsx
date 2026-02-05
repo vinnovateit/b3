@@ -329,12 +329,12 @@ const FAQ = () => {
                     className={`
     group w-full flex flex-col
     px-3 py-3 md:pl-5 md:pr-2 md:py-2
-    bg-white/[0.06] hover:bg-white/[0.1]
-    backdrop-blur-[4px]
+    bg-white/6 hover:bg-white/10
+    backdrop-blur-xs
     border border-white/10 border-t-white/20 border-l-white/20
     rounded-[18px] cursor-pointer
     transition-colors duration-300
-    ${openIndex === index ? "bg-white/[0.12] border-white/20 shadow-xl" : ""}
+    ${openIndex === index ? "bg-white/12 border-white/20 shadow-xl" : ""}
   `}
                   >
                     {/* Question Header */}

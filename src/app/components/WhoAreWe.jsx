@@ -285,7 +285,7 @@ const WhoAreWe = () => {
 		>
 			{/* Top green gradient transition */}
 			<div
-				className="absolute -top-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none"
+				className="absolute -top-87.5 left-1/2 -translate-x-1/2 w-350 h-175 pointer-events-none"
 				style={{
 					background:
 						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
@@ -295,7 +295,7 @@ const WhoAreWe = () => {
 
 			{/* Green glow effects */}
 			<div
-				className="absolute top-[20%] -left-[150px] w-[400px] h-[400px] pointer-events-none opacity-50"
+				className="absolute top-[20%] -left-37.5 w-100 h-[400px] pointer-events-none opacity-50"
 				style={{
 					background:
 						"radial-gradient(circle at center, rgba(57, 221, 124, 0.4) 0%, rgba(57, 221, 124, 0.15) 40%, transparent 70%)",
@@ -339,7 +339,7 @@ const WhoAreWe = () => {
 					result is pure magic. So come immerse yourself, in what we like to
 					believe is the closest thing to Hogwarts.
 				</p>
-				<Button text="Read more" link="https://vinnovateit.com/" />
+				<Button text="Learn More" link="https://vinnovateit.com/" />
 			</div>
 
 			{/* --- CAROUSEL CONTAINER --- */}
