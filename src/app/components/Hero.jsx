@@ -8,16 +8,15 @@ export default function Hero() {
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		// Start animations immediately after a short delay (for loading screen)
 		const timer = setTimeout(() => {
 			setIsVisible(true);
-		}, 100); // Small delay to ensure page is ready
+		}, 100);
 
 		return () => clearTimeout(timer);
 	}, []);
 
 	return (
-		<main className="relative w-full bg-[#040704] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-hidden">
+		<main className="relative w-full bg-[#040704] text-white font-sans overflow-hidden">
 			<style jsx>{`
 				@keyframes traceEllipseLeft {
 					0% {
@@ -68,9 +67,9 @@ export default function Hero() {
 			{/* Scene root */}
 			<div className="relative w-full overflow-hidden">
 				{/* Triangle gradient wrapper */}
-				<div className="absolute inset-0 z-[1] pointer-events-none">
+				<div className="absolute inset-0 z-1 pointer-events-none">
 					<div
-						className="absolute left-1/2 top-[24vh] -translate-x-1/2 w-[1059px] h-[735px] opacity-68"
+						className="absolute left-1/2 top-[24vh] -translate-x-1/2 w-264.75 h-183.75 opacity-68"
 						style={{ filter: "blur(68px)" }}
 					>
 						{/* Main center glow */}
@@ -128,7 +127,7 @@ export default function Hero() {
 					</div>
 				</div>
 				{/* Hero text stack */}
-				<div className="relative z-[5] text-center pt-[15vh]">
+				<div className="relative z-5 text-center pt-[15vh]">
 					<h1
 						className="text-[7rem] bg-clip-text text-transparent"
 						style={{
@@ -156,9 +155,9 @@ export default function Hero() {
 					<Button text="Explore Tracks" />
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-[6] w-full max-w-[900px] min-h-[474px] h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
-					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-[1] pointer-events-none">
+					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
 						<svg
 							className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -585,7 +584,7 @@ export default function Hero() {
 					{/* Glass morph card - sits on top */}
 					<div
 						ref={cardRef}
-						className={`relative z-[2] p-6 px-6 md:p-14 md:px-12 rounded-3xl border border-white/20 transform transition-transform transition-opacity duration-1000 ease-out
+						className={`relative z-2 p-6 px-6 md:p-14 md:px-12 rounded-3xl border border-white/20 transform transition-transform duration-1000 ease-out
             ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-32"}`}
 						style={{
 							background: "rgba(255, 255, 255, 0.03)",
@@ -599,7 +598,7 @@ export default function Hero() {
 					>
 						{/* Attached ambients */}
 						<div
-							className="absolute -top-[120px] -left-[140px] w-[280px] h-[280px] pointer-events-none opacity-60"
+							className="absolute -top-30 -left-35 w-70 h-70 pointer-events-none opacity-60"
 							style={{
 								background:
 									"radial-gradient(circle at center, rgba(120, 255, 200, 0.85) 0%, rgba(120, 255, 200, 0.45) 35%, rgba(120, 255, 200, 0.2) 55%, transparent 75%)",
@@ -652,7 +651,7 @@ export default function Hero() {
 
 			{/* Bottom green gradient transition */}
 			<div
-				className="absolute -bottom-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-10"
+				className="absolute -bottom-87.5 left-1/2 -translate-x-1/2 w-350 h-175 pointer-events-none z-10"
 				style={{
 					background:
 						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",

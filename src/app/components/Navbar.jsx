@@ -107,7 +107,7 @@ const Navbar = () => {
 
 				{/* Login Button */}
 				<a
-					href="#login"
+					href="/login"
 					className="hidden md:flex items-center overflow-hidden
              rounded-full bg-green-500
              text-white text-sm font-medium

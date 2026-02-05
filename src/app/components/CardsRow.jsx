@@ -218,7 +218,7 @@ export default function CardsRow() {
 		<div className="w-full min-h-screen bg-[#040704] relative overflow-hidden flex flex-col">
 			{/* Inverted gradient matching WhoAreWe bottom */}
 			<div
-				className="absolute -top-[250px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-0"
+				className="absolute -top-62.5 left-1/2 -translate-x-1/2 w-350 h-175 pointer-events-none z-0"
 				style={{
 					background:
 						"radial-gradient(ellipse at center top, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, rgba(34, 82, 44, 0.15) 50%, transparent 70%)",
@@ -237,13 +237,13 @@ export default function CardsRow() {
 				}}
 			/>
 
-			<div className="w-full absolute top-6 md:top-9 left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-linear-to-b from-white to-gray-400 bg-clip-text text-transparent font-normal z-10 select-none">
+			<div className="w-full absolute top-6 md:top-9 left-0 text-[40px] md:text-[70px] leading-[100%] text-center bg-linear-to-b from-white to-gray-400 bg-clip-text text-transparent font-sans font-bold z-10 select-none">
 				Timeline
 			</div>
 
 			<div className="flex flex-col items-start justify-center grow pt-30 md:pt-50 relative z-10 overflow-visible">
 				{/* Original Left Alignment maintained */}
-				<div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-normal text-white mb-4 md:mb-8 transition-all duration-500">
+				<div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-sans text-white mb-4 md:mb-8 transition-all duration-500">
 					{activeIndex <= 10
 						? "Day 1 - Build & Break In"
 						: "Day 2 - Stabilise & Ship"}
@@ -301,7 +301,7 @@ export default function CardsRow() {
 
 			<div className="absolute bottom-6 right-6 md:bottom-8 md:right-12 z-50">
 				<div
-					className="w-30 md:w-42.5 h-12.5 md:h-17.5 rounded-[18px] md:rounded-3xl flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]"
+					className="w-30 md:w-42.5 h-12.5 md:h-17.5 rounded-[18px] md:rounded-3xl flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-0.5"
 					style={{
 						background:
 							"linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)",
