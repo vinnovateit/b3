@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import Button from "./Button";
+import CustomButton from "./CustomButton";
 
 export default function Footer() {
   // REMOVED <HTMLDivElement> to fix the JSX error
@@ -351,7 +351,7 @@ export default function Footer() {
                   />
                 </a>
               </div>
-              <Button
+              <CustomButton
               text="Let's Connect" link=""/>
             </div>
           </div>
