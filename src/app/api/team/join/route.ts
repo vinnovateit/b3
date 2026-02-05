@@ -32,9 +32,39 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const normalizedCode = teamCode.trim().toUpperCase();
 
-    // Find team by code
+    // Find user's VIT student record
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        vitStudent: {
+          select: {
+            id: true,
+            teamId: true,
+          },
+        },
+      },
+    });
+
+    if (!user?.vitStudent?.id) {
+      logResponse("POST", "/api/team/join", 400, Date.now() - startTime);
+      return errorResponse("Please complete your profile setup first", 400);
+    }
+
+    if (user.vitStudent.teamId) {
+      logResponse("POST", "/api/team/join", 400, Date.now() - startTime);
+      return errorResponse("You are already in a team. Leave your current team first.", 400);
+    }
+
+    // Find team by code and check member count
     const team = await prisma.team.findUnique({
       where: { code: normalizedCode },
+      include: {
+        vitStudents: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (!team) {
@@ -42,10 +72,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse("Team not found", 404);
     }
 
-    // Update user with team code
-    await prisma.user.update({
-      where: { email: session.user.email },
-      data: { teamCode: normalizedCode },
+    // Check if team is full (max 5 members)
+    if (team.vitStudents.length >= 5) {
+      logResponse("POST", "/api/team/join", 400, Date.now() - startTime);
+      return errorResponse("Team is full. Maximum 5 members allowed.", 400);
+    }
+
+    // Update VITStudent with team ID
+    await prisma.vITStudent.update({
+      where: { id: user.vitStudent.id },
+      data: { teamId: team.id },
     });
 
     logResponse("POST", "/api/team/join", 200, Date.now() - startTime);

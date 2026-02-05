@@ -39,7 +39,7 @@ export default function App() {
     miscLinks: '',
     ppt: '',
     description: '',
-    progressR1: ''
+    progress: ''
   });
 
   const [teamData, setTeamData] = useState(null);
@@ -52,6 +52,7 @@ export default function App() {
   const [showQrModal, setShowQrModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // All useEffect hooks must be before any conditional returns
   // Redirect if not authenticated
@@ -102,7 +103,7 @@ export default function App() {
                 miscLinks: teamData.data.otherLinks || '',
                 ppt: teamData.data.pptLink || '',
                 description: teamData.data.projectDescription || '',
-                progressR1: teamData.data.round1Progress || ''
+                progress: teamData.data.progressNote || ''
               });
 
               // Fetch QR code for team
@@ -204,12 +205,11 @@ export default function App() {
           projectTitle: formData.title,
           projectDescription: formData.description,
           track: formData.track,
-          roundNo: currentReview,
           githubLink: formData.github || null,
           figmaLink: formData.figma || null,
           pptLink: formData.ppt || null,
           otherLinks: formData.miscLinks || null,
-          progressNote: formData.progressR1 || null,
+          progressNote: formData.progress || null,
         }),
       });
 
@@ -288,14 +288,36 @@ export default function App() {
   // Dummy team members data
   return (
     <div
-      className="min-h-screen font-sans overflow-hidden"
+      className="h-screen font-sans overflow-hidden relative flex flex-col"
       style={{
         background:
           'radial-gradient(880px 320px at 30% 30%, rgba(34,197,94,0.20), transparent 62%), radial-gradient(760px 320px at 26% 78%, rgba(34,197,94,0.12), transparent 60%), linear-gradient(180deg, #050705, #0b120c)'
       }}
     >
+      {/* Discord Floating Banner - Bottom Right */}
+      <a
+        href="https://discord.gg/TaFq4KDR"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-40 group"
+      >
+        <div 
+          className="flex items-center gap-3 px-5 py-3 rounded-full border border-green-500/30 backdrop-blur-md transition-all hover:border-green-500/60 hover:shadow-lg hover:shadow-green-500/20"
+          style={{
+            background: 'linear-gradient(90deg, rgba(34,197,94,0.15), rgba(34,197,94,0.08))',
+          }}
+        >
+          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="white">
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+          </div>
+          <span className="text-white text-sm font-medium whitespace-nowrap">Find Teammates</span>
+        </div>
+      </a>
+
       {/* Top Header */}
-      <header className="mx-auto max-w-[1400px] px-6 pt-8 pb-3">
+      <header className="mx-auto w-full max-w-[1400px] px-6 pt-6 pb-3 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-normal">
@@ -346,10 +368,10 @@ export default function App() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1400px] px-6 pb-10">
-        <div className="grid grid-cols-[1fr_380px] gap-6">
+      <div className="mx-auto w-full max-w-[1400px] px-6 pb-6 flex-1 overflow-hidden">
+        <div className="grid grid-cols-[1fr_380px] gap-6 h-full">
           {/* Main Content */}
-          <main className="pt-6 space-y-6">
+          <main className="space-y-4 overflow-y-auto pr-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,197,94,0.3) transparent'}}>
           {/* Review Timeline Card */}
           <div 
             className="rounded-2xl p-6"
@@ -456,29 +478,29 @@ export default function App() {
                   <div className="text-gray-300 text-sm">Track</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.track}
                     onChange={(e) => setFormData((p) => ({ ...p, track: e.target.value }))}
-                    // SECURITY: backend must validate track input
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div>
                   <div className="text-gray-300 text-sm">Project Title</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.title}
                     onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
-                    // SECURITY: backend must validate project title
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div>
                   <div className="text-gray-300 text-sm">Description</div>
                   <textarea
-                    className="mt-2 w-full h-28 rounded-md bg-white/10 px-3 py-2 text-gray-200 text-sm resize-none outline-none"
+                    className="mt-2 w-full h-28 rounded-md bg-white/10 px-3 py-2 text-gray-200 text-sm resize-none outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.description}
                     onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
-                    // SECURITY: backend must validate description
+                    disabled={!isEditMode}
                   />
                 </div>
               </div>
@@ -488,39 +510,46 @@ export default function App() {
                   <div className="text-gray-300 text-sm">Github Link</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.github}
                     onChange={(e) => setFormData((p) => ({ ...p, github: e.target.value }))}
-                    // SECURITY: backend must validate GitHub link
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div>
                   <div className="text-gray-300 text-sm">Figma Link</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.figma}
                     onChange={(e) => setFormData((p) => ({ ...p, figma: e.target.value }))}
-                    // SECURITY: backend must validate Figma link
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div className="pt-8 flex flex-col items-center gap-4">
                   <button
-                    className="w-40 h-9 rounded-full bg-gray-500/70 text-white text-sm"
+                    className="w-40 h-9 rounded-full bg-gray-500/70 hover:bg-gray-600/70 text-white text-sm transition-colors"
+                    onClick={() => {
+                      setIsEditMode(!isEditMode);
+                      setError(null);
+                      setSuccessMessage(null);
+                    }}
                     onMouseEnter={(e) => handleButtonHover(e.currentTarget, 1.05)}
                     onMouseLeave={(e) => handleButtonHover(e.currentTarget, 1)}
                   >
-                    Edit
+                    {isEditMode ? 'Cancel' : 'Edit'}
                   </button>
-                  <button
-                    className="w-40 h-9 rounded-full bg-green-800/60 hover:bg-green-700/60 text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting || !teamData}
-                    onMouseEnter={(e) => !isSubmitting && handleButtonHover(e.currentTarget, 1.05)}
-                    onMouseLeave={(e) => !isSubmitting && handleButtonHover(e.currentTarget, 1)}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                  </button>
+                  {isEditMode && (
+                    <button
+                      className="w-40 h-9 rounded-full bg-green-800/60 hover:bg-green-700/60 text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting || !teamData}
+                      onMouseEnter={(e) => !isSubmitting && handleButtonHover(e.currentTarget, 1.05)}
+                      onMouseLeave={(e) => !isSubmitting && handleButtonHover(e.currentTarget, 1)}
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Submit'}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -529,29 +558,30 @@ export default function App() {
                   <div className="text-gray-300 text-sm">Miscellaneous Links</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.miscLinks}
                     onChange={(e) => setFormData((p) => ({ ...p, miscLinks: e.target.value }))}
-                    // SECURITY: backend must validate miscellaneous links
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div>
                   <div className="text-gray-300 text-sm">PPT Link</div>
                   <input
                     type="text"
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.ppt}
                     onChange={(e) => setFormData((p) => ({ ...p, ppt: e.target.value }))}
-                    // SECURITY: backend must validate PPT link
+                    disabled={!isEditMode}
                   />
                 </div>
                 <div>
-                  <div className="text-gray-300 text-sm">Progress in R1</div>
+                  <div className="text-gray-300 text-sm">Progress Update</div>
                   <textarea
-                    className="mt-2 w-full h-28 rounded-md bg-white/10 px-3 py-2 text-gray-200 text-sm resize-none outline-none"
-                    value={formData.progressR1}
-                    onChange={(e) => setFormData((p) => ({ ...p, progressR1: e.target.value }))}
-                    // SECURITY: backend must validate progress in R1
+                    className="mt-2 w-full h-28 rounded-md bg-white/10 px-3 py-2 text-gray-200 text-sm resize-none outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                    value={formData.progress}
+                    onChange={(e) => setFormData((p) => ({ ...p, progress: e.target.value }))}
+                    placeholder="Describe your current progress..."
+                    disabled={!isEditMode}
                   />
                 </div>
               </div>
@@ -561,7 +591,7 @@ export default function App() {
           </main>
 
           {/* Sidebar */}
-          <aside className="pt-6 space-y-6">
+          <aside className="space-y-4 overflow-y-auto pr-2" style={{scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,197,94,0.3) transparent'}}>
           {/* Team Details Card */}
           <div 
             className="rounded-2xl p-6"
@@ -703,35 +733,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Discord Invite Card */}
-          <div 
-            className="rounded-2xl p-6"
-            style={{
-              background: 'radial-gradient(520px 260px at 110% 120%, rgba(34,197,94,0.30), transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.35), 0 4px 22px rgba(34,197,94,0.14)'
-            }}
-          >
-            <div className="flex items-center gap-2 text-white text-xl font-medium mb-4">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
-              </svg>
-              <span>Find Teammates</span>
-            </div>
-
-            <div className="text-gray-300 text-sm mb-4">
-              Looking for teammates? Join our Discord community to connect with other participants!
-            </div>
-
-            <a
-              href="https://discord.gg/TaFq4KDR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full py-3 rounded-lg bg-green-800/60 hover:bg-green-700/60 text-white text-center font-medium transition-colors"
-            >
-              Join Discord Server
-            </a>
           </div>
           </aside>
         </div>

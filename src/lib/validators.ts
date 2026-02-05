@@ -35,7 +35,11 @@ export function validateSubmissionLinks(links: {
       } else {
         cleanedLinks.githubLink = trimmed;
       }
+    } else {
+      cleanedLinks.githubLink = null;
     }
+  } else {
+    cleanedLinks.githubLink = null;
   }
 
   // Figma link validation
@@ -49,7 +53,11 @@ export function validateSubmissionLinks(links: {
       } else {
         cleanedLinks.figmaLink = trimmed;
       }
+    } else {
+      cleanedLinks.figmaLink = null;
     }
+  } else {
+    cleanedLinks.figmaLink = null;
   }
 
   // PPT link validation (Google Slides, PowerPoint Online, etc.)
@@ -61,7 +69,11 @@ export function validateSubmissionLinks(links: {
       } else {
         cleanedLinks.pptLink = trimmed;
       }
+    } else {
+      cleanedLinks.pptLink = null;
     }
+  } else {
+    cleanedLinks.pptLink = null;
   }
 
   // Other links validation
@@ -77,7 +89,11 @@ export function validateSubmissionLinks(links: {
       } else {
         cleanedLinks.otherLinks = urls.join("\n");
       }
+    } else {
+      cleanedLinks.otherLinks = null;
     }
+  } else {
+    cleanedLinks.otherLinks = null;
   }
 
   return {

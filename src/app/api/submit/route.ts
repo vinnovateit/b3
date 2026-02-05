@@ -6,11 +6,10 @@ import type { NextRequest } from "next/server";
 import type { NextResponse } from "next/server";
 
 interface SubmissionRequest {
-  projectTitle:string;
-  projectDescription:string;
-  track:string;
+  projectTitle: string;
+  projectDescription: string;
+  track: string;
   teamId: string;
-  roundNo?: number;
   githubLink?: string | null;
   figmaLink?: string | null;
   pptLink?: string | null;
@@ -67,9 +66,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       figmaLink: team.figmaLink,
       pptLink: team.pptLink,
       otherLinks: team.otherLinks,
-      round1Progress: team.round1Progress,
-      round2Progress: team.round2Progress,
-      currentRound: team.roundNo,
+      progressNote: team.progressNote,
+      lastSubmittedAt: team.lastSubmittedAt,
     };
 
     logResponse("GET", "/api/submit", 200, Date.now() - startTime);
@@ -111,24 +109,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse("teamId is required and must be a string", 400);
     }
 
-    if (
-      typeof submissionData.roundNo !== "number" ||
-      !Number.isInteger(submissionData.roundNo) ||
-      submissionData.roundNo < 1 ||
-      submissionData.roundNo > 3
-    ) {
+    if (!submissionData.projectTitle?.trim()) {
       logResponse("POST", "/api/submit", 400);
-      return errorResponse("roundNo must be an integer between 1 and 3", 400);
+      return errorResponse("Project title is required", 400);
+    }
+
+    if (!submissionData.track?.trim()) {
+      logResponse("POST", "/api/submit", 400);
+      return errorResponse("Track is required", 400);
     }
 
     // Verify team exists and user is a member
     const team = await prisma.team.findUnique({
       where: { id: submissionData.teamId },
       include: {
-        users: {
-          where: { email: session.user.email },
-          select: { id: true },
-        },
+        vitStudents: {
+          where: { userId: { not: null } },
+          include: {
+            user: {
+              select: { email: true }
+            }
+          }
+        }
       },
     });
 
@@ -138,7 +140,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check if user is a team member
-    if (team.users.length === 0) {
+    const isMember = team.vitStudents.some(
+      student => student.user?.email === session.user.email
+    );
+
+    if (!isMember) {
       logResponse("POST", "/api/submit", 403, Date.now() - startTime);
       return errorResponse("You are not a member of this team", 403);
     }
@@ -153,41 +159,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!validation.isValid) {
       logResponse("POST", "/api/submit", 400, Date.now() - startTime);
-      return errorResponse("Invalid submission links", 400, validation.errors);
+      const errorMessage = validation.errors 
+        ? Object.entries(validation.errors).map(([field, msg]) => `${field}: ${msg}`).join(", ")
+        : "Invalid submission links";
+      return errorResponse(errorMessage, 400, validation.errors);
     }
 
-    // Update team with cleaned links
-    const progressFieldByRound: Record<number, "round1Progress" | "round2Progress"> = {
-      1: "round1Progress",
-      2: "round2Progress",
-    };
-
-    const progressField = progressFieldByRound[submissionData.roundNo];
-    const progressNote = submissionData.progressNote?.trim() || "";
-
-    // Build update data object
-    const updateData: any = {
-      githubLink: validation.cleanedLinks.githubLink || null,
-      figmaLink: validation.cleanedLinks.figmaLink || null,
-      pptLink: validation.cleanedLinks.pptLink || null,
-      otherLinks: validation.cleanedLinks.otherLinks || null,
-      [progressField]: progressNote || null,
-    };
-
-    // Add optional fields if provided
-    if (submissionData.projectTitle) {
-      updateData.projectTitle = submissionData.projectTitle.trim();
-    }
-    if (submissionData.projectDescription) {
-      updateData.projectDescription = submissionData.projectDescription.trim();
-    }
-    if (submissionData.track) {
-      updateData.track = submissionData.track.trim();
-    }
-
+    // Update team with latest submission data
     await prisma.team.update({
       where: { id: submissionData.teamId },
-      data: updateData,
+      data: {
+        projectTitle: submissionData.projectTitle.trim(),
+        projectDescription: submissionData.projectDescription?.trim() || null,
+        track: submissionData.track.trim(),
+        githubLink: validation.cleanedLinks.githubLink || null,
+        figmaLink: validation.cleanedLinks.figmaLink || null,
+        pptLink: validation.cleanedLinks.pptLink || null,
+        otherLinks: validation.cleanedLinks.otherLinks || null,
+        progressNote: submissionData.progressNote?.trim() || null,
+        lastSubmittedAt: new Date(),
+      },
     });
 
     logResponse("POST", "/api/submit", 200, Date.now() - startTime);
