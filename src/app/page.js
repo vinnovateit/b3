@@ -1,3 +1,5 @@
+'use client';
+
 import CardsRow from "./components/CardsRow";
 import FAQ from "./components/FAQ";
 import Navbar from "./components/Navbar";
@@ -5,10 +7,25 @@ import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/Footer";
 import SmoothScroller from "./components/SmoothScroller";
+import Loader from "./components/Loader";
+
+// src/app/page.js
+
+
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-	return (
-		<main className="bg-[#040704]">
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 7000);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (loading) return <Loader />;
+
+  return (
+    		<main className="bg-[#040704]">
 			<SmoothScroller/>
 			<Navbar />
 
@@ -37,5 +54,6 @@ export default function Home() {
 				<Footer />
 			</section>
 		</main>
-	);
+  );
 }
+
