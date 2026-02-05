@@ -1,0 +1,30 @@
+import { TEAM_NAME_MESSAGE, TEAM_NAME_REGEX } from "@/constants/validation";
+import { z } from "zod";
+
+/**
+ * Validation schema for updating team and its associated project.
+ */
+export const updateTeamSchema = z.object({
+    name: z.string().trim().min(3).max(50).regex(
+        TEAM_NAME_REGEX, TEAM_NAME_MESSAGE).optional(),
+
+    description: z.string().trim().max(250).optional(),
+    category: z.string().optional(),
+
+    projectTitle: z.string().trim().max(80).optional(),
+    projectDescription: z.string().trim().max(500).optional(),
+    track: z.string().optional(),
+
+    githubLink: z.string().trim().url("Invalid GitHub URL").optional(),
+    figmaLink: z.string().trim().url("Invalid Figma URL").optional(),
+    pptLink: z.string().trim().url("Invalid Presentation URL").optional(),
+    otherLinks: z.string().trim().optional(),
+
+})
+    .strict()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        {
+            message: "At least one field must be updated",
+        }
+    );
