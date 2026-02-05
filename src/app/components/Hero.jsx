@@ -634,7 +634,7 @@ export default function Hero() {
 						</p>
 
 						<h3
-							className="text-[clamp(2.2rem,5vw,3.5rem)] font-semibold text-center mt-6 mb-2 bg-clip-text text-transparent"
+							className="text-[clamp(2rem,5vw,3rem)] mb-6 text-center bg-clip-text text-transparent"
 							style={{
 								background:
 									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
