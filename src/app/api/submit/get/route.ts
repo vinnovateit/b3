@@ -42,11 +42,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         figmaLink: true,
         pptLink: true,
         otherLinks: true,
-        round1Progress: true,
-        round2Progress: true,
-        roundNo: true,
-        users: {
-          select: { email: true },
+        progressNote: true,
+        lastSubmittedAt: true,
+        vitStudents: {
+          select: { 
+            user: {
+              select: { email: true }
+            }
+          },
         },
       },
     });
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check if user is a member of the team
-    const isMember = team.users.some((u) => u.email === session.user?.email);
+    const isMember = team.vitStudents.some((vs) => vs.user?.email === session.user?.email);
     if (!isMember) {
       logResponse("POST", "/api/submit/get", 403, Date.now() - startTime);
       return errorResponse("You are not a member of this team", 403);
@@ -72,9 +75,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       figmaLink: team.figmaLink,
       pptLink: team.pptLink,
       otherLinks: team.otherLinks,
-      round1Progress: team.round1Progress,
-      round2Progress: team.round2Progress,
-      currentRound: team.roundNo,
+      progressNote: team.progressNote,
+      lastSubmittedAt: team.lastSubmittedAt,
     };
 
     logResponse("POST", "/api/submit/get", 200, Date.now() - startTime);
@@ -126,11 +128,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         figmaLink: true,
         pptLink: true,
         otherLinks: true,
-        round1Progress: true,
-        round2Progress: true,
-        roundNo: true,
-        users: {
-          select: { email: true },
+        progressNote: true,
+        lastSubmittedAt: true,
+        vitStudents: {
+          select: { 
+            user: {
+              select: { email: true }
+            }
+          },
         },
       },
     });
@@ -141,7 +146,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check if user is a member of the team
-    const isMember = team.users.some((u) => u.email === session.user?.email);
+    const isMember = team.vitStudents.some((vs) => vs.user?.email === session.user?.email);
     if (!isMember) {
       logResponse("GET", "/api/submit/get", 403, Date.now() - startTime);
       return errorResponse("You are not a member of this team", 403);
@@ -156,9 +161,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       figmaLink: team.figmaLink,
       pptLink: team.pptLink,
       otherLinks: team.otherLinks,
-      round1Progress: team.round1Progress,
-      round2Progress: team.round2Progress,
-      currentRound: team.roundNo,
+      progressNote: team.progressNote,
+      lastSubmittedAt: team.lastSubmittedAt,
     };
 
     logResponse("GET", "/api/submit/get", 200, Date.now() - startTime);

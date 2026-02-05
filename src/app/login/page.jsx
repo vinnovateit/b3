@@ -8,6 +8,7 @@ export default function LoginPage() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const [isMobile, setIsMobile] = useState(false);
+	const [isRedirecting, setIsRedirecting] = useState(false);
 
 	// Check if device is mobile
 	useEffect(() => {
@@ -25,7 +26,8 @@ export default function LoginPage() {
 
 	// Redirect logic after login
 	useEffect(() => {
-		if (status === "authenticated" && session?.user?.email) {
+		if (status === "authenticated" && session?.user?.email && !isRedirecting) {
+			setIsRedirecting(true);
 			// Check user registration status
 			fetch("/api/users/profile")
 				.then((res) => res.json())
@@ -48,7 +50,7 @@ export default function LoginPage() {
 					router.push("/setup/profile");
 				});
 		}
-	}, [status, session, router]);
+	}, [status, session, router, isRedirecting]);
 
 	// Show mobile warning if on mobile device
 	if (isMobile) {
@@ -68,6 +70,18 @@ export default function LoginPage() {
 					<p className="text-gray-400 text-sm">
 						Please access this website from a desktop or laptop computer for the best experience.
 					</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Show loading state while redirecting after login
+	if (isRedirecting || (status === "authenticated" && session?.user?.email)) {
+		return (
+			<div className="flex min-h-screen w-full items-center justify-center bg-black">
+				<div className="text-center">
+					<div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mb-4"></div>
+					<p className="text-white text-lg">Redirecting...</p>
 				</div>
 			</div>
 		);
