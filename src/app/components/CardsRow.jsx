@@ -218,7 +218,7 @@ export default function CardsRow() {
 		<div className="w-full min-h-screen bg-[#040704] relative overflow-hidden flex flex-col">
 			{/* Inverted gradient matching WhoAreWe bottom */}
 			<div
-				className="absolute -top-[250px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-0"
+				className="absolute -top-62.5 left-1/2 -translate-x-1/2 w-350 h-175 pointer-events-none z-0"
 				style={{
 					background:
 						"radial-gradient(ellipse at center top, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, rgba(34, 82, 44, 0.15) 50%, transparent 70%)",
@@ -301,7 +301,7 @@ export default function CardsRow() {
 
 			<div className="absolute bottom-6 right-6 md:bottom-8 md:right-12 z-50">
 				<div
-					className="w-30 md:w-42.5 h-12.5 md:h-17.5 rounded-[18px] md:rounded-3xl flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-[2px]"
+					className="w-30 md:w-42.5 h-12.5 md:h-17.5 rounded-[18px] md:rounded-3xl flex items-center justify-between relative group hover:brightness-125 transition-all duration-300 shadow-2xl overflow-hidden p-0.5"
 					style={{
 						background:
 							"linear-gradient(116.6deg, #8CFF84 0%, #0EB337 26.9%, #42D774 78.62%, #85FFB0 99.92%)",

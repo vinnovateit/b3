@@ -17,7 +17,7 @@ export default function Button({
 
 	return (
 		<button
-			className={`px-[25px] py-[12px] btn-gradient-border text-base font-normal text-white shadow-[0_4px_15px_rgba(0,0,0,0.2)] ${className}`}
+			className={`px-6.25 py-3 btn-gradient-border text-base font-normal text-white shadow-[0_4px_15px_rgba(0,0,0,0.2)] ${className}`}
 			onClick={handleClick}
 			{...props}
 		>
