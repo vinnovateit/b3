@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "./components/AuthProvider";
 
 const satoshi = localFont({
   src: [
@@ -24,8 +25,11 @@ const satoshi = localFont({
 });
 
 export const metadata = {
-  title: "B3",
+  title: "B3-Block Build Break",
   description: "Volumetric Spotlight Timeline",
+  icons: {
+    icon: "/Favicon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -36,7 +40,7 @@ export default function RootLayout({ children }) {
       <body
         className={satoshi.variable}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const NAV_ITEMS = [
 	{ label: "Home", href: "#home" },
@@ -30,6 +32,7 @@ const Navbar = () => {
 	const [show, setShow] = useState(true);
 	const [open, setOpen] = useState(false);
 	const lastScrollY = useRef(0);
+	const { data: session, status } = useSession();
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -105,37 +108,73 @@ const Navbar = () => {
 					</svg>
 				</button>
 
-				{/* Login Button */}
-				<a
-					href="/login"
-					className="hidden md:flex items-center overflow-hidden
+				{/* Login/Dashboard Button */}
+				{status === "loading" ? (
+					<div className="hidden md:flex items-center px-6 py-2 rounded-full bg-gray-500/50 text-white text-sm">
+						Loading...
+					</div>
+				) : session ? (
+					<Link
+						href="/dashboard"
+						className="hidden md:flex items-center overflow-hidden
              rounded-full bg-green-500
              text-white text-sm font-medium
              shadow-md hover:bg-green-600 transition"
-				>
-					{/* Left section */}
-					<span className="px-6 py-2">Login</span>
+					>
+						{/* Left section */}
+						<span className="px-6 py-2">Dashboard</span>
 
-					{/* Divider */}
-					<span className="h-full w-px bg-white/40" />
+						{/* Divider */}
+						<span className="h-full w-px bg-white/40" />
 
-					{/* Right icon section */}
-					<span className="px-4 py-2 flex items-center justify-center">
-						<svg
-							className="w-5 h-5"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						>
-							<path d="M10 17l5-5-5-5" />
-							<path d="M15 12H3" />
-							<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
-						</svg>
-					</span>
-				</a>
+						{/* Right icon section */}
+						<span className="px-4 py-2 flex items-center justify-center">
+							<svg
+								className="w-5 h-5"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="M10 17l5-5-5-5" />
+								<path d="M15 12H3" />
+							</svg>
+						</span>
+					</Link>
+				) : (
+					<a
+						href="/login"
+						className="hidden md:flex items-center overflow-hidden
+             rounded-full bg-green-500
+             text-white text-sm font-medium
+             shadow-md hover:bg-green-600 transition"
+					>
+						{/* Left section */}
+						<span className="px-6 py-2">Login</span>
+
+						{/* Divider */}
+						<span className="h-full w-px bg-white/40" />
+
+						{/* Right icon section */}
+						<span className="px-4 py-2 flex items-center justify-center">
+							<svg
+								className="w-5 h-5"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="M10 17l5-5-5-5" />
+								<path d="M15 12H3" />
+								<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
+							</svg>
+						</span>
+					</a>
+				)}
 				{/* Mobile menu */}
 				{open && (
 					<div
@@ -158,13 +197,25 @@ const Navbar = () => {
 								{item.label}
 							</a>
 						))}
-						<a
-							href="#login"
-							onClick={() => setOpen(false)}
-							className="hover:opacity-80 transition"
-						>
-							Login
-						</a>
+						{status === "loading" ? (
+							<div className="text-gray-400">Loading...</div>
+						) : session ? (
+							<Link
+								href="/dashboard"
+								onClick={() => setOpen(false)}
+								className="hover:opacity-80 transition"
+							>
+								Dashboard
+							</Link>
+						) : (
+							<a
+								href="/login"
+								onClick={() => setOpen(false)}
+								className="hover:opacity-80 transition"
+							>
+								Login
+							</a>
+						)}
 					</div>
 				)}
 			</div>
