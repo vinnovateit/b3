@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const satoshi = localFont({
   src: [
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
       <body
         className={satoshi.variable}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

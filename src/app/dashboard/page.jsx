@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, QrCode, TrendingUp, Users } from 'lucide-react';
+import { Link, TrendingUp, Users } from 'lucide-react';
 import gsap from 'gsap';
+import {QRCodeSVG} from "qrcode.react";
+import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 const REVIEW_SCHEDULE = {
   review1: '2026-02-01T10:00:00',
@@ -21,29 +24,31 @@ const getCurrentReview = () => {
 };
 
 export default function App() {
+  const router = useRouter();
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profilePopupRef = useRef(null);
   const avatarButtonRef = useRef(null);
 
   const [currentReview, setCurrentReview] = useState(getCurrentReview);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const dashboardData = {
+  
+  const [dashboardData, setDashboardData] = useState({
     user: {
-      name: 'Participant',
-      email: 'participant@vitstudent.ac.in'
+      name: '',
+      email: ''
     },
     team: {
-      name: 'Team Name',
-      id: 'TEAM_ID',
-      members: [
-        { name: 'Leader Name', regNo: 'REG_NO_1', role: 'leader' },
-        { name: 'Member Name', regNo: 'REG_NO_2', role: 'member' },
-        { name: 'Member Name', regNo: 'REG_NO_3', role: 'member' },
-        { name: 'Member Name', regNo: 'REG_NO_4', role: 'member' }
-      ]
+      name: '',
+      id: '',
+      members: []
     }
-  };
-
+  });
+  
+  const shareableLink = `https://team.example.com/invite/${dashboardData.team.code}`;
+  
   const [formData, setFormData] = useState({
     track: '',
     title: '',
@@ -55,13 +60,168 @@ export default function App() {
     progressR1: ''
   });
 
+  // Fetch user profile and team data on mount
   useEffect(() => {
-    const update = () => setCurrentReview(getCurrentReview());
-    update();
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        // Fetch user profile
+        const profileRes = await fetch('/api/users/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        if (!profileRes.ok) throw new Error('Failed to fetch profile');
+        const profileData = await profileRes.json();
+        
+        // Get team code from profile
+        const teamCode = profileData.data?.teamCode || '';
+        
+        // Redirect to join-team if user doesn't have a team
+        if (!teamCode) {
+          router.push('/join-team');
+          return;
+        }
+        
+        let teamData = { name: '', id: '', users: [] };
+        if (teamCode) {
+          // Fetch team data using team code
+          const teamRes = await fetch('/api/team/get', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teamCode })
+          });
+          if (teamRes.ok) {
+            const teamResponse = await teamRes.json();
+            teamData = teamResponse.data || teamData;
+          }
+        }
+        
+        setDashboardData({
+          user: {
+            name: profileData.data?.name || 'User',
+            email: profileData.data?.email || ''
+          },
+          team: {
+            name: teamData.name || '',
+            id: teamData.id || '',
+            code: teamData.code || teamCode,
+            members: (teamData.users || []).map((u) => ({
+              name: u.name || '',
+              email: u.email || '',
+              role: teamData.teamLeaderId === u.id ? 'leader' : 'member'
+            }))
+          }
+        });
+        
+        setError('');
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const intervalId = setInterval(update, 60 * 1000);
-    return () => clearInterval(intervalId);
+    fetchDashboardData();
   }, []);
+
+  // Handle form submission
+  const handleSubmitForm = async () => {
+    try {
+      setIsSubmitting(true);
+      setError('');
+      
+      if (!dashboardData.team.id) {
+        throw new Error('Team ID not available');
+      }
+      
+      const payload = {
+        teamId: dashboardData.team.id,
+        teamCode: dashboardData.team.code,
+        projectTitle: formData.title,
+        projectDescription: formData.description,
+        track: formData.track,
+        githubLink: formData.github || null,
+        figmaLink: formData.figma || null,
+        pptLink: formData.ppt || null,
+        otherLinks: formData.miscLinks || null,
+        progressNote: currentReview === 1 ? formData.progressR1 : null,
+        roundNo: currentReview
+      };
+      
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!response.ok) throw new Error('Failed to submit');
+      
+      alert('Submission successful!');
+      setFormData({
+        track: '',
+        title: '',
+        github: '',
+        figma: '',
+        miscLinks: '',
+        ppt: '',
+        description: '',
+        progressR1: ''
+      });
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      setError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle remove team member
+  const handleRemoveMember = async (email) => {
+    try {
+      setError('');
+      if (!dashboardData.team.code) {
+        throw new Error('Team code not available');
+      }
+      
+      const response = await fetch('/api/team/remove-member', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          teamCode: dashboardData.team.code,
+          userEmailToRemove: email
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to remove member');
+      
+      // Update local state
+      setDashboardData((prev) => ({
+        ...prev,
+        team: {
+          ...prev.team,
+          members: prev.team.members.filter((m) => m.email !== email)
+        }
+      }));
+    } catch (err) {
+      console.error('Error removing member:', err);
+      setError(err.message);
+    }
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: '/' });
+    } catch (err) {
+      console.error('Error logging out:', err);
+    }
+  };
 
   useEffect(() => {
     if (!showProfilePopup) return;
@@ -73,6 +233,14 @@ export default function App() {
       { autoAlpha: 1, scale: 1, y: 0, duration: 0.2, ease: 'power2.out' }
     );
   }, [showProfilePopup]);
+
+  useEffect(() => {
+    const update = () => setCurrentReview(getCurrentReview());
+    update();
+
+    const intervalId = setInterval(update, 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     if (!showProfilePopup) return;
@@ -91,6 +259,20 @@ export default function App() {
     document.addEventListener('mousedown', onMouseDown);
     return () => document.removeEventListener('mousedown', onMouseDown);
   }, [showProfilePopup]);
+
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-screen font-sans flex items-center justify-center"
+        style={{
+          background:
+            'radial-gradient(880px 320px at 30% 30%, rgba(34,197,94,0.20), transparent 62%), linear-gradient(180deg, #050705, #0b120c)'
+        }}
+      >
+        <div className="text-white text-xl">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   const closeProfilePopup = () => {
     if (!profilePopupRef.current) {
@@ -138,11 +320,14 @@ export default function App() {
             </h1>
             <p className="text-gray-400 text-sm mt-1">
               {/* SECURITY: backend will send team name and id */}
-              {dashboardData.team.name} : {dashboardData.team.id}
+              {dashboardData.team.name} : {dashboardData.team.code}
             </p>
           </div>
           <div className="flex items-center gap-5">
-            <button className="h-9 px-9 rounded-full bg-gray-600/70 hover:bg-gray-600/80 text-white text-sm">
+            <button 
+              onClick={handleLogout}
+              className="h-9 px-9 rounded-full bg-gray-600/70 hover:bg-gray-600/80 text-white text-sm"
+            >
               Logout
             </button>
             <div className="relative">
@@ -179,6 +364,11 @@ export default function App() {
         <div className="grid grid-cols-[1fr_380px] gap-6">
           {/* Main Content */}
           <main className="pt-6 space-y-6">
+          {error && (
+            <div className="rounded-2xl p-4 bg-red-500/20 border border-red-500/50 text-red-300 text-sm">
+              {error}
+            </div>
+          )}
           {/* Review Timeline Card */}
           <div 
             className="rounded-2xl p-6"
@@ -325,11 +515,13 @@ export default function App() {
                     Edit
                   </button>
                   <button
-                    className="w-40 h-9 rounded-full bg-green-800/60 text-white text-sm"
+                    onClick={handleSubmitForm}
+                    disabled={isSubmitting}
+                    className="w-40 h-9 rounded-full bg-green-800/60 text-white text-sm disabled:opacity-50"
                     onMouseEnter={(e) => handleButtonHover(e.currentTarget, 1.05)}
                     onMouseLeave={(e) => handleButtonHover(e.currentTarget, 1)}
                   >
-                    Submit
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>
                 </div>
               </div>
@@ -388,12 +580,12 @@ export default function App() {
             <div className="rounded-2xl bg-black/35 px-4 py-2">
               {dashboardData.team.members.map((member, idx) => (
                 <div
-                  key={member.regNo}
+                  key={member.email}
                   className={`flex items-center justify-between py-2.5 ${idx !== dashboardData.team.members.length - 1 ? 'border-b border-white/10' : ''}`}
                 >
                   <div>
                     <div className="text-white text-sm leading-tight">{member.name}</div>
-                    <div className="text-gray-400 text-[11px] mt-1 leading-none">{member.regNo}</div>
+                    <div className="text-gray-400 text-[11px] mt-1 leading-none">{member.email}</div>
                   </div>
                   {member.role === 'leader' ? (
                     <button className="h-7 px-4 rounded-full bg-green-800/60 text-white text-[11px]">
@@ -401,6 +593,7 @@ export default function App() {
                     </button>
                   ) : (
                     <button
+                      onClick={() => handleRemoveMember(member.email)}
                       className="h-7 px-4 rounded-full bg-green-800/45 text-white text-[11px]"
                       onMouseEnter={(e) => handleButtonHover(e.currentTarget, 1.05)}
                       onMouseLeave={(e) => handleButtonHover(e.currentTarget, 1)}
@@ -433,7 +626,7 @@ export default function App() {
                   <div className="text-gray-300 text-sm">Team ID</div>
                   <input
                     type="text"
-                    value={dashboardData.team.id}
+                    value={dashboardData.team.code}
                     readOnly
                     className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
                     // SECURITY: backend will generate team ID
@@ -443,7 +636,7 @@ export default function App() {
                   <div className="text-gray-300 text-sm">Sharable Link</div>
                   <input
                     type="text"
-                    value={`https://team.example.com/invite/${dashboardData.team.id}`}
+                    value={shareableLink}
                     readOnly
                     className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none"
                     // SECURITY: backend will generate invite link & QR
@@ -455,7 +648,7 @@ export default function App() {
                 <div className="text-gray-300 text-sm text-right">QR code</div>
                 <div className="mt-2 w-28 h-28 bg-white rounded-sm p-1">
                   <div className="w-full h-full bg-white">
-                    <QrCode className="w-full h-full" color="#111" strokeWidth={2} />
+                    <QRCodeSVG value={shareableLink} size={104} level="H"/>
                   </div>
                 </div>
               </div>

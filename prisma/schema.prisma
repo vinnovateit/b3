@@ -10,6 +10,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
+  // @ts-ignore
   url      = env("DATABASE_URL")
 }
 
@@ -27,7 +28,7 @@ model Account {
   id_token          String? @db.String
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -38,7 +39,7 @@ model Session {
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id") @db.ObjectId
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@map("sessions")
 }
@@ -55,9 +56,13 @@ model User {
 
   accounts Account[]
   sessions Session[]
-
-  // Relation to VIT student
+  
   vitStudent VITStudent?
+  // Relation to Team by team code
+  teamCode  String  @map("team_code") @default("")
+  team      Team?   @relation("TeamUsersByCode", fields: [teamCode], references: [code], onDelete: NoAction, onUpdate: Cascade)
+  teamId    String? @map("team_id") @db.ObjectId
+  leadTeams Team[]  @relation("TeamLeader")
 
   @@map("users")
 }
@@ -93,13 +98,12 @@ model VITStudent {
 
   @@map("vit_students")
 }
-
 model Team {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   code        String   @unique // 6-character unique team code
   description String?
-  category    String
+  roundNo     Int      @default(1)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -112,20 +116,27 @@ model Team {
   pptLink            String? @map("ppt_link")
   otherLinks         String? @map("other_links")
 
-  // Relations
-  vitStudents VITStudent[]
+  // Round progress notes
+  round1Progress String? @default("") @map("round1_progress")
+  round2Progress String? @default("") @map("round2_progress")
 
+  // Team Leader
+  teamLeaderId String? @map("team_leader_id") @db.ObjectId
+  teamLeader   User?   @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  users       User[]       @relation("TeamUsersByCode")
+    vitStudents VITStudent[]
   @@map("teams")
 }
 
 model Yantra {
-  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
   name               String?
-  email              String  @unique
+  email              String   @unique
   registrationNumber String?
-  isVITian           Boolean @default(false)
-  createdAt          String
-  updatedAt          String
+  isVITian           Boolean  @default(false)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
 
   @@map("yantra")
 }

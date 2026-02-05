@@ -1,0 +1,109 @@
+import NextAuth, { DefaultSession } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+
+/**
+ * Extend NextAuth session type to include teamCode and isTeamLeader
+ */
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: DefaultSession["user"] & {
+      teamCode?: string | null;
+      isTeamLeader?: boolean;
+    };
+  }
+}
+
+declare module "next-auth" {
+  interface JWT {
+    teamCode?: string | null;
+    isTeamLeader?: boolean;
+  }
+}
+
+// Validate email domain
+function isVITStudentEmail(email: string): boolean {
+  return email.endsWith("@vitstudent.ac.in");
+}
+
+export const authOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: false,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          hd: "vitstudent.ac.in",
+        },
+      },
+    }),
+  ],
+  pages: {
+    error: "/",
+  },
+  callbacks: {
+    async signIn({ user }: any) {
+      // Validate email domain
+      if (!user.email || !isVITStudentEmail(user.email)) {
+        return "/?error=vit_email_only";
+      }
+      return true;
+    },
+    async jwt({ token, user }: any) {
+      if (user) {
+        // Fetch team info from database
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          include: {
+            leadTeams: {
+              select: { code: true },
+              take: 1,
+            },
+          },
+        });
+
+        if (dbUser) {
+          // Check if user is leading any team
+          const leadsTeam = dbUser.leadTeams.length > 0;
+          token.teamCode = dbUser.teamCode;
+          token.isTeamLeader = leadsTeam;
+        }
+      } else if (token.email) {
+        // Refresh team info on each session check
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          include: {
+            leadTeams: {
+              select: { code: true },
+              take: 1,
+            },
+          },
+        });
+
+        if (dbUser) {
+          token.teamCode = dbUser.teamCode;
+          token.isTeamLeader = dbUser.leadTeams.length > 0;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }: any) {
+      if (session.user) {
+        session.user.teamCode = (token.teamCode as string | null) || null;
+        session.user.isTeamLeader = (token.isTeamLeader as boolean) || false;
+      }
+      return session;
+    },
+  },
+  session: {
+    strategy: "jwt" as const,
+  },
+};
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
