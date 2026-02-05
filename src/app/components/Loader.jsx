@@ -352,10 +352,10 @@ const Loader = () => {
         }
        `}</style>
 
-			<CornerShape className="top-8 left-8 -rotate-90" />
-			<CornerShape className="top-8 right-8 " />
-			<CornerShape className="bottom-8 left-8 -rotate-180" />
-			<CornerShape className="bottom-8 right-8 rotate-90" />
+            <CornerShape className="top-8 left-8 -rotate-90" />
+            <CornerShape className="top-8 right-8" />
+            <CornerShape className="bottom-8 left-8 -rotate-180" />
+            <CornerShape className="bottom-8 right-8 rotate-90" />
 
 			{/* Background grid */}
 			<div className="absolute inset-0 grid-lines"></div>
