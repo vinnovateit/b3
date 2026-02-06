@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import "../globals.css";
 
 const FAQ_DATA = {
-	"General FAQS": [
+	"General": [
 		{
 			q: "Do I need prior blockchain experience?",
 			a: "No. Beginners are encouraged to join, you can learn and build during the event.",
@@ -32,7 +32,7 @@ const FAQ_DATA = {
 			a: "girls hostel- give attendance in the hostel before 9:00 pm and come to the venue. boys hostel- come to the venue before 9:00 pm, attendance will be taken at the venue.",
 		},
 	],
-	"B³ FAQS": [
+	"The B³": [
 		{
 			q: "What is the theme of B³?",
 			a: "The theme focuses on innovation in blockchain and sustainable technology.",
@@ -54,7 +54,7 @@ const FAQ_DATA = {
 			a: "Yes, there are major prizes for top teams and specific track winners.",
 		},
 	],
-	"Blockchain FAQS": [
+	"Blockchain": [
 		{
 			q: "What should I bring?",
 			a: "Bring your laptop, chargers, a valid ID, and your passion!",
@@ -68,7 +68,7 @@ const FAQ_DATA = {
 			a: "We provide mentorship and brainstorming workshops to help.",
 		},
 	],
-	"Sign up FAQS": [
+	"Sign Up": [
 		{
 			q: "Where can I register?",
 			a: "You can register through the 'Login' button on our page.",
