@@ -6,6 +6,7 @@ import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/footer/footer";
 import RulesSection from "./components/RulesSection.jsx";
 import GuidlinesSection from "./components/Guidelines.jsx";
+import Tracks from "./components/Tracks.jsx";
 
 export default function Home() {
 	return (
@@ -25,6 +26,7 @@ export default function Home() {
 			>
 				<RulesSection />
 				<GuidlinesSection />
+				<Tracks />
 				<FAQ />
 				<Footer />
 			</section>

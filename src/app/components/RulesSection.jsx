@@ -1,10 +1,10 @@
 import RuleCard from "./RuleCard";
-import TeamCompositionIcon from "/public/svgs/people_alt.svg";
-import FreshCodeIcon from "/public/svgs/code.svg";
-import SubmissionIcon from "/public/svgs/backup.svg";
-import CodeOfConductIcon from "/public/svgs/new_releases.svg";
-import IntellectualPropertyIcon from "/public/svgs/copyright.svg";
-import DemoRequiredIcon from "/public/svgs/slow_motion_video.svg";
+import TeamCompositionIcon from "@/public/svgs/people_alt.svg";
+import FreshCodeIcon from "@/public/svgs/code.svg";
+import SubmissionIcon from "@/public/svgs/backup.svg";
+import CodeOfConductIcon from "@/public/svgs/new_releases.svg";
+import IntellectualPropertyIcon from "@/public/svgs/copyright.svg";
+import DemoRequiredIcon from "@/public/svgs/slow_motion_video.svg";
 
 export default function RulesSection() {
   const rules = [
@@ -41,7 +41,7 @@ export default function RulesSection() {
   ];
 
   return (
-    <section className="relative py-24 px-6 overflow-hidden isolate bg-black">
+    <section className="relative py-16 px-6 overflow-hidden isolate bg-black">
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div
           className="absolute left-1/2 top-[-10px] -translate-x-1/2 w-[1100px] h-[750px]"
@@ -96,7 +96,9 @@ export default function RulesSection() {
 
         <div className="grid md:grid-cols-3 gap-6 mt-16">
           {rules.map((rule, i) => (
-            <RuleCard key={i} {...rule} />
+            <RuleCard key={i} {...rule} 
+              disableHoverScale
+               />
           ))}
         </div>
       </div>

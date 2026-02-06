@@ -2,7 +2,7 @@
 
 export default function Guidelines() {
   return (
-    <section className="relative w-full min-h-screen bg-black flex items-center justify-center px-6 py-20 overflow-hidden">
+    <section className="relative w-full bg-black flex items-center justify-center px-6 py-12 overflow-hidden">
       
       <div 
         className="
