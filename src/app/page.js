@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import RulesSection from "./components/RulesSection.jsx";
 import GuidlinesSection from "./components/Guidelines.jsx";
 import Tracks from "./components/Tracks.jsx";
+import FindTeammates from "./components/FindTeammates";
 
 export default function Home() {
 
@@ -43,6 +44,8 @@ export default function Home() {
 				<FAQ />
 				<Footer />
 			</section>
+
+			<FindTeammates />
 		</main>
   );
 }
