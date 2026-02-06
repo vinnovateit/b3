@@ -25,7 +25,7 @@ const satoshi = localFont({
 });
 
 export const metadata = {
-  title: "B3-Block Build Break",
+  title: "B3-Build Block Break",
   description: "Volumetric Spotlight Timeline",
   icons: {
     icon: "/Favicon.png",
