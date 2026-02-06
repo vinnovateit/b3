@@ -163,7 +163,7 @@ export default function Hero() {
 					/>
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[48vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[24vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
 					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
