@@ -560,15 +560,15 @@ export default function App() {
                 <div>
                   <div className="text-gray-300 text-sm">Track</div>
                   <select
-                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed [&>option]:bg-neutral-900 [&>option]:text-gray-200"
                     value={formData.track}
                     onChange={(e) => setFormData((p) => ({ ...p, track: e.target.value }))}
                     disabled={!isEditMode}
                   >
-                    <option value="" className="text-black">Select a track</option>
-                    <option value="Web3 for Good" className="text-black">Web3 for Good</option>
-                    <option value="Dev Tools & Infrastructure" className="text-black">Dev Tools & Infrastructure</option>
-                    <option value="Web3 × AI" className="text-black">Web3 × AI</option>
+                    <option value="">Select a track</option>
+                    <option value="Web3 for Good">Web3 for Good</option>
+                    <option value="Dev Tools & Infrastructure">Dev Tools & Infrastructure</option>
+                    <option value="Web3 × AI">Web3 × AI</option>
                   </select>
                 </div>
                 <div>
