@@ -327,7 +327,7 @@ export default function Footer() {
               </div>
 
               <div className="transform transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-105 active:scale-95">
-                 <CustomButton text="Let's Connect" link="" />
+                 <CustomButton text="Let's Connect" link="mailto:vinnovateit@vit.ac.in" />
               </div>
             </div>
           </div>

@@ -100,7 +100,7 @@ const Navbar = () => {
           {/* Desktop Login Button Wrapper (Explicitly hidden on mobile) */}
           <div className="hidden md:block">
             <a
-              href="mailto:vinnovateit@vit.ac.in"
+              href="/login"
               className={`
                 flex group relative items-center justify-between
                 px-5
@@ -114,7 +114,7 @@ const Navbar = () => {
                 active:scale-95 active:shadow-inner
               `}
             >
-              <span className="relative z-10 font-medium tracking-wide">Let's Connect</span>
+              <span className="relative z-10 font-medium tracking-wide">Login</span>
               <div className="h-12 w-1 bg-white/40 mx-4 shadow-[1px_0_2px_rgba(0,0,0,0.1)]"></div>
               <span className="relative z-10 flex items-center justify-center">
                 <svg
@@ -201,7 +201,7 @@ const Navbar = () => {
               ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
             >
               <a
-                href="mailto:vinnovateit@vit.ac.in"
+                href="/login"
                 onClick={() => setOpen(false)}
                 className={`
                   group relative flex items-center justify-between
@@ -215,7 +215,7 @@ const Navbar = () => {
                   active:scale-95
                 `}
               >
-                <span className="relative z-10 font-medium tracking-wide">Let's Connect</span>
+                <span className="relative z-10 font-medium tracking-wide">Login</span>
                 <div className="h-12 w-1 bg-white/40 mx-4"></div>
                 <span className="relative z-10 flex items-center justify-center">
                   <svg
