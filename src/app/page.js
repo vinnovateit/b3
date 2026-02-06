@@ -6,6 +6,9 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/Footer";
+import RulesSection from "./components/RulesSection.jsx";
+import GuidlinesSection from "./components/Guidelines.jsx";
+import Tracks from "./components/Tracks.jsx";
 
 export default function Home() {
 
@@ -34,6 +37,9 @@ export default function Home() {
 				className="relative overflow-hidden bg-[#040704] z-10"
 				style={{ marginTop: "-10px" }}
 			>
+				<RulesSection />
+				<GuidlinesSection />
+				<Tracks />
 				<FAQ />
 				<Footer />
 			</section>
