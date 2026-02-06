@@ -1,23 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Button from "./button";
+import CustomButton from "./CustomButton";
 
 export default function Hero() {
 	const cardRef = useRef(null);
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		// Start animations immediately after a short delay (for loading screen)
 		const timer = setTimeout(() => {
 			setIsVisible(true);
-		}, 100); // Small delay to ensure page is ready
+		}, 100);
 
 		return () => clearTimeout(timer);
 	}, []);
 
 	return (
-		<main className="relative w-full bg-[#040704] text-white font-[var(--font-satoshi),system-ui,-apple-system,sans-serif] overflow-hidden">
+		<main className="relative w-full bg-[#040704] text-white font-sans overflow-hidden">
 			<style jsx>{`
 				@keyframes traceEllipseLeft {
 					0% {
@@ -68,9 +67,9 @@ export default function Hero() {
 			{/* Scene root */}
 			<div className="relative w-full overflow-hidden">
 				{/* Triangle gradient wrapper */}
-				<div className="absolute inset-0 z-[1] pointer-events-none">
+				<div className="absolute inset-0 z-1 pointer-events-none">
 					<div
-						className="absolute left-1/2 top-[24vh] -translate-x-1/2 w-[1059px] h-[735px] opacity-68"
+						className="absolute left-1/2 top-[24vh] -translate-x-1/2 w-264.75 h-183.75 opacity-68"
 						style={{ filter: "blur(68px)" }}
 					>
 						{/* Main center glow */}
@@ -128,9 +127,9 @@ export default function Hero() {
 					</div>
 				</div>
 				{/* Hero text stack */}
-				<div className="relative z-[5] text-center pt-[15vh]">
+				<div className="relative z-5 text-center pt-24 sm:pt-32 md:pt-[15vh]">
 					<h1
-						className="text-[7rem] bg-clip-text text-transparent"
+						className="text-[clamp(5rem,22vw,10rem)] bg-clip-text text-transparent leading-tight"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -141,7 +140,7 @@ export default function Hero() {
 						B³
 					</h1>
 					<p
-						className="mt-1 text-[4.5rem] bg-clip-text text-transparent"
+						className="mt-1 text-[clamp(2.2rem,9vw,4.5rem)] bg-clip-text text-transparent leading-snug"
 						style={{
 							background:
 								"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
@@ -152,13 +151,13 @@ export default function Hero() {
 						Build. Block. Break.
 					</p>
 				</div>
-				<div className="flex justify-center mt-12 mb-8">
-					<Button text="Explore Tracks" />
+				<div className="flex justify-center mt-24 mb-40 md:mt-24 md:mb-44">
+					<CustomButton text="Explore Tracks" />
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
-				<div className="relative z-[6] w-full max-w-[900px] min-h-[474px] h-auto mx-auto mt-[24vh] mb-32 px-4 md:px-6 lg:max-w-[87.3%]">
+				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[48vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
 					{/* SVG Ellipses - positioned behind glass card */}
-					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-[1] pointer-events-none">
+					<div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
 						{/* Layer 1 - tangent at center (top-1/2) */}
 						<svg
 							className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -449,143 +448,12 @@ export default function Hero() {
 								/>
 							</g>
 						</svg>
-
-						{/* Layer 3 - tangent lowest (top-130%) */}
-						<svg
-							className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-							width="720"
-							height="356"
-							style={{ filter: "blur(2px)" }}
-						>
-							{/* LEFT ellipses - ACW from tangent */}
-							<g transform="translate(360, 461.6)">
-								<ellipse
-									pathLength="1"
-									cx="-58.775"
-									cy="0"
-									rx="58.775"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-left" : ""}
-								/>
-								<ellipse
-									pathLength="1"
-									cx="-90"
-									cy="0"
-									rx="90"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-left" : ""}
-								/>
-								<ellipse
-									pathLength="1"
-									cx="-121.835"
-									cy="0"
-									rx="121.835"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-left" : ""}
-								/>
-								<ellipse
-									pathLength="1"
-									cx="-151.835"
-									cy="0"
-									rx="151.835"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-left" : ""}
-								/>
-								<ellipse
-									pathLength="1"
-									cx="-180"
-									cy="0"
-									rx="180"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-left" : ""}
-								/>
-							</g>
-
-							{/* RIGHT ellipses - CW from tangent */}
-							<g transform="translate(360, 461.6)">
-								<ellipse
-									transform="rotate(180, 58.775, 0)"
-									pathLength="1"
-									cx="58.775"
-									cy="0"
-									rx="58.775"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-right" : ""}
-								/>
-								<ellipse
-									transform="rotate(180, 90, 0)"
-									pathLength="1"
-									cx="90"
-									cy="0"
-									rx="90"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-right" : ""}
-								/>
-								<ellipse
-									transform="rotate(180, 121.835, 0)"
-									pathLength="1"
-									cx="121.835"
-									cy="0"
-									rx="121.835"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-right" : ""}
-								/>
-								<ellipse
-									transform="rotate(180, 151.835, 0)"
-									pathLength="1"
-									cx="151.835"
-									cy="0"
-									rx="151.835"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-right" : ""}
-								/>
-								<ellipse
-									transform="rotate(180, 180, 0)"
-									pathLength="1"
-									cx="180"
-									cy="0"
-									rx="180"
-									ry="177.66"
-									fill="none"
-									stroke="rgba(57, 221, 124, 0.57)"
-									strokeWidth="1"
-									className={isVisible ? "ellipse-animate-right" : ""}
-								/>
-							</g>
-						</svg>
 					</div>
 
 					{/* Glass morph card - sits on top */}
 					<div
 						ref={cardRef}
-						className={`relative z-[2] p-6 px-6 md:p-14 md:px-12 rounded-3xl border border-white/20 transform transition-transform transition-opacity duration-1000 ease-out
+						className={`relative z-2 p-6 px-6 md:p-14 md:px-12 rounded-3xl border border-white/20 transform transition-transform duration-1000 ease-out
             ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-32"}`}
 						style={{
 							background: "rgba(255, 255, 255, 0.03)",
@@ -599,7 +467,7 @@ export default function Hero() {
 					>
 						{/* Attached ambients */}
 						<div
-							className="absolute -top-[120px] -left-[140px] w-[280px] h-[280px] pointer-events-none opacity-60"
+							className="absolute -top-30 -left-35 w-70 h-70 pointer-events-none opacity-60"
 							style={{
 								background:
 									"radial-gradient(circle at center, rgba(120, 255, 200, 0.85) 0%, rgba(120, 255, 200, 0.45) 35%, rgba(120, 255, 200, 0.2) 55%, transparent 75%)",
@@ -617,7 +485,7 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							What is B³?
+							What is B³
 						</h2>
 
 						<p
@@ -629,11 +497,50 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							B³ (Block. Build. Break.) is a 24-hour Web3 hackathon where teams
-							transform existing Web2 projects into decentralized Web3
-							solutions.
+							B³ (B-Cube) is a 30-hour blockchain hackathon by VinnovateIT, one
+							of Yantra’26’s flagship events, where Web2 ideas are reimagined
+							and built on-chain.
 						</p>
 
+						<h3
+							className="text-[clamp(2rem,5vw,3rem)] mb-6 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Why Blockchain?
+						</h3>
+
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Most of the internet today runs on Web2, apps and platforms
+							controlled by companies that manage our data, content, and
+							experiences. It’s convenient, but do we really have true ownership
+							or control?
+						</p>
+						<p
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
+							style={{
+								background:
+									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Web3 changes the game. Powered by blockchain, it puts power back
+							in the hands of users with decentralized, secure, and transparent
+							systems where you own your identity and digital assets.
+						</p>
 						<p
 							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto text-center bg-clip-text text-transparent"
 							style={{
@@ -643,8 +550,9 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							Participants migrate architecture, integrate blockchain protocols,
-							and rework security and scalability for Web3.
+							It’s the shift from platforms controlling everything to people
+							building and owning the internet themselves, a smarter, fairer,
+							and more open web for everyone.
 						</p>
 					</div>
 				</div>
@@ -652,7 +560,7 @@ export default function Hero() {
 
 			{/* Bottom green gradient transition */}
 			<div
-				className="absolute -bottom-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[700px] pointer-events-none z-10"
+				className="absolute -bottom-87.5 left-1/2 -translate-x-1/2 w-350 h-175 pointer-events-none z-10"
 				style={{
 					background:
 						"radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
