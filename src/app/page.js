@@ -8,6 +8,7 @@ import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/Footer";
 import { useEffect, useState } from 'react';
 import Loader from "./components/Loader";
+import OurWeb3Allies from "./components/OurWeb3Allies";
 
 export default function Home() {
    const [loading, setLoading] = useState(true);
@@ -31,6 +32,10 @@ export default function Home() {
 			{/* About Section */}
 			<section id="about">
 				<WhoAreWe />
+			</section>
+
+			<section id="allies">
+			<OurWeb3Allies/>
 			</section>
 
 			{/* Timeline Section */}
