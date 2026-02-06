@@ -69,7 +69,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!team) {
       logResponse("POST", "/api/team/join", 404, Date.now() - startTime);
-      return errorResponse("Team not found", 404);
+      return errorResponse("Invalid team code. Please check and try again.", 404);
     }
 
     // Check if team is full (max 5 members)

@@ -31,6 +31,8 @@ export default function JoinTeamPage() {
     const containerRef = useRef(null);
     const stripRef = useRef(null);
     const [teamCode, setTeamCode] = useState("");
+    const [isJoining, setIsJoining] = useState(false);
+    const [error, setError] = useState("");
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -63,15 +65,52 @@ export default function JoinTeamPage() {
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.from(".gsap-entry", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 });
-            if(stripRef.current) {
+            if (stripRef.current) {
                 gsap.to(stripRef.current, { yPercent: -66.66, duration: 2.5, ease: "power3.inOut", delay: 0.2 });
             }
         }, containerRef);
         return () => ctx.revert();
     }, []);
 
-    const handleJoin = () => {
-        console.log("Joining team with code:", teamCode);
+    const handleJoin = async () => {
+        const trimmedCode = teamCode.trim();
+        if (!trimmedCode) {
+            setError("Please enter a team code");
+            return;
+        }
+
+        try {
+            setIsJoining(true);
+            setError("");
+
+            const response = await fetch("/api/team/join", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ teamCode: trimmedCode }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    setError("Invalid team code. Please check and try again.");
+                } else if (data?.message) {
+                    setError(data.message);
+                } else {
+                    setError("Failed to join team. Please try again.");
+                }
+                return;
+            }
+
+            // Successfully joined team, go to dashboard
+            router.push("/dashboard");
+        } catch (err) {
+            console.error("Join team error:", err);
+        } finally {
+            setIsJoining(false);
+        }
     };
 
     return (
@@ -91,12 +130,25 @@ export default function JoinTeamPage() {
 
                 <div className="flex-1 flex flex-col gap-8 pt-10 relative z-20">
                     <div className="gsap-entry w-full md:w-1/2">
-                        <CustomInput label="Enter a team code" placeholder="uxD34a" value={teamCode} onChange={(e) => setTeamCode(e.target.value)} />
+                        <CustomInput
+                            label="Enter a team code"
+                            placeholder="uxD34a"
+                            value={teamCode}
+                            onChange={(e) => setTeamCode(e.target.value)}
+                        />
+                        {error && (
+                            <p className="mt-4 text-sm text-red-400">{error}</p>
+                        )}
                     </div>
                 </div>
 
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button size="lg" text="Join Team" onClick={handleJoin} />
+                    <Button
+                        size="lg"
+                        text={isJoining ? "Joining..." : "Join Team"}
+                        onClick={handleJoin}
+                        disabled={isJoining}
+                    />
                 </div>
             </div>
         </SetupLayout>
