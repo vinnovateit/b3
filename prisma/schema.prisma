@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -114,6 +113,8 @@ model Team {
   otherLinks         String? @map("other_links")
   progressNote       String? @map("progress_note") // Latest progress update
   lastSubmittedAt    DateTime? @map("last_submitted_at") // Timestamp of last submission
+
+  leaderId String? @map("leader_id") @db.ObjectId
 
   // Relations
   vitStudents VITStudent[]

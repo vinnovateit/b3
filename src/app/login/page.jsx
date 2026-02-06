@@ -1,11 +1,13 @@
 "use client";
 import Button from "../components/CustomButton";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
 
-export default function LoginPage() {
+function LoginContent() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get("callbackUrl");
 	const { data: session, status } = useSession();
 	const [isMobile, setIsMobile] = useState(false);
 	const [isRedirecting, setIsRedirecting] = useState(false);
@@ -35,7 +37,11 @@ export default function LoginPage() {
 					if (data.success && data.data) {
 						// If user is registered and has VIT student profile, go to dashboard
 						if (data.data.isRegistered && data.data.vitStudent?.id) {
-							router.push("/dashboard");
+							if (callbackUrl) {
+								router.push(callbackUrl);
+							} else {
+								router.push("/dashboard");
+							}
 						} else {
 							// New user - go to setup
 							router.push("/setup/profile");
@@ -50,7 +56,7 @@ export default function LoginPage() {
 					router.push("/setup/profile");
 				});
 		}
-	}, [status, session, router, isRedirecting]);
+	}, [status, session, router, isRedirecting, callbackUrl]);
 
 	// Show mobile warning if on mobile device
 	if (isMobile) {
@@ -244,5 +250,13 @@ export default function LoginPage() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export default function LoginPage() {
+	return (
+		<Suspense>
+			<LoginContent />
+		</Suspense>
 	);
 }

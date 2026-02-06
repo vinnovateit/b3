@@ -100,6 +100,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         code: teamCode,
         description: description?.trim() || null,
         category: "",
+        leaderId: user.vitStudent.id,
       },
     });
 

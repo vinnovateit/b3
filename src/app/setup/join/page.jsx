@@ -37,7 +37,8 @@ export default function JoinTeamPage() {
     // Redirect if not authenticated
     useEffect(() => {
         if (status === "unauthenticated") {
-            router.push("/login");
+            const callbackUrl = encodeURIComponent(window.location.href);
+            router.push(`/login?callbackUrl=${callbackUrl}`);
         }
     }, [status, router]);
 
