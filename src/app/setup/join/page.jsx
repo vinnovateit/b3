@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import gsap from "gsap";
 import SetupLayout from "../../components/SetupLayout";
-import Button from "../../components/CustomButton";
+import CustomButton from "../../components/CustomButton";
 
 const CustomInput = ({ label, placeholder, value, onChange }) => {
     const lineRef = useRef(null);
@@ -143,7 +143,7 @@ export default function JoinTeamPage() {
                 </div>
 
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button
+                    <CustomButton
                         size="lg"
                         text={isJoining ? "Joining..." : "Join Team"}
                         onClick={handleJoin}
