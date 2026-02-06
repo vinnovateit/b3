@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import gsap from "gsap";
+import { Suspense } from "react";
 import SetupLayout from "../../components/SetupLayout";
 import CustomButton from "../../components/CustomButton";
 
@@ -25,14 +26,23 @@ const CustomInput = ({ label, placeholder, value, onChange }) => {
     );
 };
 
-export default function JoinTeamPage() {
+function JoinTeamContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { status } = useSession();
     const containerRef = useRef(null);
     const stripRef = useRef(null);
     const [teamCode, setTeamCode] = useState("");
     const [isJoining, setIsJoining] = useState(false);
     const [error, setError] = useState("");
+
+    // Initialize team code from URL
+    useEffect(() => {
+        const codeFromUrl = searchParams.get("code");
+        if (codeFromUrl) {
+            setTeamCode(codeFromUrl);
+        }
+    }, [searchParams]);
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -153,5 +163,13 @@ export default function JoinTeamPage() {
                 </div>
             </div>
         </SetupLayout>
+    );
+}
+
+export default function JoinTeamPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <JoinTeamContent />
+        </Suspense>
     );
 }
