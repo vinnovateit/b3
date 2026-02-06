@@ -25,7 +25,7 @@ export default function RulesSection() {
   ];
 
   return (
-    <section className="relative pt-24 pb-20 px-6 overflow-hidden isolate bg-black">
+    <section id="tracks" className="relative pt-24 pb-20 px-6 overflow-hidden isolate bg-black">
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div
           className="absolute left-1/2 top-[-10px] -translate-x-1/2 w-[1100px] h-[750px]"

@@ -152,7 +152,15 @@ export default function Hero() {
 					</p>
 				</div>
 				<div className="flex justify-center mt-24 mb-40 md:mt-24 md:mb-44">
-					<CustomButton text="Explore Tracks" />
+					<CustomButton 
+						text="Explore Tracks" 
+						onClick={() => {
+							const tracksSection = document.getElementById('tracks');
+							if (tracksSection) {
+								tracksSection.scrollIntoView({ behavior: 'smooth' });
+							}
+						}}
+					/>
 				</div>
 				{/* Glass morph block wrapper with ellipses */}
 				<div className="relative z-6 w-full max-w-225 min-h-118.5 h-auto mx-auto mt-0 md:mt-[48vh] mb-40 px-4 md:px-6 lg:max-w-[87.3%]">
