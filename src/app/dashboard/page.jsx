@@ -54,6 +54,8 @@ export default function App() {
   const [isResetting, setIsResetting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [memberActionLoading, setMemberActionLoading] = useState(false);
+  const [showRemoveMemberModal, setShowRemoveMemberModal] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState(null);
 
   // All useEffect hooks must be before any conditional returns
   // Redirect if not authenticated
@@ -217,7 +219,6 @@ export default function App() {
 
   const handleRemoveMember = async (memberEmail) => {
     if (!isCurrentUserLeader || !memberEmail) return;
-    if (!confirm(`Remove ${memberEmail} from the team?`)) return;
 
     try {
       setMemberActionLoading(true);
@@ -240,12 +241,26 @@ export default function App() {
       if (teamRes.ok && teamJson.success && teamJson.data) {
         setTeamData(teamJson.data);
       }
+
+      closeRemoveMemberModal();
     } catch (err) {
       setError(err.message || 'Failed to remove member');
       console.error('Remove member error:', err);
+      closeRemoveMemberModal();
     } finally {
       setMemberActionLoading(false);
     }
+  };
+
+  const openRemoveMemberModal = (member) => {
+    if (!isCurrentUserLeader || !member?.email) return;
+    setMemberToRemove(member);
+    setShowRemoveMemberModal(true);
+  };
+
+  const closeRemoveMemberModal = () => {
+    setShowRemoveMemberModal(false);
+    setMemberToRemove(null);
   };
 
   // Handle form submission
@@ -544,13 +559,17 @@ export default function App() {
               <div className="space-y-5">
                 <div>
                   <div className="text-gray-300 text-sm">Track</div>
-                  <input
-                    type="text"
+                  <select
                     className="mt-2 w-full h-9 rounded-md bg-white/10 px-3 text-gray-200 text-sm outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                     value={formData.track}
                     onChange={(e) => setFormData((p) => ({ ...p, track: e.target.value }))}
                     disabled={!isEditMode}
-                  />
+                  >
+                    <option value="" className="text-black">Select a track</option>
+                    <option value="Web3 for Good" className="text-black">Web3 for Good</option>
+                    <option value="Dev Tools & Infrastructure" className="text-black">Dev Tools & Infrastructure</option>
+                    <option value="Web3 × AI" className="text-black">Web3 × AI</option>
+                  </select>
                 </div>
                 <div>
                   <div className="text-gray-300 text-sm">Project Title</div>
@@ -695,7 +714,7 @@ export default function App() {
                     ) : isCurrentUserLeader ? (
                       <button
                         className="h-7 px-4 rounded-full bg-green-800/45 text-white text-[11px] disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={() => handleRemoveMember(member.email)}
+                        onClick={() => openRemoveMemberModal(member)}
                         disabled={memberActionLoading}
                         onMouseEnter={(e) => handleButtonHover(e.currentTarget, 1.05)}
                         onMouseLeave={(e) => handleButtonHover(e.currentTarget, 1)}
@@ -887,6 +906,65 @@ export default function App() {
                 onMouseLeave={(e) => !isResetting && handleButtonHover(e.currentTarget, 1)}
               >
                 {isResetting ? 'Leaving...' : 'Leave Team'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Member Warning Modal */}
+      {showRemoveMemberModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => !memberActionLoading && closeRemoveMemberModal()}
+        >
+          <div 
+            className="relative p-8 rounded-2xl max-w-md border-2 border-red-500/50"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.35), 0 4px 22px rgba(239,68,68,0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white">Warning!</h3>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-red-400 font-semibold mb-3 text-lg">This action cannot be undone!</p>
+              <p className="text-gray-300 text-sm leading-relaxed mb-2">
+                You are about to remove <span className="text-white font-semibold">{memberToRemove?.email || 'this member'}</span> from the team. This will:
+              </p>
+              <ul className="text-gray-400 text-sm space-y-2 ml-4 list-disc">
+                <li>Remove the member immediately</li>
+                <li>Revoke access to team submissions</li>
+                <li>Require the member to join another team</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={closeRemoveMemberModal}
+                disabled={memberActionLoading}
+                className="flex-1 py-3 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onMouseEnter={(e) => !memberActionLoading && handleButtonHover(e.currentTarget, 1.05)}
+                onMouseLeave={(e) => !memberActionLoading && handleButtonHover(e.currentTarget, 1)}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleRemoveMember(memberToRemove?.email)}
+                disabled={memberActionLoading}
+                className="flex-1 py-3 rounded-lg bg-red-600/80 hover:bg-red-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onMouseEnter={(e) => !memberActionLoading && handleButtonHover(e.currentTarget, 1.05)}
+                onMouseLeave={(e) => !memberActionLoading && handleButtonHover(e.currentTarget, 1)}
+              >
+                {memberActionLoading ? 'Removing...' : 'Remove Member'}
               </button>
             </div>
           </div>
