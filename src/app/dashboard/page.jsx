@@ -361,7 +361,7 @@ export default function App() {
     >
       {/* Discord Floating Banner - Bottom Right */}
       <a
-        href="https://discord.gg/TaFq4KDR"
+        href="https://discord.gg/pWX2vRTMab"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 group"

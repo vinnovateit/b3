@@ -196,7 +196,7 @@ export default function TeamPage() {
 								</div>
 							</div>
 							<a
-								href="https://discord.gg/TaFq4KDR"
+								href="https://discord.gg/pWX2vRTMab"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="px-6 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
