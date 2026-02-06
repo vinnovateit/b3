@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import CardsRow from "./components/CardsRow";
 import FAQ from "./components/FAQ";
@@ -6,20 +6,13 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhoAreWe from "./components/WhoAreWe";
 import Footer from "./components/Footer";
-import { useEffect, useState } from 'react';
-import Loader from "./components/Loader";
 import OurWeb3Allies from "./components/OurWeb3Allies";
+import RulesSection from "./components/RulesSection.jsx";
+import GuidlinesSection from "./components/Guidelines.jsx";
+import Tracks from "./components/Tracks.jsx";
+import FindTeammates from "./components/FindTeammates";
 
 export default function Home() {
-   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 7000);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (loading) return <Loader />;
-
 	return (
 		<main className="bg-[#040704]">
 			<Navbar />
@@ -35,7 +28,7 @@ export default function Home() {
 			</section>
 
 			<section id="allies">
-			<OurWeb3Allies/>
+				<OurWeb3Allies />
 			</section>
 
 			{/* Timeline Section */}
@@ -49,9 +42,14 @@ export default function Home() {
 				className="relative overflow-hidden bg-[#040704] z-10"
 				style={{ marginTop: "-10px" }}
 			>
+				<RulesSection />
+				<GuidlinesSection />
+				<Tracks />
 				<FAQ />
 				<Footer />
 			</section>
+
+			<FindTeammates />
 		</main>
-  );
+	);
 }

@@ -265,7 +265,7 @@ export default function Footer() {
                     </span>
                   </h1>
                   <p className="mt-[1vh] text-[#A1A1AA] text-[1.5em] md:text-[2vh] font-sans font-medium drop-shadow-md">
-                    Block. Build. Break.
+                    Build. Block. Break.
                   </p>
                 </div>
               </div>
