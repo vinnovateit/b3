@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 
 // --- Constants & Config ---
+import FindTeammates from '../components/FindTeammates';
 
 const REVIEW_SCHEDULE = {
   review1: '2026-02-01T10:00:00',
@@ -168,6 +169,8 @@ export default function App() {
   const [linkCopied, setLinkCopied] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [memberActionLoading, setMemberActionLoading] = useState(false);
+  const [showRemoveMemberModal, setShowRemoveMemberModal] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState(null);
 
   // --- Effects ---
 
@@ -280,14 +283,32 @@ export default function App() {
 
       const teamRes = await fetch('/api/team/get');
       const teamJson = await teamRes.json();
-      if (teamRes.ok && teamJson.success && teamJson.data) setTeamData(teamJson.data);
+      if (teamRes.ok && teamJson.success && teamJson.data) {
+        setTeamData(teamJson.data);
+      }
+
+      closeRemoveMemberModal();
     } catch (err) {
       setError(err.message || 'Failed to remove member');
+      console.error('Remove member error:', err);
+      closeRemoveMemberModal();
     } finally {
       setMemberActionLoading(false);
     }
   };
 
+  const openRemoveMemberModal = (member) => {
+    if (!isCurrentUserLeader || !member?.email) return;
+    setMemberToRemove(member);
+    setShowRemoveMemberModal(true);
+  };
+
+  const closeRemoveMemberModal = () => {
+    setShowRemoveMemberModal(false);
+    setMemberToRemove(null);
+  };
+
+  // Handle form submission
   const handleSubmit = async () => {
     if (!teamData?.id) {
       setError('You must be part of a team to submit');
@@ -400,46 +421,15 @@ useEffect(() => {
   if (status === "unauthenticated") return null;
 
   return (
-    <div className="h-screen font-sans overflow-hidden relative flex flex-col bg-[#050705] text-gray-200">
-      {/* Global Styles for Scrollbar Suppression */}
-      <style jsx global>{`
-        ::-webkit-scrollbar { display: none; }
-        * { scrollbar-width: none; -ms-overflow-style: none; }
-      `}</style>
-
-      {/* Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div 
-          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.05, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-green-500/10 blur-[120px]"
-        />
-        <motion.div 
-          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[60%] rounded-full bg-green-900/10 blur-[100px]"
-        />
-      </div>
-
-      {/* Floating Discord CTA */}
-      <motion.a
-        href="https://discord.gg/TaFq4KDR"
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        whileHover={{ scale: 1.05, y: -2 }}
-        className="fixed bottom-6 right-6 z-40 group"
-      >
-        <div className="flex items-center gap-3 px-5 py-3 rounded-full border border-green-500/30 backdrop-blur-xl bg-black/40 shadow-xl shadow-green-900/20 group-hover:border-green-400/50 transition-colors">
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-            </svg>
-          </div>
-          <span className="text-white text-sm font-medium">Find Teammates</span>
-        </div>
-      </motion.a>
+    <div
+      className="h-screen font-sans overflow-hidden relative flex flex-col"
+      style={{
+        background:
+          'radial-gradient(880px 320px at 30% 30%, rgba(34,197,94,0.20), transparent 62%), radial-gradient(760px 320px at 26% 78%, rgba(34,197,94,0.12), transparent 60%), linear-gradient(180deg, #050705, #0b120c)'
+      }}
+    >
+      {/* Discord Floating Banner - Bottom Right */}
+      <FindTeammates />
 
       {/* Header */}
       <header className="w-full max-w-350 mx-auto px-6 pt-6 pb-4 shrink-0 z-10">
@@ -659,19 +649,24 @@ useEffect(() => {
 
             {/* Project Submission Card */}
             <GlassCard noPadding={true} className="flex flex-col h-full relative transform-gpu">
+              
+              {/* CSS to hide scrollbar for Chrome, Safari and Opera */}
+              <style dangerouslySetInnerHTML={{ __html: `
+                .no-scrollbar::-webkit-scrollbar {
+                  display: none;
+                }
+              `}} />
 
               {/* Header */}
               <div className="flex-shrink-0 flex items-center justify-between p-6 pb-4 z-10 relative bg-[#0F1210]/30 backdrop-blur-sm border-b border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/10">
-                    {/* Header Icon: MDI File Edit */}
                     <Icon icon="mdi:file-document-edit-outline" width="22" className="text-blue-400" />
                   </div>
                   <h2 className="text-xl font-medium text-white tracking-tight">Project Submission</h2>
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  {/* Save Button (Only visible in Edit Mode) */}
                   <AnimatePresence>
                     {isEditMode && (
                       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
@@ -686,7 +681,6 @@ useEffect(() => {
                     )}
                   </AnimatePresence>
 
-                  {/* Edit/Cancel Button */}
                   <AnimatedButton 
                     variant={isEditMode ? "secondary" : "primary"}
                     onClick={() => { setIsEditMode(!isEditMode); setError(null); setSuccessMessage(null); }}
@@ -706,34 +700,63 @@ useEffect(() => {
                   >
                     {error && (
                       <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 text-sm flex items-center gap-2">
-                        <X size={16} /> {error}
+                        <Icon icon="mdi:alert-circle-outline" size={16} /> {error}
                       </div>
                     )}
                     {successMessage && (
                       <div className="mt-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-200 text-sm flex items-center gap-2">
-                        <CheckCircle2 size={16} /> {successMessage}
+                        <Icon icon="mdi:check-circle-outline" size={16} /> {successMessage}
                       </div>
                     )}
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Scroll Container */}
+              {/* Scroll Container (Scrollbar Hidden) */}
               <div 
-                className="flex-1 min-h-0 overflow-y-auto scrollbar-hide px-6 pb-6 max-h-[550px]"
-                style={{ WebkitOverflowScrolling: 'touch', willChange: 'scroll-position', maskImage: 'linear-gradient(to bottom, black 95%, transparent 100%)', transform: 'translateZ(0)' }}
+                className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 pb-6 max-h-[550px]"
+                style={{ 
+                  WebkitOverflowScrolling: 'touch', 
+                  willChange: 'scroll-position', 
+                  maskImage: 'linear-gradient(to bottom, black 95%, transparent 100%)', 
+                  transform: 'translateZ(0)',
+                  scrollbarWidth: 'none', // For Firefox
+                  msOverflowStyle: 'none' // For IE and Edge
+                }}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
                   
                   {/* Left Column */}
                   <div className="space-y-5">
-                    <AnimatedInput 
-                      label="Track"
-                      value={formData.track}
-                      onChange={(e) => setFormData(p => ({ ...p, track: e.target.value }))}
-                      disabled={!isEditMode}
-                      placeholder="e.g. HealthTech, FinTech..."
-                    />
+                    <div>
+                      <div className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1.5 ml-1">Track</div>
+                      <div className="relative group">
+                        <select
+                          className={`
+                            w-full h-11 rounded-xl text-sm outline-none transition-all duration-200 border appearance-none px-4
+                            ${!isEditMode 
+                              ? "bg-white/5 border-white/5 text-white font-medium cursor-default opacity-100" 
+                              : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/[0.09] focus:border-green-500/50"
+                            }
+                            [&>option]:bg-neutral-900 [&>option]:text-gray-200
+                          `}
+                          value={formData.track}
+                          onChange={(e) => setFormData(p => ({ ...p, track: e.target.value }))}
+                          disabled={!isEditMode}
+                        >
+                          <option value="">Select a track</option>
+                          <option value="Web3 for Good">Web3 for Good</option>
+                          <option value="Dev Tools & Infrastructure">Dev Tools & Infrastructure</option>
+                          <option value="Web3 × AI">Web3 × AI</option>
+                        </select>
+                        {isEditMode && (
+                           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/40 group-focus-within:text-green-400 transition-colors">
+                              <Icon icon="mdi:chevron-down" width="20" />
+                           </div>
+                        )}
+                      </div>
+                    </div>
+
                     <AnimatedInput 
                       label="Project Title"
                       value={formData.title}
@@ -773,21 +796,21 @@ useEffect(() => {
                           placeholder="GitHub"
                         />
                         <AnimatedInput 
-                          icon="ion:logo-figma" // Figma/Design
+                          icon="ion:logo-figma" 
                           value={formData.figma}
                           onChange={(e) => setFormData(p => ({ ...p, figma: e.target.value }))}
                           disabled={!isEditMode}
                           placeholder="Figma"
                         />
                         <AnimatedInput 
-                          icon="mdi:presentation-play" // Slides
+                          icon="mdi:presentation-play" 
                           value={formData.ppt}
                           onChange={(e) => setFormData(p => ({ ...p, ppt: e.target.value }))}
                           disabled={!isEditMode}
                           placeholder="Slides"
                         />
                         <AnimatedInput 
-                          icon="mdi:link-variant" // Generic Link
+                          icon="mdi:link-variant" 
                           value={formData.miscLinks}
                           onChange={(e) => setFormData(p => ({ ...p, miscLinks: e.target.value }))}
                           disabled={!isEditMode}
@@ -805,12 +828,13 @@ useEffect(() => {
           <aside className="flex flex-col gap-6 overflow-y-auto pr-2 pb-10">
             
             {/* Team Members */}
-          <GlassCard noPadding={true} className="flex flex-col relative h-full transform-gpu">
+          {/* Team Squad Card - Merged Backend Logic with Liquid Glass Frontend */}
+            <GlassCard noPadding={true} className="flex flex-col relative h-full transform-gpu">
 
               {/* Header: Font Size UNTOUCHED (text-xl) */}
               <div className="shrink-0 flex items-center gap-3 p-6 pb-2 z-10 relative">
                 <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/10">
-                  <Users size={20} className="text-purple-400" />
+                  <Icon icon="mdi:account-group-outline" width="22" className="text-purple-400" />
                 </div>
                 <h2 className="text-xl font-medium text-white tracking-tight">Team Squad</h2>
               </div>
@@ -826,6 +850,7 @@ useEffect(() => {
                 }}
               >
                 {isLoading ? (
+                  /* Loading State from Frontend */
                   <div className="py-8 flex flex-col items-center justify-center text-center opacity-60">
                     <motion.div 
                       animate={{ rotate: 360 }}
@@ -834,12 +859,12 @@ useEffect(() => {
                     />
                     <div className="text-sm font-medium tracking-wide text-purple-200/70">Loading...</div>
                   </div>
-                ) : dashboardData.team.members.length > 0 ? (
+                ) : dashboardData?.team?.members?.length > 0 ? (
                   <div className="space-y-2 pb-2 pt-2">
                     <AnimatePresence initial={false} mode="popLayout">
-                      {dashboardData.team.members.map((member) => (
+                      {dashboardData.team.members.map((member, idx) => (
                         <motion.div
-                          key={member.email}
+                          key={member.email || idx}
                           layout="position"
                           initial={{ opacity: 0, x: -10, scale: 0.98 }}
                           animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -848,27 +873,32 @@ useEffect(() => {
                           style={{ transform: 'translateZ(0)' }}
                         >
                           <div className="min-w-0 pr-3">
-                            {/* UPDATED: Increased from 15px to text-base (16px) */}
+                            {/* UPDATED: text-base (16px) */}
                             <div className="text-gray-100 text-base font-medium truncate tracking-tight">{member.name}</div>
-                            {/* UPDATED: Increased from text-xs to text-sm */}
+                            {/* UPDATED: text-sm */}
                             <div className="text-gray-500 text-sm truncate font-mono mt-0.5">{member.email}</div>
                           </div>
                           
                           <div className="shrink-0">
                             {member.role === 'leader' ? (
-                              /* UPDATED: Increased from text-[10px] to text-xs */
+                              /* UPDATED: Lead Badge text-xs */
                               <div className="px-2.5 py-0.5 rounded-lg bg-amber-500/10 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/20">
                                 Lead
                               </div>
                             ) : isCurrentUserLeader && (
+                              /* Remove Member Logic from Backend attached to Frontend Button */
                               <motion.button
                                 whileHover={{ scale: 1.1, backgroundColor: "rgba(239, 68, 68, 0.2)" }}
                                 whileTap={{ scale: 0.9 }}
-                                onClick={() => handleRemoveMember(member.email)}
+                                onClick={() => openRemoveMemberModal ? openRemoveMemberModal(member) : handleRemoveMember(member.email)}
                                 disabled={memberActionLoading}
-                                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-red-400 transition-colors"
+                                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50"
                               >
-                                <X size={16} />
+                                {memberActionLoading ? (
+                                   <Icon icon="mdi:loading" className="animate-spin" width="16" />
+                                ) : (
+                                   <Icon icon="mdi:close" width="18" />
+                                )}
                               </motion.button>
                             )}
                           </div>
@@ -877,10 +907,9 @@ useEffect(() => {
                     </AnimatePresence>
                   </div>
                 ) : (
+                  /* Empty State from Frontend */
                   <div className="flex flex-col items-center justify-center py-8">
-                    {/* UPDATED: Increased to text-lg */}
                     <p className="text-gray-300 text-lg font-medium mb-1">No Team Yet</p>
-                    {/* UPDATED: Increased to text-sm */}
                     <p className="text-gray-500 text-sm mb-5 text-center">Join a squad to compete.</p>
                     <AnimatedButton 
                       onClick={() => router.push('/setup/team')} 
@@ -892,8 +921,8 @@ useEffect(() => {
                 )}
               </div>
 
-              {/* Footer */}
-              {teamData && (
+              {/* Footer: Frontend Layout & Styling */}
+              {dashboardData?.team?.members?.length > 0 && (
                 <div className="shrink-0 px-5 pb-5 pt-2 z-10 relative">
                   <div className="pt-3 border-t border-white/5 flex justify-center">
                     <AnimatedButton 
@@ -1054,36 +1083,40 @@ useEffect(() => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Leave Team Warning Modal */}
+{/* Leave Team Warning Modal */}
       <AnimatePresence>
         {showResetModal && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
             onClick={() => !isResetting && setShowResetModal(false)}
           >
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md bg-[#111] border border-red-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(220,38,38,0.1)]"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="w-full max-w-md bg-[#0F1210]/90 border border-white/10 border-t-white/20 border-l-white/20 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_50px_rgba(220,38,38,0.15)] backdrop-blur-2xl relative overflow-hidden"
               onClick={e => e.stopPropagation()}
             >
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6 mx-auto">
-                <LogOut className="text-red-500" size={32} />
+              {/* Visual Red Glow for Warning */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-red-500/10 blur-[80px] rounded-full" />
+              
+              <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6 mx-auto relative z-10">
+                <Icon icon="mdi:logout-variant" width="32" className="text-red-500" />
               </div>
-              <h3 className="text-2xl font-semibold text-white text-center mb-2">Leave Team?</h3>
-              <p className="text-gray-400 text-center mb-8 leading-relaxed">
-                This action is irreversible. You will lose access to team submissions and need to rejoin manually via code.
+
+              <h3 className="text-2xl font-bold text-white text-center mb-2 tracking-tight">Leave Team?</h3>
+              <p className="text-gray-400 text-center mb-8 leading-relaxed text-[15px]">
+                This action is <span className="text-red-400 font-semibold">irreversible</span>. You will lose access to team submissions and need to rejoin manually via code.
               </p>
               
-              <div className="flex gap-4">
+              <div className="flex gap-4 relative z-10">
                 <AnimatedButton 
                   variant="secondary" 
-                  className="flex-1 py-3"
+                  className="flex-1 py-3 h-12 rounded-2xl"
                   onClick={() => setShowResetModal(false)}
                   disabled={isResetting}
                 >
@@ -1091,7 +1124,7 @@ useEffect(() => {
                 </AnimatedButton>
                 <AnimatedButton 
                   variant="danger" 
-                  className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white border-none"
+                  className="flex-1 py-3 h-12 rounded-2xl bg-red-600 hover:bg-red-500 text-white border-none shadow-lg shadow-red-900/20"
                   onClick={handleResetTeam}
                   disabled={isResetting}
                 >
@@ -1102,6 +1135,77 @@ useEffect(() => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Remove Member Warning Modal */}
+      <AnimatePresence>
+        {showRemoveMemberModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
+            onClick={() => !memberActionLoading && closeRemoveMemberModal()}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="w-full max-w-md bg-[#0F1210]/90 border border-white/10 border-t-white/20 border-l-white/20 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_50px_rgba(220,38,38,0.15)] backdrop-blur-2xl relative overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Alert Icon & Heading */}
+              <div className="flex items-center gap-4 mb-6 relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                  <Icon icon="mdi:alert-decagram-outline" width="28" className="text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white tracking-tight">Warning!</h3>
+                  <p className="text-red-400 text-sm font-semibold uppercase tracking-wider">Irreversible Action</p>
+                </div>
+              </div>
+              
+              <div className="mb-8 space-y-4 relative z-10">
+                <p className="text-gray-300 text-[15px] leading-relaxed">
+                  You are about to remove <span className="text-white font-mono bg-white/5 px-2 py-0.5 rounded border border-white/10">{memberToRemove?.email || 'this member'}</span>. This will:
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    'Remove the member immediately',
+                    'Revoke access to team submissions',
+                    'Require them to join another team'
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm text-gray-400">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex gap-4 relative z-10">
+                <AnimatedButton 
+                  variant="secondary" 
+                  className="flex-1 py-3 h-12 rounded-2xl"
+                  onClick={closeRemoveMemberModal}
+                  disabled={memberActionLoading}
+                >
+                  Cancel
+                </AnimatedButton>
+                <AnimatedButton 
+                  variant="danger" 
+                  className="flex-1 py-3 h-12 rounded-2xl bg-red-600 hover:bg-red-500 text-white border-none shadow-lg shadow-red-900/20"
+                  onClick={() => handleRemoveMember(memberToRemove?.email)}
+                  disabled={memberActionLoading}
+                >
+                  {memberActionLoading ? 'Removing...' : 'Remove Member'}
+                </AnimatedButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
