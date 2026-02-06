@@ -103,7 +103,7 @@ model Team {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  // Project Information
+  // Project Information (Latest Submission Only)
   projectTitle       String? @map("project_title")
   projectDescription String? @map("project_description")
   track              String?
@@ -111,6 +111,8 @@ model Team {
   figmaLink          String? @map("figma_link")
   pptLink            String? @map("ppt_link")
   otherLinks         String? @map("other_links")
+  progressNote       String? @map("progress_note") // Latest progress update
+  lastSubmittedAt    DateTime? @map("last_submitted_at") // Timestamp of last submission
 
   // Relations
   vitStudents VITStudent[]

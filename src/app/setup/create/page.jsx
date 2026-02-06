@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import gsap from "gsap";
 import { Copy } from "lucide-react";
 import SetupLayout from "../../components/SetupLayout";
@@ -27,10 +29,11 @@ const CustomInput = ({ label, placeholder, value, onChange }) => {
 
 // --- Glass Code Card Component ---
 const CodeCard = ({ code }) => {
+    console.log("CodeCard rendered with code:", code);
     return (
         <div 
             className="
-                code-card-entry opacity-0 scale-95
+                code-card-entry
                 w-full md:w-125 h-62.5
                 flex flex-col justify-center items-center gap-6
                 bg-[#617B5F]/30 backdrop-blur-md
@@ -41,10 +44,11 @@ const CodeCard = ({ code }) => {
         >
             <p className="text-2xl text-white/90 font-light">Your Shareable Team Code</p>
             <div className="flex items-center gap-4">
-                <span className="text-4xl font-bold text-white border-b-2 border-white pb-1">{code}</span>
+                <span className="text-4xl font-bold text-white border-b-2 border-white pb-1">{code || "Loading..."}</span>
                 <button 
                     onClick={() => navigator.clipboard.writeText(code)}
                     className="text-white/80 hover:text-white transition-colors"
+                    disabled={!code}
                 >
                     <Copy size={28} />
                 </button>
@@ -54,6 +58,8 @@ const CodeCard = ({ code }) => {
 };
 
 export default function CreateTeamPage() {
+    const router = useRouter();
+    const { status } = useSession();
     const containerRef = useRef(null);
     const stripRef = useRef(null);
     
@@ -61,9 +67,45 @@ export default function CreateTeamPage() {
     const [step, setStep] = useState(1); // 1 = Enter Name, 2 = Show Code
     const [teamName, setTeamName] = useState("");
     const [generatedCode, setGeneratedCode] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
+    const [error, setError] = useState(null);
+    const [isCheckingTeam, setIsCheckingTeam] = useState(true);
+
+    // Redirect if not authenticated
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/login");
+        }
+    }, [status, router]);
+
+    // Check if user already has a team
+    useEffect(() => {
+        const checkTeam = async () => {
+            if (status !== "authenticated") return;
+
+            try {
+                const response = await fetch("/api/users/profile");
+                const data = await response.json();
+
+                if (response.ok && data.data?.vitStudent?.teamId) {
+                    // User already has a team, redirect to dashboard
+                    router.push("/dashboard");
+                } else {
+                    setIsCheckingTeam(false);
+                }
+            } catch (error) {
+                console.error("Error checking team status:", error);
+                setIsCheckingTeam(false);
+            }
+        };
+
+        checkTeam();
+    }, [status, router]);
 
     // Initial Load Animation
     useEffect(() => {
+        if (isCheckingTeam) return;
+        
         const ctx = gsap.context(() => {
             gsap.from(".gsap-entry", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 });
             if (stripRef.current) {
@@ -71,7 +113,7 @@ export default function CreateTeamPage() {
             }
         }, containerRef);
         return () => ctx.revert();
-    }, []);
+    }, [isCheckingTeam]);
 
     // Step 2 Transition Handler
     useEffect(() => {
@@ -86,30 +128,67 @@ export default function CreateTeamPage() {
         }
     }, [step]);
 
-    const handleAction = () => {
+    const handleAction = async () => {
         if (step === 1) {
-            // Generate Code Logic
-            if (!teamName) return; // Simple validation
+            // Create Team
+            if (!teamName.trim()) {
+                setError("Please enter a team name");
+                return;
+            }
             
-            // Simulate API call / Code Generation
-            const mockCode = "Uxhf8J"; // In real app, get this from backend
-            setGeneratedCode(mockCode);
+            try {
+                setIsCreating(true);
+                setError(null);
 
-            // Animate Step 1 Out
-            const ctx = gsap.context(() => {
-                gsap.to(".step-1-content", {
-                    opacity: 0,
-                    x: -20,
-                    duration: 0.4,
-                    onComplete: () => setStep(2)
+                const response = await fetch("/api/team/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        teamName: teamName.trim(),
+                    }),
                 });
-            }, containerRef);
 
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to create team");
+                }
+
+                console.log("Team created successfully:", data);
+                setGeneratedCode(data.data?.teamCode || data.teamCode);
+
+                // Animate Step 1 Out
+                const ctx = gsap.context(() => {
+                    gsap.to(".step-1-content", {
+                        opacity: 0,
+                        x: -20,
+                        duration: 0.4,
+                        onComplete: () => setStep(2)
+                    });
+                }, containerRef);
+            } catch (err) {
+                setError(err.message);
+                console.error("Team creation error:", err);
+            } finally {
+                setIsCreating(false);
+            }
         } else {
-            // End Setup Logic
-            console.log("Setup Completed for team:", teamName, "Code:", generatedCode);
+            // Redirect to dashboard
+            router.push("/dashboard");
         }
     };
+
+    if (isCheckingTeam) {
+        return (
+            <SetupLayout step={3}>
+                <div className="flex items-center justify-center h-full">
+                    <div className="text-white text-xl">Loading...</div>
+                </div>
+            </SetupLayout>
+        );
+    }
 
     return (
         <SetupLayout step={3}>
@@ -144,6 +223,9 @@ export default function CreateTeamPage() {
                                     onChange={(e) => setTeamName(e.target.value)}
                                 />
                             </div>
+                            {error && (
+                                <p className="text-red-400 mt-4 text-sm">{error}</p>
+                            )}
                         </div>
                     )}
 
@@ -160,8 +242,9 @@ export default function CreateTeamPage() {
                 <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
                     <Button 
                         size="lg" 
-                        text={step === 1 ? "Generate Code" : "End Setup"} 
-                        onClick={handleAction} 
+                        text={step === 1 ? (isCreating ? "Creating..." : "Generate Code") : "End Setup"} 
+                        onClick={handleAction}
+                        disabled={isCreating}
                     />
                 </div>
 
