@@ -192,11 +192,19 @@ export default function App() {
     team: {
       name: teamData?.name || 'No Team',
       id: teamData?.code || 'N/A',
-      members: teamData?.vitStudents?.map((student, index) => ({
-        name: student.name || student.user?.name || 'Member',
-        email: student.user?.email || 'Unknown',
-        role: index === 0 ? 'leader' : 'member' // First member is the leader
-      })) || []
+      members: teamData?.vitStudents?.map((student, index) => {
+        // Determine leader: if leaderId exists, check against student ID. 
+        // Fallback to index 0 (legacy behavior) only if leaderId is missing.
+        const isLeader = teamData.leaderId 
+          ? student.id === teamData.leaderId 
+          : index === 0;
+          
+        return {
+          name: student.name || student.user?.name || 'Member',
+          email: student.user?.email || 'Unknown',
+          role: isLeader ? 'leader' : 'member'
+        };
+      }) || []
     }
   };
 
