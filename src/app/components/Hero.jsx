@@ -152,8 +152,8 @@ export default function Hero() {
 					</p>
 				</div>
 				<div className="flex justify-center mt-24 mb-40 md:mt-24 md:mb-44">
-					<CustomButton 
-						text="Explore Tracks" 
+					<CustomButton
+						text="Explore Tracks"
 						onClick={() => {
 							const tracksSection = document.getElementById('tracks');
 							if (tracksSection) {
@@ -493,17 +493,11 @@ export default function Hero() {
 								WebkitTextFillColor: "transparent",
 							}}
 						>
-							What is B³
+							What is B³?
 						</h2>
 
 						<p
-							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-4 text-center bg-clip-text text-transparent"
-							style={{
-								background:
-									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
-								WebkitBackgroundClip: "text",
-								WebkitTextFillColor: "transparent",
-							}}
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-4 text-center bg-clip-text"
 						>
 							B³ (B-Cube) is a 30-hour blockchain hackathon by VinnovateIT, one
 							of Yantra’26’s flagship events, where Web2 ideas are reimagined
@@ -523,13 +517,7 @@ export default function Hero() {
 						</h3>
 
 						<p
-							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
-							style={{
-								background:
-									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
-								WebkitBackgroundClip: "text",
-								WebkitTextFillColor: "transparent",
-							}}
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text"
 						>
 							Most of the internet today runs on Web2, apps and platforms
 							controlled by companies that manage our data, content, and
@@ -537,26 +525,14 @@ export default function Hero() {
 							or control?
 						</p>
 						<p
-							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text text-transparent"
-							style={{
-								background:
-									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
-								WebkitBackgroundClip: "text",
-								WebkitTextFillColor: "transparent",
-							}}
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto mb-2 text-center bg-clip-text"
 						>
 							Web3 changes the game. Powered by blockchain, it puts power back
 							in the hands of users with decentralized, secure, and transparent
 							systems where you own your identity and digital assets.
 						</p>
 						<p
-							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto text-center bg-clip-text text-transparent"
-							style={{
-								background:
-									"linear-gradient(180deg, #FFFFFF 63.33%, rgba(213, 213, 213, 0.6) 78.61%)",
-								WebkitBackgroundClip: "text",
-								WebkitTextFillColor: "transparent",
-							}}
+							className="text-[clamp(1rem,3vw,1.5rem)] max-w-4xl mx-auto text-center bg-clip-text"
 						>
 							It’s the shift from platforms controlling everything to people
 							building and owning the internet themselves, a smarter, fairer,

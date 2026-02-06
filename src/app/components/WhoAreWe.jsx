@@ -330,7 +330,7 @@ const WhoAreWe = () => {
 			{/* TEXT CONTENT */}
 			<div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center mb-16">
 				<h2 className="text-5xl md:text-[75px] font-normal mb-8 tracking-tight text-gradient-title pb-2 relative z-20 leading-[1.0]">
-					What We’re about
+					What We’re About
 				</h2>
 				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3] mb-12 font-normal antialiased">
 					The builders of MessIT are back with another hackathon. VinnovateIT is

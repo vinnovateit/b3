@@ -151,8 +151,8 @@ const FAQ = () => {
 					.faqs-tab-text {
 						font-family: var(--font-satoshi), sans-serif;
 						font-weight: 500;
-						font-size: 1.125rem;
-						letter-spacing: 0.025em;
+						font-size: 1.05rem;
+						letter-spacing: 0.025rem;
 						color: rgba(255, 255, 255, 0.4);
 						position: relative;
 						z-index: 20;
