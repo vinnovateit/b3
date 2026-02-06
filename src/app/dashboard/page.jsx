@@ -107,7 +107,7 @@ const AnimatedInput = ({ label, icon, ...props }) => (
           ${icon ? 'pl-11 pr-4' : 'px-4'} 
           ${props.disabled 
             ? "bg-white/5 border-white/5 text-white font-medium cursor-default opacity-100 placeholder:text-transparent" 
-            : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/[0.09] focus:border-green-500/50 placeholder:text-white/[0.35]"
+            : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/9 focus:border-green-500/50 placeholder:text-white/35"
           }
         `}
       />
@@ -130,7 +130,7 @@ const AnimatedTextArea = ({ label, style, ...props }) => (
           border
           ${props.disabled 
             ? "bg-white/5 border-white/5 text-white font-medium cursor-default opacity-100 placeholder:text-transparent" 
-            : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/[0.09] focus:border-green-500/50 placeholder:text-white/[0.35]"
+            : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/9 focus:border-green-500/50 placeholder:text-white/35"
           }
         `}
       />
@@ -477,10 +477,10 @@ useEffect(() => {
                     damping: 22 
                   }}
                   // transform-gpu for better performance
-                  className="absolute right-0 top-full mt-4 w-72 rounded-2xl bg-white/[0.03] border border-white/10 border-t-white/20 border-l-white/20 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0px_1px_1px_0px_rgba(255,255,255,0.1)] z-50 backdrop-blur-2xl transform-gpu"
+                  className="absolute right-0 top-full mt-4 w-72 rounded-2xl bg-white/3 border border-white/10 border-t-white/20 border-l-white/20 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0px_1px_1px_0px_rgba(255,255,255,0.1)] z-50 backdrop-blur-2xl transform-gpu"
                 >
                   {/* User Info Header */}
-                  <div className="px-4 py-4 border-b border-white/5 mb-2 bg-white/[0.02] rounded-t-xl">
+                  <div className="px-4 py-4 border-b border-white/5 mb-2 bg-white/2 rounded-t-xl">
                     <div className="text-white text-lg font-semibold truncate tracking-tight">
                       {dashboardData.user.name}
                     </div>
@@ -526,7 +526,7 @@ useEffect(() => {
           <main className="flex flex-col gap-6 overflow-y-auto pr-2 pb-10">
             
             {/* Review Timeline Card - Height Reduced */}
-            <GlassCard noPadding={true} className="flex flex-col relative overflow-hidden justify-center min-h-[180px]">
+            <GlassCard noPadding={true} className="flex flex-col relative overflow-hidden justify-center min-h-45">
               
               {/* SVG BACKGROUND - Fixed to Snap & Fill */}
               <div className="absolute inset-0 z-0 pointer-events-none opacity-60 mix-blend-screen">
@@ -565,7 +565,7 @@ useEffect(() => {
                 <div className="relative">
                   
                   {/* --- SEGMENT 1 --- */}
-                  <div className="absolute top-12 left-[16.666%] w-[33.333%] h-[3px] -translate-y-1/2 z-0">
+                  <div className="absolute top-12 left-[16.666%] w-[33.333%] h-0.75 -translate-y-1/2 z-0">
                     <div className="mx-12 h-full bg-white/10 rounded-full" />
                     <motion.div 
                       initial={{ width: '0%' }}
@@ -583,7 +583,7 @@ useEffect(() => {
                   </div>
 
                   {/* --- SEGMENT 2 --- */}
-                  <div className="absolute top-12 left-[50%] w-[33.333%] h-[3px] -translate-y-1/2 z-0">
+                  <div className="absolute top-12 left-[50%] w-[33.333%] h-0.75 -translate-y-1/2 z-0">
                     <div className="mx-12 h-full bg-white/10 rounded-full" />
                     <motion.div 
                       initial={{ width: '0%' }}
@@ -684,7 +684,7 @@ useEffect(() => {
                   <AnimatedButton 
                     variant={isEditMode ? "secondary" : "primary"}
                     onClick={() => { setIsEditMode(!isEditMode); setError(null); setSuccessMessage(null); }}
-                    className="h-9 px-4 py-0 text-sm min-w-[80px]"
+                    className="h-9 px-4 py-0 text-sm min-w-20"
                   >
                     {isEditMode ? 'Cancel' : 'Edit'}
                   </AnimatedButton>
@@ -714,7 +714,7 @@ useEffect(() => {
 
               {/* Scroll Container (Scrollbar Hidden) */}
               <div 
-                className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 pb-6 max-h-[550px]"
+                className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 pb-6 max-h-137.5"
                 style={{ 
                   WebkitOverflowScrolling: 'touch', 
                   willChange: 'scroll-position', 
@@ -736,7 +736,7 @@ useEffect(() => {
                             w-full h-11 rounded-xl text-sm outline-none transition-all duration-200 border appearance-none px-4
                             ${!isEditMode 
                               ? "bg-white/5 border-white/5 text-white font-medium cursor-default opacity-100" 
-                              : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/[0.09] focus:border-green-500/50"
+                              : "bg-white/5 hover:bg-white/[0.07] border-white/10 hover:border-white/20 text-gray-100 focus:bg-white/9 focus:border-green-500/50"
                             }
                             [&>option]:bg-neutral-900 [&>option]:text-gray-200
                           `}
@@ -945,7 +945,7 @@ useEffect(() => {
                 Team Code
               </div>
 
-              <div className="grid grid-cols-2 gap-3 w-[160px]">
+              <div className="grid grid-cols-2 gap-3 w-40">
                 
                 {/* --- ROW 1: Team Code --- */}
                 <div className="col-span-2 relative group cursor-pointer" onClick={(e) => copyToClipboard(dashboardData.team.id, e)}>
@@ -1090,7 +1090,7 @@ useEffect(() => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
             onClick={() => !isResetting && setShowResetModal(false)}
           >
             <motion.div 
@@ -1143,7 +1143,7 @@ useEffect(() => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
             onClick={() => !memberActionLoading && closeRemoveMemberModal()}
           >
             <motion.div 

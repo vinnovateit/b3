@@ -191,7 +191,7 @@ export default function CreateTeamPage() {
     }
 
     return (
-        <SetupLayout step={3}>
+        <SetupLayout>
             <div ref={containerRef} className="flex flex-col h-full">
                 
                 {/* --- Header --- */}

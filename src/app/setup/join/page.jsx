@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { Suspense } from "react";
 import SetupLayout from "../../components/SetupLayout";
 import CustomButton from "../../components/CustomButton";
+import B3Header from "@/app/components/B3Header";
 
 const CustomInput = ({ label, placeholder, value, onChange }) => {
     const lineRef = useRef(null);
@@ -125,19 +126,14 @@ function JoinTeamContent() {
     };
 
     return (
-        <SetupLayout step={3}>
-            <div ref={containerRef} className="flex flex-col h-full">
-                <div className="h-[30vh] flex flex-col justify-end pb-10">
+        <SetupLayout>
+            <div className="h-[30vh] flex flex-col justify-end pb-10">
                     <div className="gsap-entry flex items-end">
-                        <h1 className="text-7.5xl font-bold text-white leading-none" style={{ fontSize: "5.5rem" }}>B</h1>
-                        <div className="h-12 w-8 overflow-hidden relative mb-7.5 ml-1">
-                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-12">
-                                <span>1</span><span>2</span><span>3</span>
-                            </div>
-                        </div>
+                        <B3Header/>
                     </div>
-                    <div className="gsap-entry"><p className="text-4xl text-gray-300 mt-4 font-light">Let’s set things up</p></div>
                 </div>
+            <div ref={containerRef} className="flex flex-col h-full">
+                
 
                 <div className="flex-1 flex flex-col gap-8 pt-10 relative z-20">
                     <div className="gsap-entry w-full md:w-1/2">

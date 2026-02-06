@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react"; // BACKEND: Restored useSession
+import { useSession } from "next-auth/react"; 
 import gsap from "gsap";
 import { ChevronDown } from "lucide-react";
 import SetupLayout from "../../components/SetupLayout";
 import Button from "../../components/CustomButton";
+import B3Header from "@/app/components/B3Header";
 
-// --- 1. Custom GSAP Input (Frontend: Lavan8t Style) ---
+// --- 1. Custom GSAP Input ---
 const CustomInput = ({ label, placeholder, value, onChange, disabled }) => {
     const lineRef = useRef(null);
 
@@ -40,16 +41,14 @@ const CustomInput = ({ label, placeholder, value, onChange, disabled }) => {
                     ${disabled ? 'opacity-60 cursor-not-allowed' : ''}
                 `}
             />
-            {/* Frontend: h-0.5 line style */}
             <div ref={lineRef} className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 origin-left scale-x-0" />
         </div>
     );
 };
 
-// --- 2. Custom GSAP Dropdown (Frontend: Lavan8t Style) ---
+// --- 2. Custom GSAP Dropdown ---
 const CustomDropdown = ({ placeholder, options, value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
-    
     const dropdownRef = useRef(null);
     const listRef = useRef(null);
     const arrowRef = useRef(null);
@@ -142,10 +141,10 @@ const CustomDropdown = ({ placeholder, options, value, onChange }) => {
     );
 };
 
-// --- 3. Main Page Logic (BACKEND LOGIC RESTORED) ---
+// --- 3. Main Page Logic ---
 export default function SetupProfilePage() {
     const router = useRouter();
-    const { data: session, status } = useSession(); // BACKEND: Real Session
+    const { data: session, status } = useSession();
     const containerRef = useRef(null);
     const stripRef = useRef(null);
     
@@ -159,22 +158,17 @@ export default function SetupProfilePage() {
     const [error, setError] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
-    // --- BACKEND: Redirect if not authenticated ---
+    // Authentication & Profile Check
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
+        if (status === "unauthenticated") router.push("/login");
     }, [status, router]);
 
-    // --- BACKEND: Check for existing profile (Edit Mode) ---
     useEffect(() => {
         const checkSetup = async () => {
             if (status !== "authenticated") return;
-
             try {
                 const response = await fetch("/api/users/profile");
                 const data = await response.json();
-
                 if (response.ok && data.data?.isRegistered && data.data?.vitStudent?.id) {
                     const vit = data.data.vitStudent;
                     setRegNo(vit.regNo || "");
@@ -192,7 +186,7 @@ export default function SetupProfilePage() {
         checkSetup();
     }, [status]);
 
-    // --- Logic: Name & RegNo Parsing ---
+    // Name & RegNo Parsing
     const parseNameAndRegNo = (fullName) => {
         if (!fullName) return { name: "", regNo: "" };
         const regNoPattern = /\b(\d{2}[A-Z]{3}\d{4})\b/;
@@ -215,18 +209,14 @@ export default function SetupProfilePage() {
     const { name: parsedName, regNo: parsedRegNo } = parseNameAndRegNo(session?.user?.name || "");
     const name = parsedName;
 
-    // Pre-fill RegNo if found in Google Name
     useEffect(() => {
         if (parsedRegNo && !regNo) setRegNo(parsedRegNo);
     }, [parsedRegNo, regNo]);
 
-    // --- ANIMATIONS (Visuals from Frontend Branch) ---
+    // GSAP Entry Animation
     useEffect(() => {
-        // Only run animation when session is loaded to avoid hydration mismatches
         if (status !== "authenticated") return;
-
         const ctx = gsap.context(() => {
-            // 1. Entry Fade In
             gsap.from(".gsap-entry", {
                 y: 50,
                 opacity: 0,
@@ -235,22 +225,10 @@ export default function SetupProfilePage() {
                 ease: "power3.out",
                 delay: 0.2
             });
-
-            // 2. LOGO ROLL (1 -> 2 -> 3)
-            // Visual: Scrolls fully to '3' in 2.5s as requested
-            if (stripRef.current) {
-                gsap.to(stripRef.current, {
-                    yPercent: -66.66, // -66.66% moves the strip up to show the 3rd number
-                    duration: 2.5,
-                    ease: "power3.inOut",
-                    delay: 0.5 
-                });
-            }
         }, containerRef);
         return () => ctx.revert();
-    }, [status]); // Dependency on status
+    }, [status]);
 
-    // Conditional Fields Animation
     useEffect(() => {
         if (residence === "Hosteller") {
             gsap.from(".conditional-field", {
@@ -263,10 +241,8 @@ export default function SetupProfilePage() {
         }
     }, [residence]);
 
-
-    // --- BACKEND: Real Submit Handler ---
+    // Submit Handler
     const handleNextStep = async () => {
-        // Validation
         if (!name?.trim()) { setError("Please enter your name"); return; }
         if (!regNo?.trim()) { setError("Please enter your registration number"); return; }
         if (!phone?.trim() || !/^[6-9]\d{9}$/.test(phone)) { setError("Please enter a valid phone number"); return; }
@@ -277,8 +253,6 @@ export default function SetupProfilePage() {
             setIsSaving(true);
             setError(null);
             const calculatedYear = calculateYear(regNo);
-
-            // API Call
             const response = await fetch("/api/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -293,17 +267,12 @@ export default function SetupProfilePage() {
                     room: residence === "Hosteller" ? roomNo : null,
                 }),
             });
-
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || "Failed to save profile");
-
-            // Success Handling (Backend Routes)
             router.push(isEditMode ? "/dashboard" : "/setup/team");
-
         } catch (err) {
             setError(err.message);
             setIsSaving(false);
-            console.error("Profile save error:", err);
         }
     };
 
@@ -317,129 +286,114 @@ export default function SetupProfilePage() {
         );
     }
 
-    // --- RENDER (Frontend Layout maintained) ---
     return (
         <SetupLayout>
-            <div ref={containerRef} className="flex flex-col h-full">
-                
-                {/* Header (Lavan8t Height: 30vh) */}
-                <div className="h-[30vh] flex flex-col justify-end pb-10">
-                    <div className="gsap-entry flex items-end">
-                        <h1 className="text-7.5xl font-bold text-white leading-none" style={{ fontSize: "5.5rem" }}>
-                            B
-                        </h1>
+            <B3Header />
+            
+            <div ref={containerRef} className="relative z-10 w-full pt-[35vh] pb-20">
+                {/* Content Container: Aligned with max-width and consistent gaps */}
+                <div className="max-w-5xl flex flex-col gap-12">
+                    
+                    {/* Form Fields Wrapper */}
+                    <div className="flex flex-col gap-8 w-full">
                         
-                        {/* Window (Lavan8t: h-12 w-8) */}
-                        <div className="h-12 w-8 overflow-hidden relative mb-7.5 ml-1">
-                            {/* Strip: Contains 1, 2, 3 stacked vertically */}
-                            <div ref={stripRef} className="flex flex-col text-5xl font-bold text-white leading-12">
-                                <span>1</span>
-                                <span>2</span>
-                                <span>3</span>
+                        {/* 1. Name Input - Takes half width on desktop */}
+                        <div className="gsap-entry w-full md:w-1/2">
+                            <CustomInput 
+                                label="What do we call you ?" 
+                                placeholder="Your name from Google" 
+                                value={name}
+                                disabled={true}
+                            />
+                        </div>
+
+                        {/* 2. RegNo & Phone - 2 Column Grid */}
+                        <div className="gsap-entry grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <CustomInput 
+                                label="Registration Number" 
+                                placeholder="23MID0026" 
+                                value={regNo}
+                                onChange={(e) => setRegNo(e.target.value.toUpperCase())}
+                                disabled={true}
+                            />
+                            
+                            <CustomInput 
+                                label="Phone Number" 
+                                placeholder="9876543210" 
+                                value={phone}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '' || (/^\d+$/.test(val) && val.length <= 10)) setPhone(val);
+                                }}
+                            />
+                        </div>
+
+                        {/* 3. Residence Area - 4 Column Grid */}
+                        <div className="gsap-entry flex flex-col gap-4">
+                            <label className="text-lg font-medium text-gray-200">
+                                Where do you live ?
+                            </label>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
+                                <CustomDropdown 
+                                    placeholder="Select" 
+                                    options={["Hosteller", "Day Scholar"]} 
+                                    value={residence}
+                                    onChange={setResidence} 
+                                />
+
+                                {residence === "Hosteller" && (
+                                    <>
+                                        <div className="conditional-field">
+                                            <CustomDropdown 
+                                                placeholder="Type" 
+                                                options={["Mens", "Ladies"]} 
+                                                value={hostelType}
+                                                onChange={(val) => setHostelType(val === "Mens" ? "Mens" : "Ladies")} 
+                                            />
+                                        </div>
+                                        <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Block" 
+                                                value={block}
+                                                onChange={(e) => setBlock(e.target.value)}
+                                                className="w-full bg-transparent border-none text-lg text-white placeholder:text-white/50 focus:outline-none" 
+                                            />
+                                        </div>
+                                        <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Room No." 
+                                                value={roomNo}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val === '' || /^\d+$/.test(val)) setRoomNo(val);
+                                                }}
+                                                className="w-full bg-transparent border-none text-lg text-white placeholder:text-white/50 focus:outline-none" 
+                                            />
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
-                    </div>
-                    <div className="gsap-entry">
-                        <p className="text-4xl text-gray-300 mt-4 font-light">Let's set things up</p>
-                    </div>
-                </div>
 
-                {/* Form Section */}
-                <div className="step-1-content flex-1 flex flex-col gap-10 relative z-20">
-                    
-                    <div className="gsap-entry w-full md:w-1/3">
-                        <CustomInput 
-                            label="What do we call you ?" 
-                            placeholder="Your name from Google" 
-                            value={name}
-                            disabled={true}
+                        {error && (
+                            <div className="gsap-entry w-full md:w-1/2 p-4 rounded-lg bg-red-500/20 border border-red-500/50 text-red-200 text-sm">
+                                {error}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Footer Button - Aligned with the form flow */}
+                    <div className="gsap-entry w-full">
+                        <Button
+                            size="lg"
+                            text={isSaving ? "Saving..." : (isEditMode ? "Save and Go to Dashboard" : "Next Step")}
+                            onClick={handleNextStep}
+                            disabled={isSaving}
                         />
                     </div>
-
-                    <div className="gsap-entry grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <CustomInput 
-                            label="Registration Number" 
-                            placeholder="23MID0026" 
-                            value={regNo}
-                            onChange={(e) => setRegNo(e.target.value.toUpperCase())}
-                            disabled={true}
-                        />
-                        
-                        <CustomInput 
-                            label="Phone Number" 
-                            placeholder="9876543210" 
-                            value={phone}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                if (val === '' || (/^\d+$/.test(val) && val.length <= 10)) setPhone(val);
-                            }}
-                        />
-                    </div>
-
-                    <div className="gsap-entry">
-                        <label className="block text-lg font-medium text-gray-200 mb-10">
-                            Where do you live ?
-                        </label>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl relative">
-                            <CustomDropdown 
-                                placeholder="Select" 
-                                options={["Hosteller", "Day Scholar"]} 
-                                value={residence}
-                                onChange={setResidence} 
-                            />
-
-                            {residence === "Hosteller" && (
-                                <>
-                                    <div className="conditional-field">
-                                        <CustomDropdown 
-                                            placeholder="Type" 
-                                            options={["Mens", "Ladies"]} 
-                                            value={hostelType}
-                                            onChange={(val) => setHostelType(val === "Mens" ? "Mens" : "Ladies")} 
-                                        />
-                                    </div>
-                                    <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
-                                        <input 
-                                            type="text" 
-                                            placeholder="Block" 
-                                            value={block}
-                                            onChange={(e) => setBlock(e.target.value)}
-                                            className="w-full bg-transparent border-none text-lg text-white placeholder:text-white/50 focus:outline-none" 
-                                        />
-                                    </div>
-                                    <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
-                                        <input 
-                                            type="text" 
-                                            placeholder="Room No." 
-                                            value={roomNo}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (val === '' || /^\d+$/.test(val)) setRoomNo(val);
-                                            }}
-                                            className="w-full bg-transparent border-none text-lg text-white placeholder:text-white/50 focus:outline-none" 
-                                        />
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    {error && (
-                        <div className="gsap-entry p-4 rounded-lg bg-red-500/20 border border-red-500/50 text-red-200 text-sm">
-                            {error}
-                        </div>
-                    )}
-                </div>
-
-                {/* Footer Section */}
-                <div className="gsap-entry h-[20vh] flex items-start pt-6 relative z-10">
-                    <Button
-                        size="lg"
-                        text={isSaving ? "Saving..." : (isEditMode ? "Save and Go to Dashboard" : "Next Step")}
-                        onClick={handleNextStep}
-                        disabled={isSaving}
-                    />
                 </div>
             </div>
         </SetupLayout>

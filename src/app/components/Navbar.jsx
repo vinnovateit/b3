@@ -74,7 +74,7 @@ const Navbar = () => {
           transition-all duration-300"
         >
           {/* Logo */}
-          <div className="flex items-center group cursor-pointer z-[60]">
+          <div className="flex items-center group cursor-pointer z-60">
             <div className="transform transition-transform duration-300 ease-spring group-hover:scale-105 group-active:scale-95">
               <a href="https://vinnovateit.com/">
                 <Image
@@ -144,7 +144,7 @@ const Navbar = () => {
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setOpen(true)}
-            className={`md:hidden relative z-[60] ml-auto ${buttonStyle} ${open ? 'opacity-0 rotate-180 scale-50 pointer-events-none' : 'opacity-100 rotate-0 scale-100'}`}
+            className={`md:hidden relative z-60 ml-auto ${buttonStyle} ${open ? 'opacity-0 rotate-180 scale-50 pointer-events-none' : 'opacity-100 rotate-0 scale-100'}`}
           >
             <svg
               className="w-7 h-7"
@@ -165,7 +165,7 @@ const Navbar = () => {
 
       {/* Full Screen Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 z-[100] h-[100dvh] w-screen 
+        className={`fixed inset-0 z-100 h-dvh w-screen 
           bg-black/95 backdrop-blur-3xl overflow-hidden
           flex flex-col items-center justify-center
           transition-all duration-500 ease-spring
@@ -178,19 +178,19 @@ const Navbar = () => {
         {/* Background Blurred Shape 1 (Top Left) */}
         <div 
           style={orbStyle} 
-          className={`absolute -top-20 -left-20 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 -translate-y-20"}`}
+          className={`absolute -top-20 -left-20 w-[80vw] h-[80vw] max-w-125 max-h-125 rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 -translate-y-20"}`}
         />
 
         {/* Background Blurred Shape 2 (Bottom Right) */}
         <div 
           style={orbStyle} 
-          className={`absolute -bottom-20 -right-20 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 translate-y-20"}`}
+          className={`absolute -bottom-20 -right-20 w-[80vw] h-[80vw] max-w-125 max-h-125 rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 translate-y-20"}`}
         />
 
         {/* Close Button */}
         <button 
             onClick={() => setOpen(false)}
-            className={`absolute top-6 right-6 z-[110] ${buttonStyle} ${open ? 'opacity-100 rotate-0 scale-100 delay-100' : 'opacity-0 -rotate-180 scale-50'}`}
+            className={`absolute top-6 right-6 z-110 ${buttonStyle} ${open ? 'opacity-100 rotate-0 scale-100 delay-100' : 'opacity-0 -rotate-180 scale-50'}`}
             aria-label="Close menu"
         >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,7 +227,7 @@ const Navbar = () => {
               onClick={() => setOpen(false)}
               className={`
                 group relative flex items-center justify-between
-                w-auto min-w-[160px] px-8 py-2
+                w-auto min-w-40 px-8 py-2
                 btn-gradient-border shadow-[0_4px_20px_rgba(0,0,0,0.3)]
                 bg-linear-to-b from-[#2dc966] to-[#049f46]
                 border border-[#6ee7b7]/30 border-t-[#6ee7b7]/60 border-b-[#047835]/60

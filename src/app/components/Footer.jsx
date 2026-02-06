@@ -179,28 +179,28 @@ export default function Footer() {
       >
         <div className="relative w-full flex-1 flex justify-center items-end pointer-events-none">
           <div className="absolute w-full h-full bottom-0 z-10 flex justify-center">
-            <div className="absolute bottom-0 left-0 w-full h-[100%] overflow-hidden z-0">
+            <div className="absolute bottom-0 left-0 w-full h-full overflow-hidden z-0">
               <div
                 id="anim-glow"
                 className="w-full h-full origin-bottom opacity-0"
               >
                 <div
-                  className="absolute left-1/2 -translate-x-1/2 bottom-[-300px] md:bottom-[-450px]
-                                w-[600px] md:w-[1200px] h-[600px] md:h-[900px]
+                  className="absolute left-1/2 -translate-x-1/2 -bottom-75 md:-bottom-112.5
+                                w-150 md:w-300 h-150 md:h-225
                                 bg-[radial-gradient(circle,rgba(12,144,67,0.15)_0%,transparent_70%)]
                                 blur-[60px] md:blur-[80px]"
                 ></div>
                 <div
-                  className="absolute left-1/2 -translate-x-1/2 bottom-[-200px] md:bottom-[-350px]
-                                w-[400px] md:w-[700px] h-[400px] md:h-[700px]
+                  className="absolute left-1/2 -translate-x-1/2 -bottom-50 md:-bottom-87.5
+                                w-100 md:w-175 h-100 md:h-175
                                 bg-[radial-gradient(closest-side,rgba(46,189,107,0.4)_0%,rgba(12,144,67,0.05)_60%,transparent_100%)]
-                                blur-[40px] md:blur-[50px]"
+                                blur-2xl md:blur-[50px]"
                 ></div>
                 <div
-                  className="absolute left-1/2 -translate-x-1/2 bottom-[-100px] md:bottom-[-200px]
-                                w-[250px] md:w-[400px] h-[250px] md:h-[400px]
+                  className="absolute left-1/2 -translate-x-1/2 -bottom-25 md:-bottom-50
+                                w-62.5 md:w-100 h-62.5 md:h-100
                                 bg-[radial-gradient(circle,rgba(46,189,107,0.2)_0%,transparent_70%)]
-                                blur-[30px] md:blur-[40px]"
+                                blur-[30px] md:blur-2xl"
                 ></div>
               </div>
             </div>
