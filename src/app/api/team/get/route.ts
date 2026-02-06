@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
 import { errorResponse, successResponse, parseJsonBody, logRequest, logResponse } from "@/lib/api-helpers";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
@@ -32,7 +31,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const query = teamId ? { id: teamId } : { code: (teamCode as string).toUpperCase() };
 
-    const team = (await prisma.team.findUnique({
+    const team = await prisma.team.findUnique({
       where: query,
       include: {
         vitStudents: {
@@ -49,22 +48,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-    })) as Prisma.TeamGetPayload<{
-      include: {
-        vitStudents: {
-          include: {
-            user: {
-              select: {
-                id: true;
-                name: true;
-                email: true;
-                image: true;
-              };
-            };
-          };
-        };
-      };
-    }> | null;
+    });
 
     if (!team) {
       logResponse("POST", "/api/team/get", 404, Date.now() - startTime);
@@ -129,7 +113,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return errorResponse("You are not part of any team", 404);
     }
 
-    const team = (await prisma.team.findUnique({
+    const team = await prisma.team.findUnique({
       where: { id: user.vitStudent.teamId },
       include: {
         vitStudents: {
@@ -146,22 +130,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-    })) as Prisma.TeamGetPayload<{
-      include: {
-        vitStudents: {
-          include: {
-            user: {
-              select: {
-                id: true;
-                name: true;
-                email: true;
-                image: true;
-              };
-            };
-          };
-        };
-      };
-    }> | null;
+    });
 
     if (!team) {
       logResponse("GET", "/api/team/get", 404, Date.now() - startTime);
