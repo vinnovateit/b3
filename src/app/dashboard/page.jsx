@@ -53,6 +53,7 @@ export default function App() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [memberActionLoading, setMemberActionLoading] = useState(false);
 
   // All useEffect hooks must be before any conditional returns
   // Redirect if not authenticated
@@ -167,6 +168,22 @@ export default function App() {
     return () => document.removeEventListener('mousedown', onMouseDown);
   }, [showProfilePopup]);
 
+  // Guard: don't render dashboard for unauthenticated users
+  if (status === "loading") {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <p className="text-white text-lg">Checking your session...</p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    if (typeof window !== "undefined") {
+      router.replace("/login");
+    }
+    return null;
+  }
+
   const dashboardData = {
     user: {
       name: userProfile?.name || session?.user?.name || 'Participant',
@@ -180,6 +197,46 @@ export default function App() {
         email: student.user?.email || 'Unknown',
         role: index === 0 ? 'leader' : 'member' // First member is the leader
       })) || []
+    }
+  };
+
+  const isCurrentUserLeader = React.useMemo(() => {
+    const me = dashboardData.team.members.find(
+      (m) => m.email === (userProfile?.email || session?.user?.email)
+    );
+    return me?.role === 'leader';
+  }, [dashboardData.team.members, userProfile?.email, session?.user?.email]);
+
+  const handleRemoveMember = async (memberEmail) => {
+    if (!isCurrentUserLeader || !memberEmail) return;
+    if (!confirm(`Remove ${memberEmail} from the team?`)) return;
+
+    try {
+      setMemberActionLoading(true);
+      setError(null);
+
+      const res = await fetch('/api/team/remove-member', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberEmail }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to remove member');
+      }
+
+      // Refresh team data
+      const teamRes = await fetch('/api/team/get');
+      const teamJson = await teamRes.json();
+      if (teamRes.ok && teamJson.success && teamJson.data) {
+        setTeamData(teamJson.data);
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to remove member');
+      console.error('Remove member error:', err);
+    } finally {
+      setMemberActionLoading(false);
     }
   };
 
@@ -627,15 +684,17 @@ export default function App() {
                       <button className="h-7 px-4 rounded-full bg-green-800/60 text-white text-[11px]">
                         Team Leader
                       </button>
-                    ) : (
+                    ) : isCurrentUserLeader ? (
                       <button
-                        className="h-7 px-4 rounded-full bg-green-800/45 text-white text-[11px]"
+                        className="h-7 px-4 rounded-full bg-green-800/45 text-white text-[11px] disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleRemoveMember(member.email)}
+                        disabled={memberActionLoading}
                         onMouseEnter={(e) => handleButtonHover(e.currentTarget, 1.05)}
                         onMouseLeave={(e) => handleButtonHover(e.currentTarget, 1)}
                       >
-                        Remove member
+                        {memberActionLoading ? 'Removing...' : 'Remove member'}
                       </button>
-                    )}
+                    ) : null}
                   </div>
                 ))
               ) : (

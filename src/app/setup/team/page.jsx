@@ -79,8 +79,6 @@ export default function TeamPage() {
 	}, [status, router]);
 
 	useEffect(() => {
-		if (status !== "authenticated") return;
-
 		const ctx = gsap.context(() => {
 			gsap.from(".gsap-entry", {
 				y: 50,
@@ -88,7 +86,7 @@ export default function TeamPage() {
 				duration: 1,
 				stagger: 0.15,
 				ease: "power3.out",
-				delay: 0.2
+				delay: 0.2,
 			});
 
 			gsap.from(".team-card", {
@@ -97,21 +95,20 @@ export default function TeamPage() {
 				duration: 0.8,
 				stagger: 0.2,
 				ease: "power3.out",
-				delay: 0.4
+				delay: 0.4,
 			});
 
 			if (stripRef.current) {
-				// Team page shows "2" - move up by 1 position (48px)
 				gsap.to(stripRef.current, {
-					y: -48,
+					yPercent: -66.66,
 					duration: 2.5,
 					ease: "power3.inOut",
-					delay: 0.5
+					delay: 0.5,
 				});
 			}
 		}, containerRef);
 		return () => ctx.revert();
-	}, [status]);
+	}, []);
 
 	const handleNextStep = () => {
 		if (selectedOption === 'create') {
