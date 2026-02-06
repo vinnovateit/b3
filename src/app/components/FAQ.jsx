@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import "../globals.css";
 
 const FAQ_DATA = {
-	"General FAQS": [
+	"Bui	lder FAQS": [
 		{
 			q: "Do I need prior blockchain experience?",
 			a: "No. Beginners are encouraged to join, you can learn and build during the event.",
@@ -25,7 +25,7 @@ const FAQ_DATA = {
 		},
 		{
 			q: "Will problem statements/tracks be provided?",
-			a: "No, there will be no problem statements or track given to you, you are free to choose it.",
+			a: "Yes. The hackathon will feature 3 fixed problem statement tracks, listed above, for participants to build and innovate on.",
 		},
 		{
 			q: "What should I do for overnight slips?",

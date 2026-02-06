@@ -333,11 +333,11 @@ const WhoAreWe = () => {
 					What We’re about
 				</h2>
 				<p className="text-white max-w-[863px] text-lg md:text-[30px] leading-[1.3] mb-12 font-normal antialiased">
-					The builders of MessIT are back with another hackathon. VinnovateIT is
-					where curiosity turns into creation. A community of builders and
-					innovators exploring technology beyond classrooms, through hands-on
-					learning and real problem solving. We don’t just learn tech, we build
-					with it. Because real innovation begins when ideas meet execution.
+					The builders behind MessIT are back and this time, we’re going on-chain.
+					VinnovateIT is a community where curiosity turns into creation. We bring together passionate
+					builders, designers, and innovators to explore technology beyond classrooms through
+					hands-on projects, real-world problem solving, and nonstop building.
+					<br/><br/>We don’t just learn tech. We build with it.
 				</p>
 				<CustomButton text="Learn More" link="https://vinnovateit.com/" />
 			</div>
