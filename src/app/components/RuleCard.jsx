@@ -61,7 +61,7 @@ export default function RuleCard({
         </svg>
 
       {/* card ka content */}
-      <div className="relative p-8 w-full text-left" style={{ height: resolvedHeight }}>
+      <div className="relative p-8 w-full text-left" style={{ minHeight: resolvedHeight }}>
         <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-[#0CAC4F1A] mb-6">
           {Icon && (
             <img 
@@ -79,7 +79,7 @@ export default function RuleCard({
           {title}
         </h3>
 
-        <p className="text-gray-400 mt-3 leading-relaxed">
+        <p className="text-gray-400 mt-3 leading-relaxed break-words">
           {desc}
         </p>
       </div>
