@@ -73,7 +73,7 @@ export default function RulesSection() {
         </div>
       </div>
 
-      <div className="pt-0.5 max-w-6xl mx-auto my-30 text-center">
+      <div className="pt-0.5 max-w-6xl mx-auto my-[10vw] text-center">
         <h1 className="text-5xl font-semibold mt-6 text-white">
           Rules of Engagement
         </h1>

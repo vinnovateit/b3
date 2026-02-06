@@ -57,7 +57,7 @@ export default function RulesSection() {
         </div>
       </div>
       <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-5xl font-semibold mt-6 text-white pt-2">
+        <h1 className="text-5xl font-semibold mt-[10vw] text-white pt-2">
             Tracks
         </h1>
 
