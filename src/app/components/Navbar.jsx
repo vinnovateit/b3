@@ -27,7 +27,6 @@ const scrollToSection = (e, href) => {
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
-  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -44,6 +43,13 @@ const Navbar = () => {
       "0px 4px 8px 1px rgba(0, 0, 0, 0.25), inset 0px 1px 1px 0px rgba(255, 255, 255, 0.15), inset 0px 0px 20px 0px rgba(255, 255, 255, 0.05)",
   };
 
+  const orbStyle = {
+    background: "radial-gradient(ellipse at center, rgba(5, 124, 53, 0.45) 0%, rgba(34, 82, 44, 0.3) 30%, transparent 60%)",
+    filter: "blur(60px)",
+  };
+
+  const buttonStyle = "p-2 text-white transition-all duration-500 ease-spring hover:scale-110 active:scale-90 cursor-pointer";
+
   return (
     <>
       <style dangerouslySetInnerHTML={{__html: `
@@ -57,6 +63,7 @@ const Navbar = () => {
         }
       `}} />
 
+      {/* Main Navigation Bar */}
       <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%]">
         <div
           style={glassStyle}
@@ -97,7 +104,7 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Desktop Login Button Wrapper (Explicitly hidden on mobile) */}
+          {/* Desktop Login Button */}
           <div className="hidden md:block">
             <a
               href="/login"
@@ -136,107 +143,121 @@ const Navbar = () => {
 
           {/* Mobile Menu Toggle Button */}
           <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden relative z-[60] text-white p-2 transition-transform duration-300 ease-spring hover:scale-110 active:scale-90 ml-auto"
+            onClick={() => setOpen(true)}
+            className={`md:hidden relative z-[60] ml-auto ${buttonStyle} ${open ? 'opacity-0 rotate-180 scale-50 pointer-events-none' : 'opacity-100 rotate-0 scale-100'}`}
           >
             <svg
-              className={`w-7 h-7 transition-transform duration-300 ${
-                open ? "rotate-90" : "rotate-0"
-              }`}
+              className="w-7 h-7"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
               viewBox="0 0 24 24"
             >
-              {open ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M4 6h16M4 12h16M4 18h16"
                 />
-              )}
             </svg>
           </button>
         </div>
+      </nav>
 
-        {/* Full Screen Mobile Menu Overlay */}
-        <div
-          className={`fixed inset-0 z-50 h-[100dvh] w-screen 
-            bg-black/60 backdrop-blur-3xl
-            flex flex-col items-center justify-center
-            transition-all duration-500 ease-spring
-            ${
-              open
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 translate-y-4 pointer-events-none"
-            }`}
+      {/* Full Screen Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-[100] h-[100dvh] w-screen 
+          bg-black/95 backdrop-blur-3xl overflow-hidden
+          flex flex-col items-center justify-center
+          transition-all duration-500 ease-spring
+          ${
+            open
+              ? "opacity-100 visible pointer-events-auto"
+              : "opacity-0 invisible pointer-events-none"
+          }`}
+      >
+        {/* Background Blurred Shape 1 (Top Left) */}
+        <div 
+          style={orbStyle} 
+          className={`absolute -top-20 -left-20 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 -translate-y-20"}`}
+        />
+
+        {/* Background Blurred Shape 2 (Bottom Right) */}
+        <div 
+          style={orbStyle} 
+          className={`absolute -bottom-20 -right-20 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] rounded-full pointer-events-none z-0 transition-transform duration-1000 ease-spring ${open ? "scale-100 translate-y-0" : "scale-50 translate-y-20"}`}
+        />
+
+        {/* Close Button */}
+        <button 
+            onClick={() => setOpen(false)}
+            className={`absolute top-6 right-6 z-[110] ${buttonStyle} ${open ? 'opacity-100 rotate-0 scale-100 delay-100' : 'opacity-0 -rotate-180 scale-50'}`}
+            aria-label="Close menu"
         >
-          <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
-            {/* Mobile Nav Links */}
-            {NAV_ITEMS.map((item, index) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => {
-                  scrollToSection(e, item.href);
-                  setOpen(false);
-                }}
-                style={{ transitionDelay: `${index * 50}ms` }}
-                className={`text-2xl font-medium text-white/90 hover:text-green-400 transition-all duration-300 transform
-                  ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
-              >
-                {item.label}
-              </a>
-            ))}
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
 
-            {/* Mobile Login Button (Centered & Auto Width) */}
-            <div
-              className={`w-full flex justify-center pt-4 transition-all duration-500 delay-200
-              ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        {/* Content Container (z-10 to sit above shapes) */}
+        <div className="relative z-10 flex flex-col items-center gap-10 w-full max-w-sm px-6">
+          {/* Mobile Nav Links */}
+          {NAV_ITEMS.map((item, index) => (
+            <a
+              key={item.label}
+              href={item.href}
+              onClick={(e) => {
+                scrollToSection(e, item.href);
+                setOpen(false);
+              }}
+              style={{ transitionDelay: `${index * 50}ms` }}
+              className={`text-4xl md:text-5xl font-medium text-white/90 hover:text-green-400 transition-all duration-300 transform
+                ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
             >
-              <a
-                href="/login"
-                onClick={() => setOpen(false)}
-                className={`
-                  group relative flex items-center justify-between
-                  w-auto min-w-[140px] px-6 py-1
-                  btn-gradient-border shadow-[0_4px_20px_rgba(0,0,0,0.3)]
-                  bg-linear-to-b from-[#2dc966] to-[#049f46]
-                  border border-[#6ee7b7]/30 border-t-[#6ee7b7]/60 border-b-[#047835]/60
-                  text-lg font-normal text-white
-                  rounded-2xl
-                  transition-all duration-300 ease-spring
-                  active:scale-95
-                `}
-              >
-                <span className="relative z-10 font-medium tracking-wide">Login</span>
-                <div className="h-12 w-1 bg-white/40 mx-4"></div>
-                <span className="relative z-10 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 transition-transform duration-300 ease-spring group-hover:translate-x-1"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                    <polyline points="10 17 15 12 10 7" />
-                    <line x1="15" y1="12" x2="3" y2="12" />
-                  </svg>
-                </span>
-              </a>
-            </div>
+              {item.label}
+            </a>
+          ))}
+
+          {/* Mobile Login Button */}
+          <div
+            className={`w-full flex justify-center pt-8 transition-all duration-500 delay-200
+            ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+          >
+            <a
+              href="/login"
+              onClick={() => setOpen(false)}
+              className={`
+                group relative flex items-center justify-between
+                w-auto min-w-[160px] px-8 py-2
+                btn-gradient-border shadow-[0_4px_20px_rgba(0,0,0,0.3)]
+                bg-linear-to-b from-[#2dc966] to-[#049f46]
+                border border-[#6ee7b7]/30 border-t-[#6ee7b7]/60 border-b-[#047835]/60
+                text-xl font-normal text-white
+                rounded-2xl
+                transition-all duration-300 ease-spring
+                active:scale-95
+              `}
+            >
+              <span className="relative z-10 font-medium tracking-wide">Login</span>
+              <div className="h-12 w-1 bg-white/40 mx-4"></div>
+              <span className="relative z-10 flex items-center justify-center">
+                <svg
+                  className="w-7 h-7 transition-transform duration-300 ease-spring group-hover:translate-x-1"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+              </span>
+            </a>
           </div>
         </div>
-      </nav>
+      </div>
     </>
   );
 };
