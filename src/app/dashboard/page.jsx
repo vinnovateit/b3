@@ -168,22 +168,6 @@ export default function App() {
     return () => document.removeEventListener('mousedown', onMouseDown);
   }, [showProfilePopup]);
 
-  // Guard: don't render dashboard for unauthenticated users
-  if (status === "loading") {
-    return (
-      <div className="h-screen flex items-center justify-center bg-black">
-        <p className="text-white text-lg">Checking your session...</p>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    if (typeof window !== "undefined") {
-      router.replace("/login");
-    }
-    return null;
-  }
-
   const dashboardData = {
     user: {
       name: userProfile?.name || session?.user?.name || 'Participant',
@@ -214,6 +198,22 @@ export default function App() {
     );
     return me?.role === 'leader';
   }, [dashboardData.team.members, userProfile?.email, session?.user?.email]);
+
+  // Guard: don't render dashboard for unauthenticated users
+  if (status === "loading") {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <p className="text-white text-lg">Checking your session...</p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    if (typeof window !== "undefined") {
+      router.replace("/login");
+    }
+    return null;
+  }
 
   const handleRemoveMember = async (memberEmail) => {
     if (!isCurrentUserLeader || !memberEmail) return;
