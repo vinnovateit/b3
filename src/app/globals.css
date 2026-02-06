@@ -28,17 +28,27 @@
 	font-style: normal;
 	font-display: swap;
 }
-
+@layer base{	
 html {
 	scroll-behavior: smooth;
 	scroll-padding-top: 100px;
+	cursor: url("/svgs/cursor.svg") 4 4, auto;
 }
+a,
+input,
+textarea,
+button,
+select,
+label {
+	cursor: url("/svgs/cursor.svg") 4 4, auto;
+}
+
 
 body {
 	background: var(--background);
 	color: var(--foreground);
 	font-family: "Satoshi", Arial, Helvetica, sans-serif;
-}
+}}
 
 @layer utilities {
 	.perspective-1000 {
