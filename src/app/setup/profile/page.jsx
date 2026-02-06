@@ -399,12 +399,13 @@ export default function SetupProfilePage() {
                                             onChange={(val) => setHostelType(val === "Mens" ? "Mens" : "Ladies")} 
                                         />
                                     </div>
-                                    <div className="conditional-field">
-                                        <CustomDropdown 
+                                    <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
+                                        <input 
+                                            type="text" 
                                             placeholder="Block" 
-                                            options={["A Block", "B Block", "C Block"]} 
                                             value={block}
-                                            onChange={setBlock} 
+                                            onChange={(e) => setBlock(e.target.value)}
+                                            className="w-full bg-transparent border-none text-lg text-white placeholder:text-white/50 focus:outline-none" 
                                         />
                                     </div>
                                     <div className="conditional-field relative bg-[#B7FFB2]/34 hover:bg-[#B7FFB2]/40 border border-white/10 rounded-xl px-5 py-2.5 backdrop-blur-md flex items-center transition-colors">
