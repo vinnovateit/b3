@@ -35,6 +35,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       where: query,
       include: {
         vitStudents: {
+          orderBy: { createdAt: "asc" },
           include: {
             user: {
               select: {
@@ -116,6 +117,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       where: { id: user.vitStudent.teamId },
       include: {
         vitStudents: {
+          orderBy: { createdAt: "asc" },
           include: {
             user: {
               select: {
