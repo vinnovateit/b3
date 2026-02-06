@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { errorResponse, successResponse, parseJsonBody, logRequest, logResponse } from "@/lib/api-helpers";
 import type { NextRequest } from "next/server";
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const teamId = currentUser.vitStudent.teamId;
 
     // Load team members ordered by join time
-    const teamWithMembers = await prisma.team.findUnique({
+    const teamWithMembers = (await prisma.team.findUnique({
       where: { id: teamId },
       include: {
         vitStudents: {
@@ -63,7 +64,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-    });
+    })) as Prisma.TeamGetPayload<{
+      include: {
+        vitStudents: {
+          include: {
+            user: {
+              select: {
+                email: true;
+              };
+            };
+          };
+        };
+      };
+    }> | null;
 
     if (!teamWithMembers) {
       logResponse("POST", "/api/team/remove-member", 404, Date.now() - startTime);
