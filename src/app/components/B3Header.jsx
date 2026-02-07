@@ -30,41 +30,15 @@ export default function B3Header() {
         });
       }
 
-      // ------------------------------------------------
-      // 2. SCROLL RESIZE ANIMATION
-      // ------------------------------------------------
-      const handleScroll = () => {
-        const scrollY = window.scrollY;
-        const threshold = 100; 
-
-        const progress = Math.min(scrollY / threshold, 1);
-
-        gsap.to(headerRef.current, {
-          scale: 1 - progress * 0.4, 
-          y: -progress * 20,         
-          transformOrigin: "bottom left", 
-          duration: 0.1,             
-          overwrite: "auto",
-        });
-
-        gsap.to(textRef.current, {
-          opacity: 1 - progress * 1.5, 
-          y: -progress * 10,
-          duration: 0.1,
-          overwrite: "auto",
-        });
-      };
-
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
     }, headerRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    // UPDATED: Added 'md:pl-24' to add the requested left margin on desktop screens
-    <div className="fixed top-0 left-0 w-full z-50 pointer-events-none p-10 md:pl-24">
+    // CHANGE: 'fixed' -> 'absolute'
+    // This attaches the header to the container flow so it scrolls with the page.
+    <div className="absolute top-0 left-0 w-full z-50 pointer-events-none p-10 md:pl-24">
       
       <div ref={headerRef} className="origin-bottom-left">
         <div className="flex items-end">
