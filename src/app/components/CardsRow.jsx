@@ -69,9 +69,9 @@ export default function CardsRow() {
       description: "Teams continue building into the night.",
       image: "/images/image8.png",
     },
-    { index: null, text: "End of Day 1...", isEnd: true },
+    { index: 9, text: "End of Day 1...", isEnd: true },
     {
-      index: 9,
+      index: 10,
       title: "Jamming, Coffee Pong & Mini Games",
       date: "Day 2",
       time: "12:00 AM – 12:30 AM",
@@ -79,7 +79,7 @@ export default function CardsRow() {
       image: "/images/image9.png",
     },
     {
-      index: 10,
+      index: 11,
       title: "Night Build Sprint 2",
       date: "Day 2",
       time: "01:00 AM – 03:00 AM",
@@ -87,7 +87,7 @@ export default function CardsRow() {
       image: "/images/image10.png",
     },
     {
-      index: 11,
+      index: 12,
       title: "Review 2",
       date: "Day 2",
       time: "03:00 AM – 05:00 AM",
@@ -95,7 +95,7 @@ export default function CardsRow() {
       image: "/images/image11.png",
     },
     {
-      index: 12,
+      index: 13,
       title: "Rest (Go to Rooms)",
       date: "Day 2",
       time: "05:00 AM – 06:00 AM",
@@ -103,7 +103,7 @@ export default function CardsRow() {
       image: "/images/image12.png",
     },
     {
-      index: 13,
+      index: 14,
       title: "Final Build Phase",
       date: "Day 2",
       time: "08:00 AM – 10:00 AM",
@@ -111,7 +111,7 @@ export default function CardsRow() {
       image: "/images/image13.png",
     },
     {
-      index: 14,
+      index: 15,
       title: "Final Review",
       date: "Day 2",
       time: "10:00 AM – 12:30 PM",
@@ -119,7 +119,7 @@ export default function CardsRow() {
       image: "/images/image14.png",
     },
     {
-      index: 15,
+      index: 16,
       title: "Ending Ceremony",
       date: "Day 2",
       time: "12:30 PM – 01:00 PM",
@@ -286,7 +286,7 @@ export default function CardsRow() {
       {/* CONTENT CONTAINER - Changed to justify-start with fixed top padding */}
       <div className="flex flex-col items-start justify-start pt-12 md:pt-24 relative z-10 overflow-visible">
         <div className="px-6 md:pl-20 text-[24px] md:text-[48px] font-sans text-white mb-4 md:mb-8 transition-all duration-500">
-          {activeIndex <= 10
+          {activeIndex <= 8
             ? "Day 1 - Build & Break In"
             : "Day 2 - Stabilise & Ship"}
         </div>
