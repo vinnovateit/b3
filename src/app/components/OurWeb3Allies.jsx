@@ -69,7 +69,7 @@ export default function OurWeb3Allies() {
 					>
 						Qamar Rizwani
 					</h2>
-					<p
+					<div
 						className="text-[clamp(0.875rem,2vw,1.125rem)] mb-6 text-center bg-clip-text text-transparent"
 						style={{
 							background:
@@ -79,7 +79,7 @@ export default function OurWeb3Allies() {
 						}}
 					>
 						Engineer | Educator | Web3 Strategist
-					</p>
+					</div>
 
 					{/* Image section */}
 					<motion.div
