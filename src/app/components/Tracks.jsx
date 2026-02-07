@@ -27,49 +27,37 @@ export default function RulesSection() {
   return (
     <section id="tracks" className="relative pt-24 pb-20 px-6 overflow-hidden isolate bg-black">
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-        <div
-          className="absolute left-1/2 top-[-10px] -translate-x-1/2 w-[1100px] h-[750px]"
+        <div 
+          className="
+            absolute left-1/2 top-[-50px] md:top-[-80px] -translate-x-1/2 mt-20
+            w-[600px] md:w-[1300px] 
+            h-[400px] md:h-[800px]
+          "
           style={{
-            background: `linear-gradient(to bottom, 
-              #8CFF84 10%, 
-              #0CAC4F 25%, 
-              #0E773999 30%
-            )`,
-            WebkitMaskImage: `
-              radial-gradient(ellipse at 50% 50%, 
-                transparent 50%, 
-                black 68%, 
-                black 60%, 
-                transparent 55%
-              ),
-              linear-gradient(to bottom, 
-                black 0%, 
-                black 25%, 
-                transparent 50%
-              )
-            `,
-            maskImage: `
-              radial-gradient(ellipse at 50% 50%, 
-                transparent 45%, 
-                black 46%, 
-                black 54%, 
-                transparent 55%
-              ),
-              linear-gradient(to bottom, 
-                black 0%, 
-                black 30%, 
-                transparent 45%
-              )
-            `,
-            WebkitMaskComposite: "destination-in",
-            maskComposite: "intersect",
-            filter: "blur(100px)",
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 40%, transparent 60%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 40%, transparent 60%)',
           }}
-        />
+        >
+          <div
+            className="w-full h-full"
+            style={{
+              background: `radial-gradient(ellipse at 50% 50%, 
+                transparent 40%, 
+                #8CFF84 52%, 
+                #0E773999 45%, 
+                #0CAC4F 50%, 
+                transparent 65%
+              )`,
+              filter: 'blur(clamp(20px, 5vw, 40px))',
+              opacity: 0.8,
+              transform: 'translateZ(0)',
+              willChange: 'filter'
+            }}
+          />
+        </div>
       </div>
-
       <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-5xl font-semibold mt-6 text-white pt-2">
+        <h1 className="text-5xl font-semibold mt-[10vw] text-white pt-2">
             Tracks
         </h1>
 
