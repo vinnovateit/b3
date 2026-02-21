@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/vinnovateit/b3">
-    <img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/logo.png" alt="B3 Logo" width="180" height="auto" />
+    <img src="./public/images/logo.png" alt="B3 Logo" width="180" height="auto" />
   </a>
 
   <h1 align="center">B³ Hackathon Platform</h1>
@@ -55,8 +55,8 @@
       <td align="center"><strong>Judge Dashboard</strong></td>
     </tr>
     <tr>
-      <td><img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/landing-preview.png" width="100%" /></td>
-      <td><img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/dashboard-preview.png" width="100%" /></td>
+      <td><img src="./public/images/landing-preview.png" width="100%" alt="Landing Page" /></td>
+      <td><img src="./public/images/dashboard-preview.png" width="100%" alt="Dashboard" /></td>
     </tr>
   </table>
 </div>
