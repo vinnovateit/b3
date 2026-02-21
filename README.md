@@ -1,93 +1,110 @@
-# README
+B³ Hackathon Platform
+<p align="center"> <img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/logo.png" alt="B3 Logo" width="160"/> </p> <p align="center"> <strong>Official Management Platform for B³ — A Blockchain Hackathon by VinnovateIT</strong> </p> <p align="center"> <a href="https://github.com/vinnovateit/b3/blob/main/LICENSE"> <img src="https://img.shields.io/badge/license-MIT-black" /> </a> <img src="https://img.shields.io/badge/Next.js-14-black" /> <img src="https://img.shields.io/badge/Prisma-ORM-blue" /> <img src="https://img.shields.io/badge/Database-MongoDB-green" /> <img src="https://img.shields.io/badge/Auth-NextAuth-purple" /> <img src="https://img.shields.io/badge/Deployment-Cloudflare-orange" /> </p>
+About The Project
 
-# B³ Hackathon Platform
+B³ is a full-stack hackathon management system built to handle the complete operational lifecycle of a blockchain-based hackathon.
 
-Official hackathon management platform built for **B³ (B Cube)** — a blockchain-based hackathon organized by VinnovateIT.
+The platform was developed to replace fragmented tools like Google Forms, spreadsheets, and manual scoring systems with a structured, scalable, and secure web application.
 
-This platform was developed to manage the complete lifecycle of the event, including participant registration, team management, judge evaluation, and result aggregation through a structured and role-based workflow system.
+It enables:
 
----
+Participant registration and team creation
 
-## Overview
+Project submission management
 
-The B³ Hackathon Platform is a full-stack web application designed to eliminate manual workflows and replace them with a centralized, scalable system.
+Role-based authentication
 
-The platform handles:
+Judge evaluation dashboards
 
-- Participant registration and team creation
-- Project submissions
-- Role-based authentication
-- Judge evaluation dashboards
-- Automated score aggregation
-- Result generation
+Automated score aggregation
 
-It ensures operational efficiency, transparency, and structured coordination between organizers, judges, and participants.
+Final result generation
 
----
+This system ensures transparency, efficiency, and smooth coordination between participants, judges, and organizers.
 
-## Core Features
+Platform Preview
 
-### Participant Module
+Replace the image paths below with your actual screenshots.
 
-- Secure authentication
-- Team creation and management
-- Project submission interface
-- Dashboard access
+<p align="center"> <img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/landing-preview.png" width="85%" /> </p> <p align="center"> <img src="https://raw.githubusercontent.com/vinnovateit/b3/main/public/images/dashboard-preview.png" width="85%" /> </p>
+Architecture Overview
+Participants → Registration System → Database
+Judges       → Evaluation Dashboard → Score Engine
+Admin        → Management Panel → Result Generator
 
-### Judge Panel
+Built using a modular full-stack architecture powered by Next.js App Router and Prisma ORM.
 
-- Role-based access control
-- Structured evaluation rubric
-- Score submission system
-- Controlled project visibility
+Core Modules
+1. Participant System
 
-### Admin Controls
+Secure authentication
 
-- Manage participants and teams
-- Monitor submissions
-- Track evaluation progress
-- Generate final results
+Team creation and management
 
-### Result Engine
+Project submission interface
 
-- Automated score aggregation
-- Ranking logic
-- Centralized result publishing
+Submission status tracking
 
----
+2. Judge Dashboard
 
-## Tech Stack
+Role-based access control
 
-### Frontend
+Structured scoring rubric
 
-- Next.js (App Router)
-- React
-- TypeScript
-- Tailwind CSS
+Score submission and editing
 
-### Backend
+Controlled visibility of assigned teams
 
-- Next.js API routes
-- Node.js runtime
+3. Admin Panel
 
-### Database
+Manage teams and participants
 
-- MongoDB
-- Prisma ORM
+Assign judges
 
-### Authentication
+Monitor evaluation progress
 
-- NextAuth.js
+Trigger result aggregation
 
-### Deployment
+4. Result Engine
 
-- Cloudflare (via open-next configuration)
+Automatic score calculation
 
----
+Ranking logic
 
-## Project Structure
+Structured result publishing
 
-```
+Tech Stack
+Frontend
+
+Next.js (App Router)
+
+React
+
+TypeScript
+
+Tailwind CSS
+
+Backend
+
+Next.js API routes
+
+Node.js runtime
+
+Database
+
+MongoDB
+
+Prisma ORM
+
+Authentication
+
+NextAuth.js
+
+Deployment
+
+Cloudflare (via open-next configuration)
+
+Folder Structure
 b3/
 │
 ├── prisma/
@@ -100,164 +117,80 @@ b3/
 │   └── backgrounds/
 │
 ├── src/
-│   ├── app/              # App Router pages and layouts
-│   ├── lib/              # Utility and helper functions
-│   ├── auth.ts           # NextAuth configuration
-│   └── middleware.ts     # Route protection
+│   ├── app/
+│   ├── lib/
+│   ├── auth.ts
+│   └── middleware.ts
 │
-├── open-next.config.ts   # Cloudflare deployment config
-├── next.config.mjs
+├── open-next.config.ts
 ├── prisma.config.ts
+├── next.config.mjs
 └── package.json
-```
+Getting Started
+Prerequisites
 
----
+Node.js v18+
 
-## System Workflow
+MongoDB instance
 
-1. Participants register and create teams.
-2. Teams submit their project details.
-3. Admin verifies and manages submissions.
-4. Judges evaluate projects using predefined criteria.
-5. Scores are aggregated automatically.
-6. Final rankings are generated and published.
+npm
 
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v18 or higher recommended)
-- npm
-- MongoDB instance (local or cloud)
-
-Check versions:
-
-```
-node -v
-npm -v
-```
-
----
-
-### Installation
-
-Clone the repository:
-
-```
+Installation
 git clone https://github.com/vinnovateit/b3.git
 cd b3
-```
-
-Install dependencies:
-
-```
 npm install
-```
+Environment Variables
 
----
+Create a .env file:
 
-### Environment Variables
-
-Create a `.env` file in the root directory and configure:
-
-```
 DATABASE_URL=
 NEXTAUTH_SECRET=
 NEXTAUTH_URL=
-```
-
-If using OAuth providers, add corresponding credentials.
-
----
-
-### Prisma Setup
-
-Generate Prisma client:
-
-```
+Prisma Setup
 npx prisma generate
-```
-
-Push schema to database:
-
-```
 npx prisma db push
-```
-
----
-
-### Run Development Server
-
-```
+Run Development Server
 npm run dev
-```
 
-Application will be available at:
-
-```
+Visit:
 http://localhost:3000
-```
 
----
+Security Model
 
-## Deployment
+Role-based route protection using middleware
 
-This project includes `open-next.config.ts` for deployment to Cloudflare Workers.
+Server-side session validation via NextAuth
 
-Build the project:
+Database access abstraction through Prisma
 
-```
-npm run build
-```
+Environment-based secret management
 
-Follow your Cloudflare deployment workflow accordingly.
+Future Roadmap
 
----
+Blockchain-based certificate issuance
 
-## Security Considerations
+On-chain score verification
 
-- Role-based route protection using middleware
-- Server-side session validation via NextAuth
-- Controlled judge access to assigned submissions
-- Environment-based secret management
+Live leaderboard
 
----
+Automated email workflows
 
-## Future Enhancements
+Advanced analytics dashboard
 
-- On-chain certificate issuance
-- Blockchain-based score verification
-- Live leaderboard system
-- Email notification automation
-- Advanced analytics dashboard
+Contributing
 
----
+We welcome contributions from the VinnovateIT community.
 
-## Contributing
+Fork the repository
 
-Contributions are welcome from the VinnovateIT community.
+Create a branch
 
-1. Fork the repository
-2. Create a new branch
-    
-    `git checkout -b feature/feature-name`
-    
-3. Commit your changes
-    
-    `git commit -m "Add feature"`
-    
-4. Push to your branch
-    
-    `git push origin feature/feature-name`
-    
-5. Open a Pull Request
+Commit changes
 
-Please maintain code structure consistency and follow existing patterns.
+Submit a Pull Request
 
----
+Maintain modular architecture and follow project structure conventions.
 
-## License
+License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
