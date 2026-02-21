@@ -1,71 +1,84 @@
+<a id="readme-top"></a>
+
+<br />
 <div align="center">
   <a href="https://github.com/vinnovateit/b3">
-    <img src="./public/images/logo.png" alt="B3 Logo" width="180" height="auto" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg">
+      <img alt="VinnovateIT Logo" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/blackLogoViit.svg" width="200">
+    </picture>
   </a>
 
-  <h1 align="center">B³ Hackathon Platform</h1>
+<h3 align="center">B³ Hackathon Platform</h3>
 
   <p align="center">
-    <strong>The Official Blockchain Hackathon Management System by VinnovateIT</strong>
-  </p>
-
-  <p align="center">
+    The Official Blockchain Hackathon Management System by VinnovateIT
+    <br />
     <i>Structured. Scalable. Secure.</i>
     <br />
     <br />
-    <a href="https://github.com/vinnovateit/b3/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/vinnovateit/b3/issues">Request Feature</a>
-  </p>
-
-  <p align="center">
-    <a href="https://github.com/vinnovateit/b3/blob/main/LICENSE">
-      <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" />
-    </a>
-    <img src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
-    <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma" />
-    <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white" alt="MongoDB" />
-    <img src="https://img.shields.io/badge/Auth-NextAuth-purple?style=for-the-badge&logo=next.js&logoColor=white" alt="Auth" />
-    <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white" alt="Cloudflare" />
+    <a href="https://github.com/vinnovateit/b3"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/vinnovateit/b3">Visit</a>
+    &middot;
+    <a href="https://github.com/vinnovateit/b3/issues/new?labels=bug&template=bug-report.md">Report Bug</a>
+    &middot;
+    <a href="https://github.com/vinnovateit/b3/issues/new?labels=enhancement&template=feature-request.md">Request Feature</a>
   </p>
 </div>
 
-<br />
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#contributing">Contributing</a></li>
+  </ol>
+</details>
 
-## ⚡ About The Project
+## About The Project
 
-> **No more Google Forms. No more spreadsheets.**
+<img alt="B3 Logo" src="./public/images/logo.png" width="200" align="right">
 
-**B³** is a specialized, full-stack management system designed to handle the operational chaos of a blockchain hackathon. We built this to replace fragmented tools with a single source of truth.
+**B³** is a full-stack hackathon management system built to handle the complete operational lifecycle of a blockchain-based hackathon. 
 
-### 🎯 Key Capabilities
-* 🔐 **Role-Based Auth**: Secure gateways for Participants, Judges, and Admins.
-* 👥 **Team Management**: Real-time team creation and dynamic member handling.
-* ⚖️ **Judge Dashboard**: A dedicated interface for scoring projects against rubrics.
-* 📊 **Automated Results**: Instant score aggregation and ranking logic.
+The platform was developed to replace fragmented tools like Google Forms, spreadsheets, and manual scoring systems with a structured, scalable, and secure web application.
 
----
+It enables:
+* ✅ **Participant Registration** and team creation.
+* ✅ **Project Submission** management.
+* ✅ **Role-based Authentication** (Admin, Judge, User).
+* ✅ **Judge Dashboards** for rubric-based evaluation.
+* ✅ **Automated Scoring** and result generation.
 
-## 📸 Platform Preview
+<details>
+  <summary><b>📸 Screenshots (Click to Expand)</b></summary>
+  
+  <br />
 
-<div align="center"> 
-  <table>
-    <tr>
-      <td align="center"><strong>Landing Page</strong></td>
-      <td align="center"><strong>Judge Dashboard</strong></td>
-    </tr>
-    <tr>
-      <td><img src="./public/images/landing-preview.png" width="100%" alt="Landing Page" /></td>
-      <td><img src="./public/images/dashboard-preview.png" width="100%" alt="Dashboard" /></td>
-    </tr>
-  </table>
-</div>
+  | Landing Page | Judge Dashboard |
+  | :--------------: | :--------: |
+  | <img width="100%" alt="Landing Page" src="./public/images/landing-preview.png"> | <img width="100%" alt="Dashboard" src="./public/images/dashboard-preview.png"> |
 
----
+</details>
 
-## 🏗 Architecture & Workflow
+<br/>
 
-We utilize a modular full-stack architecture powered by the **Next.js App Router**.
+### Architecture 
 
 ```mermaid
 graph TD
@@ -74,56 +87,121 @@ graph TD
         J[Judges]
         A[Admin]
     end
-
     subgraph "B³ Platform"
         Auth[NextAuth Security]
-        
         subgraph Modules
             Reg[Registration System]
             Eval[Evaluation Dashboard]
-            Mgmt[Management Panel]
         end
-        
-        Engine[Score Engine & Result Generator]
+        Engine[Score Engine]
     end
-
     subgraph Data
         DB[(MongoDB)]
     end
-
-    P -->|Register/Submit| Reg
-    J -->|Score Projects| Eval
-    A -->|Manage| Mgmt
-    
+    P --> Reg
+    J --> Eval
     Reg --> Auth
     Eval --> Auth
-    Mgmt --> Auth
-    
     Auth --> DB
     Eval --> Engine
-    Engine --> DB
-🛠 Tech Stack<div align="center">LayerTechnologyDescriptionFrontendApp Router, Tailwind CSS, Framer MotionBackendServer Actions, API RoutesDatabaseNoSQL Data Store with Type-safe ORMAuthSession management & Middleware protectionDevOpsDeployed via open-next config</div>📂 Folder Structure<details><summary>Click to expand file tree</summary>Bashb3/
-├── prisma/
-│   └── schema.prisma      # Database Schema
-├── public/                # Static Assets
-│   ├── images/
-│   ├── fonts/
-│   └── svgs/
-├── src/
-│   ├── app/               # Next.js App Router Pages
-│   ├── lib/               # Utility functions
-│   ├── auth.ts            # Auth Configuration
-│   └── middleware.ts      # Route Protection
-├── open-next.config.ts    # Deployment Config
-├── next.config.mjs
-└── package.json
-</details>🚀 Getting StartedFollow these steps to set up the project locally.PrerequisitesNode.js v18+MongoDB (Local or Atlas URL)npm or yarnInstallationClone the RepoBashgit clone [https://github.com/vinnovateit/b3.git](https://github.com/vinnovateit/b3.git)
+Built With
+[][Next-url]
+[][React-url]
+[][Tailwind-url]
+[][Node-url]
+[][Mongo-url]
+[][Prisma-url]
+[][NextAuth-url]
+[][Cloudflare-url]
+
+Roadmap
+[ ] Blockchain-based certificate issuance
+
+[ ] On-chain score verification
+
+[ ] Live leaderboard (WebSocket)
+
+[ ] Automated email workflows
+
+[ ] Advanced analytics dashboard
+
+See the open issues for a full list of proposed features (and known issues).
+
+Getting Started
+To get a local copy up and running follow these simple example steps.
+
+Prerequisites
+Node.js v18+
+
+MongoDB Instance (Local or Atlas)
+
+npm
+
+Bash
+npm install npm@latest -g
+Installation
+Clone the repo
+
+Bash
+git clone [https://github.com/vinnovateit/b3.git](https://github.com/vinnovateit/b3.git)
 cd b3
-Install DependenciesBashnpm install
-Configure EnvironmentCreate a .env file in the root directory:Code snippetDATABASE_URL="mongodb+srv://..."
-NEXTAUTH_SECRET="your_super_secret_key"
+Install NPM packages
+
+Bash
+npm install
+Set up your Environment Variables inside a .env file:
+
+Code snippet
+DATABASE_URL="mongodb+srv://..."
+NEXTAUTH_SECRET="your_secret"
 NEXTAUTH_URL="http://localhost:3000"
-Database SyncGenerate Prisma client and push schema:Bashnpx prisma generate
+Sync Database
+
+Bash
+npx prisma generate
 npx prisma db push
-Run Dev ServerBashnpm run dev
-Access the app at http://localhost:3000🔮 Future Roadmap[ ] On-Chain Verification: Store scores on a public ledger.[ ] NFT Certificates: Automated minting for winners.[ ] Live Leaderboard: WebSocket-enabled real-time ranking.[ ] Analytics: Advanced visualization for admin data.🤝 ContributingContributions from the VinnovateIT community are welcome!Fork the ProjectCreate your Feature Branch (git checkout -b feature/AmazingFeature)Commit your Changes (git commit -m 'Add some AmazingFeature')Push to the Branch (git push origin feature/AmazingFeature)Open a Pull Request📝 LicenseDistributed under the MIT License. See LICENSE for more information.<div align="center"><br /><p>Made with ❤️ by <strong>VinnovateIT</strong></p></div>
+Run Development Server
+
+Bash
+npm run dev
+Contributing
+We welcome contributions from the VinnovateIT community.
+
+Fork the repository
+
+Create a branch (git checkout -b feature/AmazingFeature)
+
+Commit changes (git commit -m 'Add AmazingFeature')
+
+Submit a Pull Request
+
+Top contributors:
+<a href="https://www.google.com/search?q=https://github.com/vinnovateit/b3/graphs/contributors">
+<img src="https://www.google.com/search?q=https://contrib.rocks/image%3Frepo%3Dvinnovateit/b3" alt="contrib.rocks image" />
+</a>
+
+Acknowledgments
+VinnovateIT Core Team
+
+B³ Hackathon Organizers
+
+<p align="center">
+Made with :heart: by <a href="https://vinnovateit.com">VinnovateIT</a>
+</p>
+
+[]: #
+[next-url]: https://nextjs.org/
+[]: #
+[react-url]: https://reactjs.org/
+[]: #
+[tailwind-url]: https://www.google.com/search?q=https://tailwindcss.com/
+[]: #
+[node-url]: https://www.google.com/search?q=https://nodejs.org/
+[]: #
+[mongo-url]: https://www.google.com/search?q=https://www.mongodb.com/
+[]: #
+[prisma-url]: https://www.google.com/search?q=https://www.prisma.io/
+[]: #
+[nextauth-url]: https://www.google.com/search?q=https://next-auth.js.org/
+[]: #
+[cloudflare-url]: https://www.google.com/search?q=https://cloudflare.com
