@@ -54,8 +54,6 @@
 
 ## About The Project
 
-<img alt="B3 Logo" src="public/images/logo.png" width="180" align="right">
-
 **B³** is a full-stack hackathon management system built to handle the complete operational lifecycle of a blockchain-based hackathon.
 
 The platform replaces fragmented tools like Google Forms, spreadsheets, and manual scoring systems with a structured, scalable, and secure web application.
@@ -75,9 +73,9 @@ It enables:
 
 <br/>
 
-| Landing Page | Judge Dashboard |
-|:-------------:|:--------------:|
-| <img width="100%" alt="Landing Page" src="public/images/landing-preview.png"> | <img width="100%" alt="Dashboard" src="public/images/dashboard-preview.png"> |
+| Landing Page |
+|:-------------:|
+| <img width="100%" alt="Landing Page" src="public/images/b3.vinnovateit.com_ (1).png">
 
 </details>
 
@@ -86,30 +84,80 @@ It enables:
 ## Architecture
 
 ```mermaid
-graph TD
-    subgraph Users
-        P[Participants]
-        J[Judges]
-        A[Admin]
+%%{
+  init: {
+    'theme': 'base',
+    'flowchart': {
+        'htmlLabels': true,
+        'padding': 20,
+        'nodeSpacing': 50,
+        'rankSpacing': 50,
+        'curve': 'basis' 
+    },
+    'themeVariables': {
+      'background': '#ffffff',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#111111',
+      'primaryBorderColor': '#00E676',
+      'lineColor': '#00E676',
+      'secondaryColor': '#F8F9FA',
+      'tertiaryColor': '#F8F9FA',
+      'fontFamily': 'Inter, Segoe UI, sans-serif',
+      'fontSize': '14px'
+    }
+  }
+}%%
+
+flowchart LR
+
+
+    %% NODE STYLES
+    classDef neon fill:#ffffff,stroke:#00E676,stroke-width:2px,color:#111111,rx:5,ry:5;
+    classDef solid fill:#00E676,stroke:#00E676,stroke-width:1px,color:#000000,font-weight:bold,rx:5,ry:5;
+    classDef db fill:#ffffff,stroke:#00E676,stroke-width:2px,color:#111111;
+
+
+    %% USERS
+    subgraph USERS [Users]
+        direction TB
+        P[" Participants "]:::neon
+        J[" Judges "]:::neon
+        A[" Admin "]:::neon
     end
 
-    subgraph "B³ Platform"
-        Auth[NextAuth Security]
-        Reg[Registration System]
-        Eval[Evaluation Dashboard]
-        Engine[Score Engine]
+    style USERS fill:none,stroke:#E5E7EB,stroke-width:1px,rx:10,ry:10
+
+
+    %% PLATFORM
+    subgraph PLATFORM [" B³ Platform "]
+        direction TB
+        Reg[" Registration <br/> System "]:::neon
+        Eval[" Evaluation <br/> Dashboard "]:::neon
+        Auth[" NextAuth <br/> Security "]:::solid
+        Engine[" Score <br/> Engine "]:::solid
+    end
+    style PLATFORM fill:#F8F9FA,stroke:#E5E7EB,stroke-width:1px,rx:10,ry:10
+
+
+    %% DATA
+    subgraph DATA [Data Layer]
+        DB[(" MongoDB ")]:::db
     end
 
-    subgraph Data
-        DB[(MongoDB)]
-    end
+    style DATA fill:none,stroke:#E5E7EB,stroke-width:1px,rx:10,ry:10
+
+
+    %% FLOW
 
     P --> Reg
     J --> Eval
+    A --> Eval
+
     Reg --> Auth
     Eval --> Auth
-    Auth --> DB
+
     Eval --> Engine
+    Auth --> DB
 ```
 
 ---
@@ -127,17 +175,6 @@ graph TD
 
 ---
 
-## Roadmap
-
-- [ ] Blockchain-based certificate issuance  
-- [ ] On-chain score verification  
-- [ ] Live leaderboard (WebSocket)  
-- [ ] Automated email workflows  
-- [ ] Advanced analytics dashboard  
-
-See the issues section for proposed features and known improvements.
-
----
 
 ## Getting Started
 
