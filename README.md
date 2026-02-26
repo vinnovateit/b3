@@ -1,42 +1,40 @@
 <a id="readme-top"></a>
 
-
-<!-- Club Logo -->
 <br />
 <div align="center">
-  <a href="https://github.com/vinnovateit/repo_name">
+  <a href="https://github.com/vinnovateit/b3">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg">
       <img alt="VinnovateIT Logo" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/blackLogoViit.svg" width="200">
     </picture>
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">B³ Hackathon Platform</h3>
 
   <p align="center">
-    project_description
+    The Official Blockchain Hackathon Management System by VinnovateIT
     <br />
-    <a href="https://github.com/vinnovateit/repo_name"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/vinnovateit/repo_name">Visit</a>
-    &middot;
-    <a href="https://github.com/vinnovateit/repo_name/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    &middot;
-    <a href="https://github.com/vinnovateit/repo_name/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <i>Structured. Scalable. Secure.</i>
+    <br /><br />
+    <a href="https://github.com/vinnovateit/b3"><strong>Explore the Repository »</strong></a>
+    <br /><br />
+    <a href="https://github.com/vinnovateit/b3">View Repository</a>
+    ·
+    <a href="https://github.com/vinnovateit/b3/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/vinnovateit/b3/issues">Request Feature</a>
   </p>
 </div>
 
+---
 
-
-<!-- TABLE OF CONTENTS -->
-<!-- Use if things get too long -->
-<!-- <details>
+<details>
   <summary>Table of Contents</summary>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+        <li><a href="#architecture">Architecture</a></li>
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
@@ -48,151 +46,148 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#contributing">Contributing</a></li>
   </ol>
-</details> -->
+</details>
 
+---
 
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<!-- Put the PROJECT LOGO here -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg">
-  <img alt="Project Logo" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/blackLogoViit.svg" width="200" align="right">
-</picture>
+**B³** is a full-stack hackathon management system built to handle the complete operational lifecycle of a blockchain-based hackathon.
 
-Do a search and replace with your text editor for the following: `repo_name`, `project_title`, `project_description`, `project_license`
+The platform replaces fragmented tools like Google Forms, spreadsheets, and manual scoring systems with a structured, scalable, and secure web application.
 
-<!-- Put appropriate SCREENSHOTS here
-Use width modifier to control size
-Use wisely: don't overfill & don't use too heavy imgs
--->
+It enables:
+
+- Participant Registration and team creation  
+- Project Submission management  
+- Role-based Authentication (Admin, Judge, User)  
+- Judge Dashboards for rubric-based evaluation  
+- Automated Scoring and result generation  
+
+---
+
 <details>
   <summary><b>Screenshots</b></summary>
-  
-  | Landing page | Login |
-  | :--------------: | :--------: |
-  | <img width="60%" alt="Home screen" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg"> | <img width="60%" alt="Login page" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg"> |
-  | **Dashboard | **Something** |
-  | <img width="60%" alt="Donation page" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg"> | <img width="60%" alt="pwa flow" src="https://raw.githubusercontent.com/vinnovateit/.github/main/assets/whiteLogoViit.svg"> |
+
+<br/>
+
+| Landing Page |
+|:-------------:|
+| <img width="100%" alt="Landing Page" src="public/images/b3.vinnovateit.com_ (1).png">
 
 </details>
 
-### Built With
+---
 
-[![Next][Next.js]][Next-url]
-[![React][React.js]][React-url]
-[![Vue][Vue.js]][Vue-url]
-[![Angular][Angular.io]][Angular-url]
-[![Svelte][Svelte.dev]][Svelte-url]
-[![Laravel][Laravel.com]][Laravel-url]
-[![Laravel][Laravel.com]][Laravel-url]
-[![Bootstrap][Bootstrap.com]][Bootstrap-url]
-[![JQuery][JQuery.com]][JQuery-url]
+## Architecture
+<p align="center">
+  <img src="public/images/_- visual selection (1).png" alt="B3 Architecture" width="100%">
+</p>
+---
 
+## Built With
 
-<!-- ROADMAP -->
-## Roadmap
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Node.js](https://nodejs.org/)
+- [MongoDB](https://www.mongodb.com/)
+- [Prisma ORM](https://www.prisma.io/)
+- [NextAuth.js](https://next-auth.js.org/)
+- [Cloudflare](https://cloudflare.com/)
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/vinnovateit/repo_name/issues) for a full list of proposed features (and known issues).
+---
 
 
-
-
-<!-- GETTING STARTED -->
 ## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- Node.js v18+
+- MongoDB instance (Local or Atlas)
+- npm
+
+Update npm (optional):
+
+```bash
+npm install -g npm@latest
+```
+
+---
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/vinnovateit/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin vinnovateit/repo_name
-   git remote -v # confirm the changes
-   ```
+Clone the repository:
 
+```bash
+git clone https://github.com/vinnovateit/b3.git
+cd b3
+```
 
+Install dependencies:
 
+```bash
+npm install
+```
 
+Create a `.env` file:
 
-<!-- USAGE - REMOVE IF NOT NEEDED -->
-## Usage
+```
+DATABASE_URL="mongodb+srv://..."
+NEXTAUTH_SECRET="your_secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Sync database:
 
-_For more examples, please refer to the [Documentation](https://github.com/vinnovateit/)_
+```bash
+npx prisma generate
+npx prisma db push
+```
 
+Run development server:
 
+```bash
+npm run dev
+```
 
-### Top contributors:
+Visit:  
+http://localhost:3000
 
-<a href="https://github.com/vinnovateit/repo_name/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vinnovateit/repo_name" alt="contrib.rocks image" />
+---
+
+## Contributing
+
+We welcome contributions from the VinnovateIT community.
+
+1. Fork the repository  
+2. Create a branch  
+   `git checkout -b feature/AmazingFeature`  
+3. Commit changes  
+   `git commit -m "Add AmazingFeature"`  
+4. Push to branch  
+   `git push origin feature/AmazingFeature`  
+5. Open a Pull Request  
+
+---
+
+## Contributors
+
+<a href="https://github.com/vinnovateit/b3/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=vinnovateit/b3" alt="contributors" />
 </a>
 
+---
 
-
-
-
-<!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+- VinnovateIT Core Team  
+- B³ Hackathon Organizers  
 
+---
 
 <p align="center">
-	Made with :heart: by <a href="https://vinnovateit.com">VinnovateIT</a>
+Made with ❤️ by <a href="https://vinnovateit.com">VinnovateIT</a>
 </p>
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[Next.js]: https://img.shields.io/badge/next.js-000000?&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
